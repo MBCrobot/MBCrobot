@@ -55,27 +55,49 @@
             100% { transform: translateY(0px); }
         }
 
-        /* 光榮瞬間 - 溫馨相框與特效 */
-        .glory-frame {
-            border: 8px solid #FFD93D;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 10px 10px 0px #FF9F43; /* 童趣陰影 */
-            transition: all 0.4s ease;
-            position: relative;
+      /* 定義呼吸燈動畫 */
+    @keyframes frameBreathe {
+        0% { 
+            box-shadow: 0 0 10px rgba(255, 159, 67, 0.3), 10px 10px 0px #FF9F43;
+            border-color: #FFD93D;
         }
-        .glory-frame:hover {
-            transform: translate(-5px, -5px) rotate(2deg);
-            box-shadow: 15px 15px 0px #FF6B6B;
-            border-color: #54A0FF;
+        50% { 
+            box-shadow: 0 0 25px rgba(255, 217, 61, 0.8), 10px 10px 0px #FF9F43;
+            border-color: #FFFFFF; /* 閃爍感 */
         }
-        .glory-frame img {
-            transition: transform 0.5s ease;
+        100% { 
+            box-shadow: 0 0 10px rgba(255, 159, 67, 0.3), 10px 10px 0px #FF9F43;
+            border-color: #FFD93D;
         }
-        .glory-frame:hover img {
-            transform: scale(1.1);
-        }
+    }
 
+    .glory-frame-new {
+        border: 8px solid #FFD93D;
+        border-radius: 24px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        background: white;
+        /* 啟用呼吸燈動畫 */
+        animation: frameBreathe 3s infinite ease-in-out;
+    }
+
+    /* 滑鼠移入：停止呼吸，改為強光聚焦並膨脹 */
+    .glory-frame-new:hover {
+        animation: none;
+        transform: scale(1.03) translateY(-10px);
+        box-shadow: 0 0 40px rgba(84, 160, 255, 0.8), 15px 15px 0px #54A0FF;
+        border-color: #54A0FF;
+        z-index: 10;
+    }
+
+    .glory-frame-new img {
+        transition: transform 0.6s ease;
+    }
+
+    .glory-frame-new:hover img {
+        transform: scale(1.1);
+    }
         /* 呼吸燈特效 (用於社群與特定按鈕) */
         @keyframes breathe {
             0% { transform: scale(1); filter: brightness(100%); }
