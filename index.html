@@ -169,32 +169,53 @@
             90% { transform: translateX(-100%); opacity: 0; } /* 緩慢駛出 */
             100% { transform: translateX(-100%); opacity: 0; }
         }
-
-       /* 1. 強化煙霧顏色與形狀 */
-.smoke-effect {
-    position: absolute;
-    bottom: 80%; /* 稍微下壓，讓煙從字體後方噴出 */
-    left: 45%;
-    width: 25px;
-    height: 25px;
-    background: rgba(100, 100, 100, 0.8); /* 深灰色且不透明度高 */
-    border-radius: 50%;
-    filter: blur(3px); /* 增加朦朧感 */
-    opacity: 0;
+/* 1. 發光特效 */
+@keyframes glowing {
+    0% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
+    50% { text-shadow: 0 0 15px rgba(255, 217, 61, 0.8), 0 0 25px rgba(255, 107, 107, 0.8); }
+    100% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
 }
 
-/* 2. 獨立噴煙動畫：讓煙霧有「噗、噗、噗」的連噴感 */
+/* 2. 火車進出動畫 (從右至左，停留 14 秒) */
+@keyframes trainIntro {
+    0% { transform: translateX(100%); opacity: 0; }
+    10% { transform: translateX(0); opacity: 1; }
+    80% { transform: translateX(0); opacity: 1; }
+    90% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(-100%); opacity: 0; }
+}
+
+/* 3. 強化深灰色煙霧動畫 */
 @keyframes puffAndFade {
     0% { transform: scale(0.5) translateY(0); opacity: 0; }
     20% { opacity: 1; }
     100% { transform: scale(3) translateY(-80px); opacity: 0; }
 }
 
-/* 3. 在火車停靠期間（10%-80%）觸發噴煙 */
-/* 我們利用 animation-delay 讓三顆煙霧錯開噴發 */
-.animated-title .smoke-1 { animation: puffAndFade 2s infinite 3s; }
-.animated-title .smoke-2 { animation: puffAndFade 2s infinite 4s; }
-.animated-title .smoke-3 { animation: puffAndFade 2s infinite 5s; }
+.animated-title {
+    position: relative;
+    display: inline-block;
+    /* 同時執行進出動畫 (20秒) 與 發光動畫 (3秒) */
+    animation: trainIntro 20s ease-in-out infinite, glowing 3s ease-in-out infinite alternate;
+    padding: 0 20px;
+}
+
+.smoke-effect {
+    position: absolute;
+    bottom: 80%;
+    width: 25px;
+    height: 25px;
+    background: rgba(80, 80, 80, 0.9); /* 深灰色強化 */
+    border-radius: 50%;
+    filter: blur(3px);
+    opacity: 0;
+    pointer-events: none; /* 防止煙霧擋住滑鼠點擊 */
+}
+
+/* 設定三顆煙霧在火車停留時循環噴發 */
+.smoke-1 { left: 40%; animation: puffAndFade 2s infinite 3s; }
+.smoke-2 { left: 50%; animation: puffAndFade 2s infinite 4s; }
+.smoke-3 { left: 60%; animation: puffAndFade 2s infinite 5s; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -224,11 +245,11 @@
     <div class="absolute bottom-10 right-10 w-40 h-40 bg-mbc-blue rounded-full opacity-20 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
 
     <div class="container mx-auto px-4 z-10">
-        <h1 class="text-4xl md:text-6xl font-black mb-4 text-gray-800 relative">
-    <span class="animated-title px-4">
+      <h1 class="text-4xl md:text-6xl font-black mb-4 text-gray-800 relative">
+    <span class="animated-title">
         <span class="smoke-effect smoke-1"></span>
-        <span class="smoke-effect smoke-2" style="left: 55%;"></span>
-        <span class="smoke-effect smoke-3" style="left: 65%;"></span>
+        <span class="smoke-effect smoke-2"></span>
+        <span class="smoke-effect smoke-3"></span>
         
         歡迎來到 <span class="text-mbc-red">積動城市</span>
     </span>
