@@ -170,32 +170,31 @@
             100% { transform: translateX(-100%); opacity: 0; }
         }
 
-        /* 標題煙霧動畫 (模擬火車煙囪冒煙) */
-        @keyframes smokePuff {
-            0% { transform: scale(0.5) translateY(0); opacity: 0; }
-            20% { transform: scale(1) translateY(-20px); opacity: 0.8; }
-            100% { transform: scale(1.5) translateY(-50px); opacity: 0; }
-        }
+       /* 1. 強化煙霧顏色與形狀 */
+.smoke-effect {
+    position: absolute;
+    bottom: 80%; /* 稍微下壓，讓煙從字體後方噴出 */
+    left: 45%;
+    width: 25px;
+    height: 25px;
+    background: rgba(100, 100, 100, 0.8); /* 深灰色且不透明度高 */
+    border-radius: 50%;
+    filter: blur(3px); /* 增加朦朧感 */
+    opacity: 0;
+}
 
-        .animated-title {
-            position: relative;
-            display: inline-block; /* 讓 text-shadow 和 transform 作用於整個標題 */
-            animation: trainIntro 20s ease-in-out infinite, glowing 3s ease-in-out infinite alternate;
-            padding: 0 10px; /* 避免文字邊緣被陰影裁切 */
-        }
+/* 2. 獨立噴煙動畫：讓煙霧有「噗、噗、噗」的連噴感 */
+@keyframes puffAndFade {
+    0% { transform: scale(0.5) translateY(0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: scale(3) translateY(-80px); opacity: 0; }
+}
 
-        .smoke-effect {
-            position: absolute;
-            bottom: 100%; /* 從文字上方冒出 */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
-            background: #ccc; /* 煙霧顏色 */
-            border-radius: 50%;
-            opacity: 0;
-            animation: none; /* 預設不執行，等待 JS 觸發 */
-        }
+/* 3. 在火車停靠期間（10%-80%）觸發噴煙 */
+/* 我們利用 animation-delay 讓三顆煙霧錯開噴發 */
+.animated-title .smoke-1 { animation: puffAndFade 2s infinite 3s; }
+.animated-title .smoke-2 { animation: puffAndFade 2s infinite 4s; }
+.animated-title .smoke-3 { animation: puffAndFade 2s infinite 5s; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -225,13 +224,15 @@
     <div class="absolute bottom-10 right-10 w-40 h-40 bg-mbc-blue rounded-full opacity-20 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
 
     <div class="container mx-auto px-4 z-10">
-        <h1 class="text-4xl md:text-6xl font-black mb-4 text-gray-800 relative overflow-hidden">
-            <span class="animated-title">
-                歡迎來到 <span class="text-mbc-red">積動城市</span>
-                <span id="smokePuff1" class="smoke-effect bg-gray-400"></span>
-                <span id="smokePuff2" class="smoke-effect bg-gray-300" style="left: 60%; animation-delay: 0.5s;"></span>
-            </span>
-        </h1>
+        <h1 class="text-4xl md:text-6xl font-black mb-4 text-gray-800 relative">
+    <span class="animated-title px-4">
+        <span class="smoke-effect smoke-1"></span>
+        <span class="smoke-effect smoke-2" style="left: 55%;"></span>
+        <span class="smoke-effect smoke-3" style="left: 65%;"></span>
+        
+        歡迎來到 <span class="text-mbc-red">積動城市</span>
+    </span>
+</h1>
         <p class="text-xl text-gray-600 mb-8 font-bold">讓創意與程式，成為孩子未來的超能力！</p>
         
         <div class="relative w-full max-w-lg mx-auto">
