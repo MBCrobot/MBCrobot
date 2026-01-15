@@ -155,6 +155,47 @@
             from { filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
             to { filter: drop-shadow(0 0 15px rgba(84, 160, 255, 0.9)); }
         }
+        /* 標題發光與火車動畫 */
+        @keyframes glowing {
+            0% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
+            50% { text-shadow: 0 0 15px rgba(255, 217, 61, 0.8), 0 0 25px rgba(255, 107, 107, 0.8); }
+            100% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
+        }
+
+        @keyframes trainIntro {
+            0% { transform: translateX(100%); opacity: 0; }
+            10% { transform: translateX(0); opacity: 1; } /* 快速駛入 */
+            80% { transform: translateX(0); opacity: 1; } /* 停留 */
+            90% { transform: translateX(-100%); opacity: 0; } /* 緩慢駛出 */
+            100% { transform: translateX(-100%); opacity: 0; }
+        }
+
+        /* 標題煙霧動畫 (模擬火車煙囪冒煙) */
+        @keyframes smokePuff {
+            0% { transform: scale(0.5) translateY(0); opacity: 0; }
+            20% { transform: scale(1) translateY(-20px); opacity: 0.8; }
+            100% { transform: scale(1.5) translateY(-50px); opacity: 0; }
+        }
+
+        .animated-title {
+            position: relative;
+            display: inline-block; /* 讓 text-shadow 和 transform 作用於整個標題 */
+            animation: trainIntro 20s ease-in-out infinite, glowing 3s ease-in-out infinite alternate;
+            padding: 0 10px; /* 避免文字邊緣被陰影裁切 */
+        }
+
+        .smoke-effect {
+            position: absolute;
+            bottom: 100%; /* 從文字上方冒出 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: #ccc; /* 煙霧顏色 */
+            border-radius: 50%;
+            opacity: 0;
+            animation: none; /* 預設不執行，等待 JS 觸發 */
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -179,22 +220,50 @@
         </div>
     </nav>
 
-    <header class="relative w-full py-20 flex flex-col items-center justify-center text-center overflow-hidden">
-        <div class="absolute top-10 left-10 w-32 h-32 bg-mbc-yellow rounded-full opacity-20 blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-10 right-10 w-40 h-40 bg-mbc-blue rounded-full opacity-20 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+  <header class="relative w-full py-20 flex flex-col items-center justify-center text-center overflow-hidden">
+    <div class="absolute top-10 left-10 w-32 h-32 bg-mbc-yellow rounded-full opacity-20 blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-10 right-10 w-40 h-40 bg-mbc-blue rounded-full opacity-20 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
 
-        <div class="container mx-auto px-4 z-10">
-            <h1 class="text-4xl md:text-6xl font-black mb-4 text-gray-800">
+    <div class="container mx-auto px-4 z-10">
+        <h1 class="text-4xl md:text-6xl font-black mb-4 text-gray-800 relative overflow-hidden">
+            <span class="animated-title">
                 歡迎來到 <span class="text-mbc-red">積動城市</span>
-            </h1>
-            <p class="text-xl text-gray-600 mb-8 font-bold">讓創意與程式，成為孩子未來的超能力！</p>
-            
-            <div class="relative w-full max-w-lg mx-auto">
-                <img src="積動城市GIF.gif" alt="MBC Robot Dynamic Logo" class="hero-gif w-full h-auto object-contain">
-            </div>
+                <span id="smokePuff1" class="smoke-effect bg-gray-400"></span>
+                <span id="smokePuff2" class="smoke-effect bg-gray-300" style="left: 60%; animation-delay: 0.5s;"></span>
+            </span>
+        </h1>
+        <p class="text-xl text-gray-600 mb-8 font-bold">讓創意與程式，成為孩子未來的超能力！</p>
+        
+        <div class="relative w-full max-w-lg mx-auto">
+            <img src="積動城市GIF.gif" alt="MBC Robot Dynamic Logo" class="hero-gif w-full h-auto object-contain">
         </div>
-    </header>
+    </div>
+</header>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleSpan = document.querySelector('.animated-title');
+        const smokePuff1 = document.getElementById('smokePuff1');
+        const smokePuff2 = document.getElementById('smokePuff2');
+
+        titleSpan.addEventListener('animationiteration', (e) => {
+            if (e.animationName === 'trainIntro') {
+                // 在火車停下後的適當時機觸發冒煙
+                if (e.elapsedTime % 20 > 10 && e.elapsedTime % 20 < 15) { // 假設停留時間在 10s-18s 之間
+                    smokePuff1.style.animation = 'smokePuff 2s ease-out forwards';
+                    smokePuff2.style.animation = 'smokePuff 2s ease-out forwards 0.3s'; // 錯開一點時間
+                    
+                    // 重置動畫以便下次循環
+                    setTimeout(() => {
+                        smokePuff1.style.animation = 'none';
+                        smokePuff2.style.animation = 'none';
+                    }, 2000); // 煙霧動畫持續2秒
+                }
+            }
+        });
+    });
+</script>
+         
 <section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
