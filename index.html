@@ -171,9 +171,9 @@
         }
 /* 火車總容器：控制整體行駛動畫 */
 .train-total-wrap {
-    display: inline-flex;
-    align-items: flex-end; /* 讓車頭與車廂底部對齊 */
-    animation: trainMovement 20s ease-in-out infinite;
+  display: inline-flex;
+    align-items: flex-end;
+    animation: trainMovement 18s ease-in-out infinite;
     white-space: nowrap;
 }
 
@@ -240,12 +240,19 @@
 
 /* 行駛動畫 */
 @keyframes trainMovement {
-    0% { transform: translateX(100vw); }
-    10% { transform: translateX(0); }
-    80% { transform: translateX(0); }
-    90% { transform: translateX(-120vw); }
-    100% { transform: translateX(-120vw); }
-}
+    /* 0% 到 20%：從右側緩緩駛入 (原本是 10%，現在改為 20% 讓時間翻倍) */
+    0% { transform: translateX(100vw); opacity: 1; }
+    20% { transform: translateX(0); opacity: 1; }
+    
+    /* 20% 到 80%：停留在畫面中心冒煙 (約 10.8 秒) */
+    80% { transform: translateX(0); opacity: 1; }
+    
+    /* 80% 到 95%：緩緩向左駛出 */
+    95% { transform: translateX(-120vw); opacity: 1; }
+    
+    /* 95% 到 100%：極短暫的空白，隨即重頭開始循環 */
+    100% { transform: translateX(-120vw); opacity: 1; }
+    }
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
