@@ -234,42 +234,47 @@
             from { opacity: 0.9; }
             to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 50px var(--cinema-gold); }
         }
-        /* --- 放映機主體 --- */
-.projector-wrap {
+/* === 1. 復古放映機主體 (純 CSS 打造) === */
+.vintage-projector {
     position: absolute;
-    right: -120px; /* 放在螢幕右側 */
-    bottom: -20px;
-    width: 100px;
-    height: 120px;
-    z-index: 40;
+    right: -150px; /* 移到右側適當位置 */
+    bottom: 20px;
+    width: 120px;
+    height: 150px;
+    z-index: 50;
 }
 
 /* 放映機機身 */
-.projector-body {
-    width: 60px;
-    height: 80px;
-    background: #222;
-    border-radius: 5px;
-    position: relative;
-    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1);
+.projector-main-body {
+    width: 80px;
+    height: 100px;
+    background: linear-gradient(145deg, #222, #000);
+    border-radius: 8px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
 }
 
-/* 旋轉的底片盤 */
+/* 膠卷盤 (大輪子) */
 .projector-reel {
-    width: 50px;
-    height: 50px;
-    border: 3px dashed #444;
+    width: 70px;
+    height: 70px;
+    border: 4px dashed #444;
     border-radius: 50%;
     position: absolute;
-    top: -40px;
-    left: 5px;
-    animation: rotateReel 2s linear infinite;
+    background: rgba(20,20,20,0.8);
+    animation: rotateReel 3s linear infinite;
 }
+.reel-top { top: -45px; right: 40px; } /* 上膠卷 */
+.reel-back { top: 20px; right: -30px; } /* 後膠卷 */
+
 .projector-reel::after {
     content: '';
     position: absolute;
     top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 10px; height: 10px; background: #333; border-radius: 50%;
+    width: 15px; height: 15px; background: #666; border-radius: 50%;
+    box-shadow: 0 0 5px #000;
 }
 
 @keyframes rotateReel {
@@ -277,56 +282,81 @@
     to { transform: rotate(360deg); }
 }
 
-/* --- 投影閃爍光束 --- */
-.projector-beam {
+/* 放映機鏡頭 */
+.projector-lens {
+    width: 30px;
+    height: 40px;
+    background: #111;
     position: absolute;
+    left: -20px;
     top: 20px;
-    right: 50px;
-    width: 400px;
-    height: 300px;
-    /* 錐形光束效果 */
-    background: radial-gradient(ellipse at right, rgba(255, 255, 200, 0.15) 0%, transparent 80%);
-    clip-path: polygon(0 20%, 100% 45%, 100% 55%, 0 80%);
-    filter: blur(15px);
-    z-index: 35;
-    pointer-events: none;
-    animation: lightFlicker 0.1s infinite alternate;
+    border-radius: 5px 0 0 5px;
 }
-
-@keyframes lightFlicker {
-    0% { opacity: 0.3; transform: scale(1); }
-    100% { opacity: 0.6; transform: scale(1.02); }
-}
-
-/* --- 字幕樣式修正 (確保在最上層) --- */
-#movie-subtitle {
+.lens-glass {
+    width: 10px;
+    height: 100%;
+    background: #444;
     position: absolute;
-    bottom: 30px; /* 向上微調避免被遮擋 */
+    left: 0;
+    border-radius: 2px;
+    box-shadow: -5px 0 20px rgba(255,255,200,0.8); /* 鏡頭發光 */
+}
+
+/* === 2. 震撼的投影光束 (放射狀) === */
+.cinema-beam {
+    position: absolute;
+    right: 140px; /* 從鏡頭位置出發 */
+    top: 50px;
+    width: 1000px; /* 往左延伸覆蓋螢幕 */
+    height: 600px;
+    background: radial-gradient(ellipse at right, rgba(255, 255, 220, 0.2) 0%, transparent 70%);
+    clip-path: polygon(0% 0%, 100% 45%, 100% 55%, 0% 100%); /* 梯形光束 */
+    z-index: 45;
+    pointer-events: none;
+    animation: beamFlicker 0.15s infinite alternate;
+}
+
+/* 光束中的空氣塵埃效果 */
+.beam-dust {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.1;
+    animation: dustMove 10s linear infinite;
+}
+
+@keyframes beamFlicker {
+    0% { opacity: 0.4; transform: skewY(0.5deg) scaleX(1); }
+    100% { opacity: 0.7; transform: skewY(-0.5deg) scaleX(1.05); }
+}
+
+@keyframes dustMove {
+    from { background-position: 0 0; }
+    to { background-position: 500px 500px; }
+}
+
+/* === 3. 字幕修正 (確保顯示在正中央下方) === */
+.subtitle-container {
+    position: absolute;
+    bottom: 25px;
     left: 0;
     width: 100%;
     text-align: center;
-    z-index: 100; /* 極高層級 */
-    pointer-events: none;
+    z-index: 100;
 }
-
-#movie-subtitle span {
-    background: rgba(0, 0, 0, 0.7);
-    color: #f1c40f;
-    padding: 8px 20px;
-    border-radius: 4px;
-    font-size: 1.25rem;
-    font-weight: bold;
-    border-left: 5px solid #f1c40f;
+.subtitle-text {
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffcc00; /* 經典老電影黃色 */
+    padding: 10px 30px;
+    font-size: 1.5rem;
+    font-weight: 900;
+    border-bottom: 4px solid #ffcc00;
     display: inline-block;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    transition: all 0.5s ease;
+    box-shadow: 0 0 20px rgba(0,0,0,1);
+    letter-spacing: 2px;
+    opacity: 0; /* JS 控制淡入 */
+    transition: opacity 0.5s ease;
 }
-
-/* 手機版隱藏放映機避免破版 */
-@media (max-width: 1024px) {
-    .projector-wrap, .projector-beam { display: none; }
-}
-
     </style>
 </head>
 <body>
@@ -348,19 +378,24 @@
         <div class="w-24 h-1 bg-yellow-500 mx-auto mt-6 shadow-[0_0_10px_#f1c40f]"></div>
     </header>
 
-   <section class="container mx-auto px-4 relative">
+  <section class="container mx-auto px-4 relative">
     <div class="cinema-screen-container">
         
-        <div class="projector-wrap">
-            <div class="projector-reel"></div>
-            <div class="projector-body">
-                <div class="absolute right-[-10px] top-[15px] w-[20px] h-[30px] bg-[#111] rounded-r-full"></div> </div>
+        <div class="vintage-projector">
+            <div class="projector-reel reel-top"></div>
+            <div class="projector-reel reel-back"></div>
+            <div class="projector-main-body"></div>
+            <div class="projector-lens">
+                <div class="lens-glass"></div>
+            </div>
         </div>
         
-        <div class="projector-beam"></div>
+        <div class="cinema-beam">
+            <div class="beam-dust"></div>
+        </div>
 
         <div class="cinema-screen" id="projector-screen">
-            <div class="screen-texture"></div>
+            <div class="screen-texture" style="background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.6) 100%); z-index: 20;"></div>
                 
                 <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="...">
                 <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="...">
@@ -448,53 +483,54 @@
         </div>
     </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. 布幕邏輯
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. 布幕自動拉開 (維持原樣)
+    setTimeout(() => {
+        const curtain = document.getElementById('intro-curtain');
+        if(curtain) curtain.classList.add('curtain-open');
+    }, 500);
+
+    // 2. 幻燈片與字幕邏輯
+    const slides = document.querySelectorAll('.slide-img');
+    const subtitleElement = document.getElementById('target-subtitle');
+    let currentSlide = 0;
+    const slideInterval = 4000;
+
+    function updateDisplay() {
+        if (!slides[currentSlide] || !subtitleElement) return;
+
+        // 取得當前圖片的字幕內容
+        const caption = slides[currentSlide].getAttribute('data-caption');
+        
+        // 字幕淡出再淡入效果
+        subtitleElement.style.opacity = 0;
         setTimeout(() => {
-            const curtain = document.getElementById('intro-curtain');
-            if(curtain) curtain.classList.add('curtain-open');
-        }, 500);
+            subtitleElement.innerText = caption;
+            subtitleElement.style.opacity = 1;
+        }, 300);
+    }
 
-        // 2. 幻燈片與字幕
-        const slides = document.querySelectorAll('.slide-img');
-        const subtitleSpan = document.querySelector('#movie-subtitle span');
-        let currentSlide = 0;
-        const slideInterval = 4000;
+    function nextSlide() {
+        // 移除當前圖片效果
+        slides[currentSlide].classList.remove('active', 'slide-transition');
 
-        function updateSubtitle() {
-            if (slides[currentSlide] && subtitleSpan) {
-                const text = slides[currentSlide].getAttribute('data-caption');
-                subtitleSpan.style.opacity = 0; // 先淡出
-                setTimeout(() => {
-                    subtitleSpan.innerText = text || ""; // 填入文字
-                    subtitleSpan.style.opacity = 1; // 再淡入
-                }, 300);
-            }
-        }
+        // 計算下一張
+        currentSlide = (currentSlide + 1) % slides.length;
 
-        function nextSlide() {
-            if (slides.length === 0) return;
+        // 套用新圖片效果
+        slides[currentSlide].classList.add('active', 'slide-transition');
 
-            // 移除舊狀態
-            slides[currentSlide].classList.remove('active', 'slide-transition');
+        // 更新字幕
+        updateDisplay();
+    }
 
-            // 換下一張
-            currentSlide = (currentSlide + 1) % slides.length;
-
-            // 加入新狀態
-            slides[currentSlide].classList.add('active', 'slide-transition');
-
-            // 更新字幕
-            updateSubtitle();
-        }
-
-        // 初始化
-        if (slides.length > 0) {
-            updateSubtitle();
-            setInterval(nextSlide, slideInterval);
-        }
-    });
+    // 初始化第一張字幕
+    if (slides.length > 0) {
+        updateDisplay();
+        setInterval(nextSlide, slideInterval);
+    }
+});
 </script>
 </body>
 </html>
