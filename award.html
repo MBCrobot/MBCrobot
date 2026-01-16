@@ -234,95 +234,115 @@
             from { opacity: 0.9; }
             to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 50px var(--cinema-gold); }
         }
-/* 放映機與腳架的總容器 */
-.projector-total-unit {
+/* 總容器定位 */
+.projector-unit-fixed {
     position: absolute;
-    right: -180px; /* 根據你的螢幕寬度微調 */
-    bottom: -50px;
-    z-index: 60;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    right: -140px; /* 根據截圖調整，讓它出現在螢幕右側 */
+    bottom: 20px;
+    z-index: 99;   /* 確保在最前方 */
+    width: 200px;
+    height: 350px;
 }
 
-/* 復古放映機主體 */
-.vintage-projector {
-    width: 130px;
-    height: 160px;
+/* 放映機主體 */
+.projector-machine {
     position: relative;
-}
-
-/* 改良版膠卷盤：更大、更有存在感 */
-.projector-reel {
-    width: 85px;
-    height: 85px;
-    border: 5px solid #333;
-    border-radius: 50%;
-    position: absolute;
-    background: repeating-conic-gradient(#111 0% 25%, #222 25% 50%);
-    animation: rotateReel 4s linear infinite;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-.reel-top { top: -50px; left: 10px; }
-.reel-back { top: 30px; right: -30px; }
-
-/* 放映機腳架 (三腳架) */
-.projector-stand {
-    position: relative;
-    width: 100px;
-    height: 200px;
-    margin-top: -10px;
-}
-
-/* 三根支架 */
-.stand-leg {
-    position: absolute;
-    top: 0;
-    width: 4px;
+    width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, #444, #111);
-    transform-origin: top center;
 }
-.leg-left { left: 50%; transform: rotate(15deg); }
-.leg-right { left: 50%; transform: rotate(-15deg); }
-.leg-center { left: 50%; height: 95%; transform: rotate(0deg); }
 
-/* 腳架連接處 */
-.stand-joint {
+/* 實體機身：給予明確的背景色與大小 */
+.machine-body {
     position: absolute;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 15px;
-    background: #222;
-    border-radius: 5px;
+    top: 80px;
+    right: 20px;
+    width: 90px;
+    height: 110px;
+    background: #1a1a1a; /* 深黑色機身 */
+    border: 2px solid #333;
+    border-radius: 8px;
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.8);
 }
 
-/* 強化的鏡頭噴射光束 */
-.cinema-beam {
+.body-detail {
     position: absolute;
-    right: 110px; /* 從鏡頭出發 */
-    top: 35px;
-    width: 1200px;
-    height: 700px;
-    background: radial-gradient(ellipse at right, rgba(255, 255, 200, 0.25) 0%, transparent 80%);
-    clip-path: polygon(0% 10%, 100% 48%, 100% 52%, 0% 90%);
-    z-index: 45;
-    pointer-events: none;
-    animation: beamFlicker 0.1s infinite alternate;
+    top: 20px; left: 10px;
+    width: 70px; height: 30px;
+    border-top: 2px solid #444;
+    border-bottom: 2px solid #444;
 }
 
-@keyframes rotateReel {
+/* 膠卷盤：強化邊框感 */
+.reel {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border: 6px solid #2a2a2a;
+    border-radius: 50%;
+    background: repeating-conic-gradient(#111 0% 15%, #222 15% 30%);
+    animation: rotateMachine 3s linear infinite;
+    z-index: -1; /* 位於機身後方 */
+}
+.reel-top { top: 0; right: 40px; }
+.reel-back { top: 50px; right: -30px; }
+
+@keyframes rotateMachine {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-@keyframes beamFlicker {
-    0% { opacity: 0.5; filter: brightness(1.2) blur(10px); }
-    100% { opacity: 0.8; filter: brightness(1) blur(12px); }
+/* 鏡頭與光束起始點 */
+.machine-lens {
+    position: absolute;
+    left: -30px;
+    top: 25px;
+    width: 40px;
+    height: 45px;
+    background: #000;
+    border-radius: 5px;
 }
-    </style>
+.lens-glow {
+    position: absolute;
+    left: 0; top: 0;
+    width: 8px; height: 100%;
+    background: #ffcc00;
+    box-shadow: -10px 0 20px #ffcc00;
+}
+
+/* 放射光束：精準對準鏡頭 */
+.cinema-beam-fixed {
+    position: absolute;
+    right: 150px; /* 從鏡頭噴出 */
+    top: 105px;
+    width: 1000px;
+    height: 600px;
+    background: radial-gradient(ellipse at right, rgba(255, 220, 100, 0.2) 0%, transparent 80%);
+    clip-path: polygon(0% 15%, 100% 48%, 100% 52%, 0% 85%);
+    pointer-events: none;
+    z-index: 40;
+    animation: lightFlicker 0.1s infinite alternate;
+}
+
+/* 穩固的三腳架 */
+.tripod-stand {
+    position: absolute;
+    top: 190px;
+    right: 35px;
+    width: 60px;
+}
+.tripod-head {
+    width: 20px; height: 15px; background: #222; margin: 0 auto;
+}
+.leg {
+    position: absolute;
+    width: 4px; height: 180px;
+    background: linear-gradient(to bottom, #444, #111);
+    transform-origin: top;
+}
+.l-1 { left: 50%; transform: rotate(15deg); }
+.l-2 { left: 50%; transform: rotate(-15deg); }
+.l-3 { left: 50%; height: 160px; transform: rotate(0deg) translateZ(-1px); }
+</style>
 </head>
 <body>
 
@@ -346,28 +366,28 @@
  <section class="container mx-auto px-4 relative">
     <div class="cinema-screen-container">
         
-        <div class="cinema-beam">
-            <div class="beam-dust"></div>
+      <div class="projector-unit-fixed">
+    <div class="cinema-beam-fixed"></div>
+
+    <div class="projector-machine">
+        <div class="reel reel-top"></div>
+        <div class="reel reel-back"></div>
+        
+        <div class="machine-body">
+            <div class="body-detail"></div>
+            <div class="machine-lens">
+                <div class="lens-glow"></div>
+            </div>
         </div>
 
-        <div class="projector-total-unit">
-            <div class="vintage-projector">
-                <div class="projector-reel reel-top"></div>
-                <div class="projector-reel reel-back"></div>
-                <div class="projector-main-body">
-                    <div class="projector-lens">
-                        <div class="lens-glass"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="projector-stand">
-                <div class="stand-joint"></div>
-                <div class="stand-leg leg-left"></div>
-                <div class="stand-leg leg-right"></div>
-                <div class="stand-leg leg-center"></div>
-            </div>
+        <div class="tripod-stand">
+            <div class="tripod-head"></div>
+            <div class="leg l-1"></div>
+            <div class="leg l-2"></div>
+            <div class="leg l-3"></div>
         </div>
+    </div>
+</div>
 
         <div class="cinema-screen" id="projector-screen">
             <div class="screen-texture" style="background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.6) 100%); z-index: 20;"></div>
