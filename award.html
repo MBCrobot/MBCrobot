@@ -23,7 +23,7 @@
             margin: 0;
         }
 
-        /* === 1. 開場布幕動畫 === */
+        /* === 1. 開場布幕 === */
         #intro-curtain {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -35,110 +35,57 @@
             position: relative; transition: transform 2.5s cubic-bezier(0.77, 0, 0.175, 1);
             box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
         }
-        .curtain-panel::after {
-            content: ''; position: absolute; inset: 0;
-            background: repeating-linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 5%, transparent 10%);
-        }
         .curtain-open .left-panel { transform: translateX(-100%); }
         .curtain-open .right-panel { transform: translateX(100%); }
 
-        /* === 2. 老式電影螢幕與強烈雜訊 === */
-        .cinema-screen-container {
-            position: relative; width: 90%; max-width: 1000px; margin: 40px auto; perspective: 1000px;
-        }
+        /* === 2. 螢幕與雜訊 === */
+        .cinema-screen-container { position: relative; width: 90%; max-width: 1000px; margin: 40px auto; perspective: 1000px; }
         .cinema-screen {
             position: relative; aspect-ratio: 16/9; background: #000;
             border: 8px solid #333; border-radius: 10px;
             box-shadow: 0 0 0 10px #1a1a1a, 0 20px 50px rgba(0,0,0,0.8);
             overflow: hidden; z-index: 30; 
         }
-
-        /* 核心雜訊層 */
-        .screen-texture {
-            position: absolute; inset: 0; z-index: 15; pointer-events: none;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6) 100%);
-        }
-        /* 垂直刮痕與閃爍 */
+        .screen-texture { position: absolute; inset: 0; z-index: 15; pointer-events: none; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.6) 100%); }
         .screen-texture::before {
             content: ""; position: absolute; inset: 0;
-            background-image: repeating-linear-gradient(90deg, 
-                transparent 0, transparent 15%, 
-                rgba(255,255,255,0.1) 15.1%, transparent 15.2%,
-                transparent 45%, rgba(255,255,255,0.08) 45.1%, transparent 45.3%,
-                transparent 80%, rgba(255,255,255,0.1) 80.1%, transparent 80.2%
-            );
-            background-size: 300% 100%;
-            animation: filmFlicker 0.15s infinite, grainMoving 4s steps(5) infinite;
+            background-image: repeating-linear-gradient(90deg, transparent 0, transparent 15%, rgba(255,255,255,0.1) 15.1%, transparent 15.2%);
+            background-size: 300% 100%; animation: filmFlicker 0.15s infinite, grainMoving 4s steps(5) infinite;
         }
-        /* 隨機塵埃與抖動 */
         .screen-texture::after {
             content: ""; position: absolute; inset: -10%; opacity: 0.15;
             background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
             animation: screenShake 0.1s infinite;
         }
+        .slide-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; z-index: 1; transition: opacity 0.8s ease-in-out; }
+        .slide-img.active { opacity: 1; z-index: 2; animation: screenShake 0.4s infinite; }
 
-        .slide-img {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; opacity: 0; z-index: 1; transition: opacity 0.8s ease-in-out;
-            filter: contrast(1.1) brightness(0.9);
-        }
-        .slide-img.active { 
-            opacity: 1; z-index: 2; 
-            animation: screenShake 0.4s infinite; /* 圖片微弱抖動 */
-        }
-
-        /* === 3. 復古控制台 (Control Deck) === */
+        /* === 3. 復古控制台 === */
         .control-deck {
             background: linear-gradient(180deg, #2a2a2a, #111);
             border: 3px solid #333; border-radius: 0 0 15px 15px;
             width: 60%; margin: -8px auto 0; padding: 15px;
             display: flex; justify-content: center; gap: 40px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            position: relative; z-index: 40;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); position: relative; z-index: 40;
         }
-        .dial-unit { text-align: center; }
-        .dial-label { font-family: 'Bebas Neue', sans-serif; font-size: 11px; color: #666; letter-spacing: 2px; }
         .dial-button {
             width: 45px; height: 45px; background: radial-gradient(circle, #444, #222);
             border: 2px solid #555; border-radius: 50%; cursor: pointer;
-            margin: 5px auto; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 0 #000; transition: all 0.1s; position: relative;
         }
         .dial-button:active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
-        .dial-button::after {
-            content: ''; width: 3px; height: 12px; background: var(--cinema-gold);
-            position: absolute; top: 5px; border-radius: 2px;
-        }
-        .btn-prev::after { transform: rotate(-45deg); }
-        .btn-next::after { transform: rotate(45deg); }
-        .dial-text { font-size: 10px; color: #aaa; font-weight: bold; }
 
         /* === 4. 放映機系統 === */
-        .projector-unit-fixed {
-            position: absolute; right: -160px; top: 50%; transform: translateY(-50%);
-            z-index: 99; width: 200px;
-        }
-        .projector-machine {
-            position: relative; width: 100px; height: 120px;
-            background: #1a1a1a; border: 2px solid #333; border-radius: 8px;
-            box-shadow: 10px 10px 20px rgba(0,0,0,0.8); margin-left: auto;
-        }
+        .projector-unit-fixed { position: absolute; right: -160px; top: 50%; transform: translateY(-50%); z-index: 99; width: 200px; }
         .reel {
             position: absolute; width: 85px; height: 85px;
             border: 5px solid #2a2a2a; border-radius: 50%;
             background: repeating-conic-gradient(#111 0% 15%, #222 15% 30%);
             animation: rotateMachine 3s linear infinite;
         }
-        .reel.spinning { animation: rotateMachine 0.3s linear infinite !important; } /* 加速旋轉 */
+        .reel.spinning { animation: rotateMachine 0.3s linear infinite !important; }
         .reel-top { top: -60px; right: 20px; }
         .reel-back { top: 20px; right: -40px; z-index: -1; }
-
-        .machine-lens {
-            position: absolute; left: -35px; top: 25px; width: 45px; height: 50px;
-            background: #000; border-radius: 5px; display: flex; align-items: center;
-        }
-        .lens-glow { width: 10px; height: 100%; background: #ffcc00; box-shadow: 0 0 20px #ffcc00; z-index: 2; }
-        
         .cinema-beam-fixed {
             position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
             width: 1200px; height: 700px;
@@ -147,58 +94,49 @@
             pointer-events: none; z-index: -1; animation: lightFlicker 0.1s infinite alternate;
         }
 
-        .tripod-stand { position: relative; width: 100%; height: 250px; margin-top: -5px; }
-        .leg { position: absolute; top: 0; left: 75%; width: 4px; height: 100%; background: linear-gradient(to bottom, #444, #111); transform-origin: top; }
-        .l-1 { transform: rotate(15deg); }
-        .l-2 { transform: rotate(-15deg); }
-        .l-3 { height: 90%; transform: rotate(0deg); opacity: 0.6; }
+        /* === 5. 音效齒輪開關 (新) === */
+        .audio-toggle {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center;
+        }
+        .gear-icon {
+            width: 40px; height: 40px; fill: #555;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .audio-on .gear-icon {
+            fill: var(--cinema-gold);
+            filter: drop-shadow(0 0 8px var(--cinema-gold));
+            animation: rotateMachine 2s linear infinite;
+        }
+        .audio-label { font-size: 10px; color: #666; margin-top: 5px; font-weight: bold; letter-spacing: 1px; }
+        .audio-on .audio-label { color: var(--cinema-gold); }
 
-        /* === 5. 字幕與特效關鍵字 === */
-        .subtitle-container {
-            position: absolute; bottom: 30px; left: 0; width: 100%; text-align: center; z-index: 50; pointer-events: none;
-        }
-        .subtitle-text {
-            background: rgba(0, 0, 0, 0.85); color: var(--cinema-gold);
-            padding: 8px 25px; font-size: 1.4rem; font-weight: 700;
-            border-bottom: 2px solid var(--cinema-gold); transition: opacity 0.3s ease;
-        }
-
-        @keyframes filmFlicker {
-            0%, 100% { opacity: 1; } 50% { opacity: 0.92; }
-        }
-        @keyframes screenShake {
-            0% { transform: translate(0,0); } 10% { transform: translate(-1px, 1px); } 20% { transform: translate(1px, -1px); }
-        }
-        @keyframes grainMoving { 0% { background-position: 0 0; } 100% { background-position: 100% 0; } }
         @keyframes rotateMachine { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes lightFlicker { 0% { opacity: 0.6; } 100% { opacity: 0.9; } }
+        @keyframes screenShake { 0% { transform: translate(0,0); } 10% { transform: translate(-1px, 1px); } }
+        @keyframes filmFlicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.92; } }
+        @keyframes grainMoving { 0% { background-position: 0 0; } 100% { background-position: 100% 0; } }
 
-        .neon-title {
-            font-family: 'Bebas Neue', sans-serif; color: #fff;
-            text-shadow: 0 0 10px var(--cinema-gold); animation: neonPulse 2s infinite alternate;
-        }
-        @keyframes neonPulse { from { opacity: 0.9; } to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 40px var(--cinema-gold); } }
+        .neon-title { font-family: 'Bebas Neue', sans-serif; color: #fff; text-shadow: 0 0 10px var(--cinema-gold); animation: neonPulse 2s infinite alternate; }
+        @keyframes neonPulse { from { opacity: 0.9; } to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold); } }
 
-        .info-lightbox {
-            max-width: 800px; margin: 60px auto; border: 4px solid var(--cinema-gold);
-            padding: 4px; border-radius: 4px; background: #111;
-        }
-        .info-inner {
-            border: 2px solid rgba(241, 196, 15, 0.5); padding: 40px;
-            background: radial-gradient(circle at center, #222 0%, #0d0d0d 100%); text-align: center;
-        }
-        
-        .footer-marquee-container {
-            background: #000; border-top: 4px solid var(--cinema-red);
-            padding: 20px 0; overflow: hidden;
-        }
+        .footer-marquee-container { background: #000; border-top: 4px solid var(--cinema-red); padding: 20px 0; overflow: hidden; }
         .marquee-wrapper { display: inline-flex; animation: scrollText 20s linear infinite; }
-        .marquee-item { display: flex; align-items: center; margin-right: 60px; }
-        .marquee-logo { height: 50px; margin-right: 15px; }
         @keyframes scrollText { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     </style>
 </head>
 <body>
+
+    <audio id="projector-sound" loop preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2386/2386-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="audio-toggle" id="audioToggle" onclick="toggleAudio()">
+        <svg class="gear-icon" viewBox="0 0 24 24">
+            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.35 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.47,5.34 14.86,5.08L14.47,2.44C14.43,2.21 14.23,2.05 14,2.05H10C9.77,2.05 9.57,2.21 9.53,2.44L9.14,5.08C8.53,5.34 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.35 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.53,18.66 9.14,18.92L9.53,21.56C9.57,21.79 9.77,21.95 10,21.95H14C14.23,21.95 14.43,21.79 14.47,21.56L14.86,18.92C15.47,18.66 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+        </svg>
+        <span class="audio-label">SOUND OFF</span>
+    </div>
 
     <div id="intro-curtain">
         <div class="curtain-panel left-panel"></div>
@@ -219,7 +157,6 @@
 
     <section class="container mx-auto px-4 relative">
         <div class="cinema-screen-container">
-            
             <div class="projector-unit-fixed">
                 <div class="projector-machine">
                     <div class="reel reel-top"></div>
@@ -236,15 +173,13 @@
 
             <div class="cinema-screen" id="projector-screen">
                 <div class="screen-texture"></div>
-                
-                <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="wro1">
-                <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="wro2">
-                <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽" alt="wro3">
-                <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽" alt="wro4">
-                <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="wro5">
-                <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="wro6">
-                <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃展示" alt="wro7">
-                
+                <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽">
+                <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽">
+                <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽">
+                <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽">
+                <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽">
+                <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽">
+                <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃展示">
                 <div class="subtitle-container">
                     <span id="target-subtitle" class="subtitle-text">2019年馬來西亞足球機器人國際公開賽</span>
                 </div>
@@ -253,7 +188,7 @@
             <div class="control-deck">
                 <div class="dial-unit">
                     <div class="dial-label">PREV</div>
-                    <button class="dial-button btn-prev" onclick="changeSlide(-1)"></button>
+                    <button class="dial-button" onclick="changeSlide(-1)"></button>
                     <div class="dial-text">上一幕</div>
                 </div>
                 <div class="dial-unit" style="opacity: 0.5;">
@@ -263,65 +198,53 @@
                 </div>
                 <div class="dial-unit">
                     <div class="dial-label">NEXT</div>
-                    <button class="dial-button btn-next" onclick="changeSlide(1)"></button>
+                    <button class="dial-button" onclick="changeSlide(1)"></button>
                     <div class="dial-text">下一幕</div>
                 </div>
             </div>
-            
-            <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
         </div>
     </section>
 
-    <section class="container mx-auto px-4 pb-20 mt-20">
-        <div class="info-lightbox">
-            <div class="info-inner">
-                <h3 class="text-3xl font-bold mb-6 text-yellow-500 font-serif">關於這部名為「成長」的電影</h3>
-                <p class="text-lg leading-loose mb-6 text-gray-300">
-                    在榮耀時光放映館裡，每一張膠卷都記錄著積動城市孩子的奮鬥軌跡。<br>
-                    從 <span class="text-white font-bold border-b border-yellow-600">哥斯大黎加 WRO 世界賽</span> 的巔峰對決，到 <span class="text-white font-bold border-b border-yellow-600">泰國亞洲盃</span> 的穩健發揮。
-                </p>
-                <span class="text-xl text-yellow-400 font-bold block mb-8">「最好的獎牌，是孩子眼裡自信的光芒。」</span>
-                <button class="px-8 py-3 border border-yellow-600 text-yellow-500 hover:bg-yellow-600 hover:text-black transition-all duration-300 uppercase tracking-widest text-sm font-bold">
-                    預約下一場試聽
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer-marquee-container">
+    <footer class="footer-marquee-container mt-20">
         <div class="marquee-wrapper">
             <div class="flex">
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">積動城市 MBC ROBOT © 2026</span>
-                </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span>
-                </div>
+                <div class="marquee-item"><img src="積動城市圖1.png" class="marquee-logo"><span class="marquee-text">積動城市 MBC ROBOT © 2026</span></div>
+                <div class="marquee-item"><img src="積動城市圖1.png" class="marquee-logo"><span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span></div>
             </div>
             <div class="flex">
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">積動城市 MBC ROBOT © 2026</span>
-                </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span>
-                </div>
+                <div class="marquee-item"><img src="積動城市圖1.png" class="marquee-logo"><span class="marquee-text">積動城市 MBC ROBOT © 2026</span></div>
+                <div class="marquee-item"><img src="積動城市圖1.png" class="marquee-logo"><span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span></div>
             </div>
         </div>
     </footer>
 
     <script>
+    const audio = document.getElementById('projector-sound');
+    const audioToggle = document.getElementById('audioToggle');
+    const audioLabel = audioToggle.querySelector('.audio-label');
+    let isPlaying = false;
+
+    // 音效切換函數
+    function toggleAudio() {
+        if (!isPlaying) {
+            audio.play();
+            audioToggle.classList.add('audio-on');
+            audioLabel.innerText = "SOUND ON";
+            isPlaying = true;
+        } else {
+            audio.pause();
+            audioToggle.classList.remove('audio-on');
+            audioLabel.innerText = "SOUND OFF";
+            isPlaying = false;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. 布幕自動拉開
         setTimeout(() => {
             const curtain = document.getElementById('intro-curtain');
             if(curtain) curtain.classList.add('curtain-open');
         }, 500);
 
-        // 2. 幻燈片控制與膠捲連動
         const slides = document.querySelectorAll('.slide-img');
         const subtitleElement = document.getElementById('target-subtitle');
         const reels = document.querySelectorAll('.reel');
@@ -332,29 +255,30 @@
             if (isTransitioning) return;
             isTransitioning = true;
 
-            // A. 膠捲加速轉動
+            // 1. 膠捲加速 + 音效加速 (變調)
             reels.forEach(r => r.classList.add('spinning'));
+            if(isPlaying) audio.playbackRate = 1.5; // 換片時聲音變急促
 
-            // B. 圖片切換
+            // 2. 圖片切換
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + direction + slides.length) % slides.length;
             slides[currentSlide].classList.add('active');
 
-            // C. 更新字幕
+            // 3. 更新字幕
             subtitleElement.style.opacity = 0;
             setTimeout(() => {
                 subtitleElement.innerText = slides[currentSlide].getAttribute('data-caption');
                 subtitleElement.style.opacity = 1;
             }, 300);
 
-            // D. 延遲恢復正常轉速
+            // 4. 恢復正常
             setTimeout(() => {
                 reels.forEach(r => r.classList.remove('spinning'));
+                if(isPlaying) audio.playbackRate = 1.0;
                 isTransitioning = false;
             }, 800);
         };
 
-        // 自動播放邏輯 (6秒一張)
         setInterval(() => {
             if (!isTransitioning) changeSlide(1);
         }, 6000);
