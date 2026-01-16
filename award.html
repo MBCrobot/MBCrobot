@@ -234,47 +234,83 @@
             from { opacity: 0.9; }
             to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 50px var(--cinema-gold); }
         }
-/* === 1. 復古放映機主體 (純 CSS 打造) === */
+/* 放映機與腳架的總容器 */
+.projector-total-unit {
+    position: absolute;
+    right: -180px; /* 根據你的螢幕寬度微調 */
+    bottom: -50px;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 復古放映機主體 */
 .vintage-projector {
-    position: absolute;
-    right: -150px; /* 移到右側適當位置 */
-    bottom: 20px;
-    width: 120px;
-    height: 150px;
-    z-index: 50;
+    width: 130px;
+    height: 160px;
+    position: relative;
 }
 
-/* 放映機機身 */
-.projector-main-body {
-    width: 80px;
-    height: 100px;
-    background: linear-gradient(145deg, #222, #000);
-    border-radius: 8px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
-}
-
-/* 膠卷盤 (大輪子) */
+/* 改良版膠卷盤：更大、更有存在感 */
 .projector-reel {
-    width: 70px;
-    height: 70px;
-    border: 4px dashed #444;
+    width: 85px;
+    height: 85px;
+    border: 5px solid #333;
     border-radius: 50%;
     position: absolute;
-    background: rgba(20,20,20,0.8);
-    animation: rotateReel 3s linear infinite;
+    background: repeating-conic-gradient(#111 0% 25%, #222 25% 50%);
+    animation: rotateReel 4s linear infinite;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
-.reel-top { top: -45px; right: 40px; } /* 上膠卷 */
-.reel-back { top: 20px; right: -30px; } /* 後膠卷 */
+.reel-top { top: -50px; left: 10px; }
+.reel-back { top: 30px; right: -30px; }
 
-.projector-reel::after {
-    content: '';
+/* 放映機腳架 (三腳架) */
+.projector-stand {
+    position: relative;
+    width: 100px;
+    height: 200px;
+    margin-top: -10px;
+}
+
+/* 三根支架 */
+.stand-leg {
     position: absolute;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 15px; height: 15px; background: #666; border-radius: 50%;
-    box-shadow: 0 0 5px #000;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #444, #111);
+    transform-origin: top center;
+}
+.leg-left { left: 50%; transform: rotate(15deg); }
+.leg-right { left: 50%; transform: rotate(-15deg); }
+.leg-center { left: 50%; height: 95%; transform: rotate(0deg); }
+
+/* 腳架連接處 */
+.stand-joint {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 15px;
+    background: #222;
+    border-radius: 5px;
+}
+
+/* 強化的鏡頭噴射光束 */
+.cinema-beam {
+    position: absolute;
+    right: 110px; /* 從鏡頭出發 */
+    top: 35px;
+    width: 1200px;
+    height: 700px;
+    background: radial-gradient(ellipse at right, rgba(255, 255, 200, 0.25) 0%, transparent 80%);
+    clip-path: polygon(0% 10%, 100% 48%, 100% 52%, 0% 90%);
+    z-index: 45;
+    pointer-events: none;
+    animation: beamFlicker 0.1s infinite alternate;
 }
 
 @keyframes rotateReel {
@@ -282,80 +318,9 @@
     to { transform: rotate(360deg); }
 }
 
-/* 放映機鏡頭 */
-.projector-lens {
-    width: 30px;
-    height: 40px;
-    background: #111;
-    position: absolute;
-    left: -20px;
-    top: 20px;
-    border-radius: 5px 0 0 5px;
-}
-.lens-glass {
-    width: 10px;
-    height: 100%;
-    background: #444;
-    position: absolute;
-    left: 0;
-    border-radius: 2px;
-    box-shadow: -5px 0 20px rgba(255,255,200,0.8); /* 鏡頭發光 */
-}
-
-/* === 2. 震撼的投影光束 (放射狀) === */
-.cinema-beam {
-    position: absolute;
-    right: 140px; /* 從鏡頭位置出發 */
-    top: 50px;
-    width: 1000px; /* 往左延伸覆蓋螢幕 */
-    height: 600px;
-    background: radial-gradient(ellipse at right, rgba(255, 255, 220, 0.2) 0%, transparent 70%);
-    clip-path: polygon(0% 0%, 100% 45%, 100% 55%, 0% 100%); /* 梯形光束 */
-    z-index: 45;
-    pointer-events: none;
-    animation: beamFlicker 0.15s infinite alternate;
-}
-
-/* 光束中的空氣塵埃效果 */
-.beam-dust {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-    opacity: 0.1;
-    animation: dustMove 10s linear infinite;
-}
-
 @keyframes beamFlicker {
-    0% { opacity: 0.4; transform: skewY(0.5deg) scaleX(1); }
-    100% { opacity: 0.7; transform: skewY(-0.5deg) scaleX(1.05); }
-}
-
-@keyframes dustMove {
-    from { background-position: 0 0; }
-    to { background-position: 500px 500px; }
-}
-
-/* === 3. 字幕修正 (確保顯示在正中央下方) === */
-.subtitle-container {
-    position: absolute;
-    bottom: 25px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    z-index: 100;
-}
-.subtitle-text {
-    background: rgba(0, 0, 0, 0.85);
-    color: #ffcc00; /* 經典老電影黃色 */
-    padding: 10px 30px;
-    font-size: 1.5rem;
-    font-weight: 900;
-    border-bottom: 4px solid #ffcc00;
-    display: inline-block;
-    box-shadow: 0 0 20px rgba(0,0,0,1);
-    letter-spacing: 2px;
-    opacity: 0; /* JS 控制淡入 */
-    transition: opacity 0.5s ease;
+    0% { opacity: 0.5; filter: brightness(1.2) blur(10px); }
+    100% { opacity: 0.8; filter: brightness(1) blur(12px); }
 }
     </style>
 </head>
@@ -378,36 +343,49 @@
         <div class="w-24 h-1 bg-yellow-500 mx-auto mt-6 shadow-[0_0_10px_#f1c40f]"></div>
     </header>
 
-  <section class="container mx-auto px-4 relative">
+ <section class="container mx-auto px-4 relative">
     <div class="cinema-screen-container">
-        
-        <div class="vintage-projector">
-            <div class="projector-reel reel-top"></div>
-            <div class="projector-reel reel-back"></div>
-            <div class="projector-main-body"></div>
-            <div class="projector-lens">
-                <div class="lens-glass"></div>
-            </div>
-        </div>
         
         <div class="cinema-beam">
             <div class="beam-dust"></div>
         </div>
 
-        <div class="cinema-screen" id="projector-screen">
-            <div class="screen-texture" style="background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.6) 100%); z-index: 20;"></div>
-                
-                <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="...">
-                <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="...">
-                <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽" alt="...">
-                <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽" alt="...">
-                 <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="...">
-                 <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="...">
-                 <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃" alt="...">
-          <div class="subtitle-container">
-                <span id="target-subtitle" class="subtitle-text">各項獎盃</span>
+        <div class="projector-total-unit">
+            <div class="vintage-projector">
+                <div class="projector-reel reel-top"></div>
+                <div class="projector-reel reel-back"></div>
+                <div class="projector-main-body">
+                    <div class="projector-lens">
+                        <div class="lens-glass"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="projector-stand">
+                <div class="stand-joint"></div>
+                <div class="stand-leg leg-left"></div>
+                <div class="stand-leg leg-right"></div>
+                <div class="stand-leg leg-center"></div>
             </div>
         </div>
+
+        <div class="cinema-screen" id="projector-screen">
+            <div class="screen-texture" style="background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.6) 100%); z-index: 20;"></div>
+            
+            <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="wro1">
+            <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="wro2">
+            <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽" alt="wro3">
+            <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽" alt="wro4">
+            <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="wro5">
+            <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="wro6">
+            <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃" alt="wro7">
+            
+            <div class="subtitle-container">
+                <span id="target-subtitle" class="subtitle-text">2019年馬來西亞足球機器人國際公開賽</span>
+            </div>
+        </div>
+        
+        <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
     </div>
 </section>
     <section class="container mx-auto px-4 pb-20">
