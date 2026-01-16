@@ -77,7 +77,7 @@
                 0 20px 50px rgba(0,0,0,0.8),
                 0 0 100px rgba(255, 255, 255, 0.1);
             overflow: hidden;
-            z-index: 30; /* 確保螢幕層級 */
+            z-index: 30; 
         }
 
         .screen-texture {
@@ -99,14 +99,14 @@
 
         .slide-img.active { opacity: 1; z-index: 2; }
 
-        /* === 3. 字幕系統 (修正消失問題) === */
+        /* === 3. 字幕系統 (一體化核心) === */
         .subtitle-container {
             position: absolute;
             bottom: 30px;
             left: 0;
             width: 100%;
             text-align: center;
-            z-index: 50; /* 提高層級至最前 */
+            z-index: 50; 
             pointer-events: none;
         }
 
@@ -123,65 +123,28 @@
             transition: opacity 0.3s ease;
         }
 
-        /* === 4. 放映機與腳架系統 (修正光束位移) === */
+        /* === 4. 放映機與光束 (一體化設計：光束永遠黏著鏡頭) === */
         .projector-unit-fixed {
             position: absolute;
-            right: -180px;
-            top: 40px; /* 整體稍微上移對準螢幕 */
+            right: -160px; /* 控制放映機離螢幕多遠 */
+            top: 50%;
+            transform: translateY(-50%);
             z-index: 99;
             width: 200px;
-            height: 400px;
         }
 
         .projector-machine {
             position: relative;
-            width: 100%;
-            height: 150px;
-        }
-
-        .machine-body {
-            position: absolute;
-            top: 60px;
-            right: 40px;
-            width: 90px;
-            height: 100px;
+            width: 100px;
+            height: 120px;
             background: #1a1a1a;
             border: 2px solid #333;
             border-radius: 8px;
             box-shadow: 10px 10px 20px rgba(0,0,0,0.8);
+            margin-left: auto;
         }
 
-        .machine-lens {
-            position: absolute;
-            left: -30px;
-            top: 20px;
-            width: 40px;
-            height: 45px;
-            background: #000;
-            border-radius: 5px;
-        }
-
-        .lens-glow {
-            position: absolute;
-            left: 0; top: 0; width: 8px; height: 100%;
-            background: #ffcc00;
-            box-shadow: -15px 0 30px #ffcc00;
-        }
-
-        /* 修正後的光束：精準對齊鏡頭高度 */
-        .cinema-beam-fixed {
-            position: absolute;
-            right: 170px; /* 緊貼鏡頭 */
-            top: 85px;   /* 根據鏡頭 top 20 + 機身 top 60 調整 */
-            width: 1100px;
-            height: 650px;
-            background: radial-gradient(ellipse at right, rgba(255, 220, 100, 0.25) 0%, transparent 80%);
-            clip-path: polygon(0% 15%, 100% 48%, 100% 52%, 0% 85%);
-            pointer-events: none;
-            z-index: 40;
-            animation: lightFlicker 0.1s infinite alternate;
-        }
-
+        /* 膠卷盤 */
         .reel {
             position: absolute;
             width: 85px; height: 85px;
@@ -190,30 +153,69 @@
             background: repeating-conic-gradient(#111 0% 15%, #222 15% 30%);
             animation: rotateMachine 3s linear infinite;
         }
-        .reel-top { top: -40px; right: 60px; }
-        .reel-back { top: 20px; right: -10px; }
+        .reel-top { top: -60px; right: 20px; }
+        .reel-back { top: 20px; right: -40px; z-index: -1; }
 
-        .tripod-stand {
+        /* 鏡頭：這是光束的父元素 */
+        .machine-lens {
             position: absolute;
-            top: 160px;
-            right: 55px;
-            width: 60px;
+            left: -35px;
+            top: 25px;
+            width: 45px;
+            height: 50px;
+            background: #000;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
         }
 
+        .lens-glow {
+            width: 10px;
+            height: 100%;
+            background: #ffcc00;
+            box-shadow: 0 0 20px #ffcc00;
+            border-radius: 5px 0 0 5px;
+            z-index: 2;
+        }
+
+        /* 修正後的光束：包在鏡頭裡，起點永遠正確 */
+        .cinema-beam-fixed {
+            position: absolute;
+            right: 10px; /* 從鏡頭內部射出 */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1200px; /* 光束射程 */
+            height: 700px; /* 光束擴散寬度 */
+            background: radial-gradient(ellipse at right, rgba(255, 220, 100, 0.25) 0%, transparent 80%);
+            /* 將光束切成從右向左擴散的三角形 */
+            clip-path: polygon(0% 0%, 0% 100%, 100% 52%, 100% 48%);
+            pointer-events: none;
+            z-index: -1; 
+            animation: lightFlicker 0.1s infinite alternate;
+        }
+
+        /* 腳架部分 */
+        .tripod-stand {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin-top: -5px;
+        }
         .leg {
             position: absolute;
-            width: 4px; height: 200px;
+            top: 0; left: 75%;
+            width: 4px; height: 100%;
             background: linear-gradient(to bottom, #444, #111);
             transform-origin: top;
         }
-        .l-1 { left: 50%; transform: rotate(15deg); }
-        .l-2 { left: 50%; transform: rotate(-15deg); }
-        .l-3 { left: 50%; height: 180px; transform: rotate(0deg); opacity: 0.7; }
+        .l-1 { transform: rotate(15deg); }
+        .l-2 { transform: rotate(-15deg); }
+        .l-3 { height: 90%; transform: rotate(0deg); opacity: 0.6; }
 
         @keyframes rotateMachine { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes lightFlicker { 0% { opacity: 0.6; } 100% { opacity: 0.9; } }
 
-        /* === 5. 燈箱、霓虹標題與跑馬燈 (保留原本設計) === */
+        /* === 5. 其他內容設計 === */
         .neon-title {
             font-family: 'Bebas Neue', sans-serif;
             color: #fff;
@@ -251,7 +253,7 @@
 
     <nav class="absolute top-0 left-0 w-full p-6 z-50 flex justify-between items-center bg-gradient-to-b from-black to-transparent">
         <a href="index.html" class="text-white hover:text-yellow-400 font-bold tracking-widest transition-colors flex items-center gap-2">
-            <span>🔙</span> 返回大樓大廳
+            <span>🔙</span> 返回大廳
         </a>
     </nav>
 
@@ -265,12 +267,13 @@
         <div class="cinema-screen-container">
             
             <div class="projector-unit-fixed">
-                <div class="cinema-beam-fixed"></div> <div class="projector-machine">
+                <div class="projector-machine">
                     <div class="reel reel-top"></div>
                     <div class="reel reel-back"></div>
                     <div class="machine-body">
                         <div class="machine-lens">
                             <div class="lens-glow"></div>
+                            <div class="cinema-beam-fixed"></div>
                         </div>
                     </div>
                 </div>
