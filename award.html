@@ -234,6 +234,98 @@
             from { opacity: 0.9; }
             to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 50px var(--cinema-gold); }
         }
+        /* --- 放映機主體 --- */
+.projector-wrap {
+    position: absolute;
+    right: -120px; /* 放在螢幕右側 */
+    bottom: -20px;
+    width: 100px;
+    height: 120px;
+    z-index: 40;
+}
+
+/* 放映機機身 */
+.projector-body {
+    width: 60px;
+    height: 80px;
+    background: #222;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1);
+}
+
+/* 旋轉的底片盤 */
+.projector-reel {
+    width: 50px;
+    height: 50px;
+    border: 3px dashed #444;
+    border-radius: 50%;
+    position: absolute;
+    top: -40px;
+    left: 5px;
+    animation: rotateReel 2s linear infinite;
+}
+.projector-reel::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 10px; height: 10px; background: #333; border-radius: 50%;
+}
+
+@keyframes rotateReel {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* --- 投影閃爍光束 --- */
+.projector-beam {
+    position: absolute;
+    top: 20px;
+    right: 50px;
+    width: 400px;
+    height: 300px;
+    /* 錐形光束效果 */
+    background: radial-gradient(ellipse at right, rgba(255, 255, 200, 0.15) 0%, transparent 80%);
+    clip-path: polygon(0 20%, 100% 45%, 100% 55%, 0 80%);
+    filter: blur(15px);
+    z-index: 35;
+    pointer-events: none;
+    animation: lightFlicker 0.1s infinite alternate;
+}
+
+@keyframes lightFlicker {
+    0% { opacity: 0.3; transform: scale(1); }
+    100% { opacity: 0.6; transform: scale(1.02); }
+}
+
+/* --- 字幕樣式修正 (確保在最上層) --- */
+#movie-subtitle {
+    position: absolute;
+    bottom: 30px; /* 向上微調避免被遮擋 */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 100; /* 極高層級 */
+    pointer-events: none;
+}
+
+#movie-subtitle span {
+    background: rgba(0, 0, 0, 0.7);
+    color: #f1c40f;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border-left: 5px solid #f1c40f;
+    display: inline-block;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    transition: all 0.5s ease;
+}
+
+/* 手機版隱藏放映機避免破版 */
+@media (max-width: 1024px) {
+    .projector-wrap, .projector-beam { display: none; }
+}
 
     </style>
 </head>
@@ -256,10 +348,19 @@
         <div class="w-24 h-1 bg-yellow-500 mx-auto mt-6 shadow-[0_0_10px_#f1c40f]"></div>
     </header>
 
-    <section class="container mx-auto px-4">
-        <div class="cinema-screen-container">
-            <div class="cinema-screen" id="projector-screen">
-                <div class="screen-texture"></div>
+   <section class="container mx-auto px-4 relative">
+    <div class="cinema-screen-container">
+        
+        <div class="projector-wrap">
+            <div class="projector-reel"></div>
+            <div class="projector-body">
+                <div class="absolute right-[-10px] top-[15px] w-[20px] h-[30px] bg-[#111] rounded-r-full"></div> </div>
+        </div>
+        
+        <div class="projector-beam"></div>
+
+        <div class="cinema-screen" id="projector-screen">
+            <div class="screen-texture"></div>
                 
                 <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="...">
                 <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="...">
@@ -268,12 +369,14 @@
                  <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="...">
                  <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="...">
                  <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃" alt="...">
+           <div id="movie-subtitle">
+                <span></span>
             </div>
-
-            <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
         </div>
-    </section>
-
+        
+        <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
+    </div>
+</section>
     <section class="container mx-auto px-4 pb-20">
         <div class="info-lightbox">
             <div class="info-inner">
@@ -345,46 +448,52 @@
         </div>
     </footer>
 
-   <script>
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. 處理開場布幕 (維持原樣)
+        // 1. 布幕邏輯
         setTimeout(() => {
             const curtain = document.getElementById('intro-curtain');
-            curtain.classList.add('curtain-open');
+            if(curtain) curtain.classList.add('curtain-open');
         }, 500);
 
-        // 2. 幻燈片與字幕邏輯
+        // 2. 幻燈片與字幕
         const slides = document.querySelectorAll('.slide-img');
-        const subtitleSpan = document.querySelector('#movie-subtitle span'); // 抓取字幕標籤
+        const subtitleSpan = document.querySelector('#movie-subtitle span');
         let currentSlide = 0;
-        const slideInterval = 4000; 
+        const slideInterval = 4000;
 
-        function nextSlide() {
-            // A. 移除當前圖片的 active 與 動畫效果
-            slides[currentSlide].classList.remove('active');
-            slides[currentSlide].classList.remove('slide-transition');
-
-            // B. 計算下一張
-            currentSlide = (currentSlide + 1) % slides.length;
-
-            // C. 加上新圖片的 active 與 幻燈片機械感特效 (這保留了你想要的感覺)
-            slides[currentSlide].classList.add('active');
-            slides[currentSlide].classList.add('slide-transition');
-
-            // D. 同步更新字幕內容
-            const newCaption = slides[currentSlide].getAttribute('data-caption');
-            if (subtitleSpan && newCaption) {
-                subtitleSpan.innerText = newCaption;
+        function updateSubtitle() {
+            if (slides[currentSlide] && subtitleSpan) {
+                const text = slides[currentSlide].getAttribute('data-caption');
+                subtitleSpan.style.opacity = 0; // 先淡出
+                setTimeout(() => {
+                    subtitleSpan.innerText = text || ""; // 填入文字
+                    subtitleSpan.style.opacity = 1; // 再淡入
+                }, 300);
             }
         }
 
-        // 初始化：頁面一載入先放第一張圖片的字幕
-        if (subtitleSpan && slides[0]) {
-            subtitleSpan.innerText = slides[0].getAttribute('data-caption');
+        function nextSlide() {
+            if (slides.length === 0) return;
+
+            // 移除舊狀態
+            slides[currentSlide].classList.remove('active', 'slide-transition');
+
+            // 換下一張
+            currentSlide = (currentSlide + 1) % slides.length;
+
+            // 加入新狀態
+            slides[currentSlide].classList.add('active', 'slide-transition');
+
+            // 更新字幕
+            updateSubtitle();
         }
 
-        // 啟動輪播
-        setInterval(nextSlide, slideInterval);
+        // 初始化
+        if (slides.length > 0) {
+            updateSubtitle();
+            setInterval(nextSlide, slideInterval);
+        }
     });
 </script>
 </body>
