@@ -32,7 +32,7 @@
             height: 100%;
             z-index: 9999;
             display: flex;
-            pointer-events: none; /* 讓點擊穿透，動畫結束後不擋路 */
+            pointer-events: none;
         }
         
         .curtain-panel {
@@ -44,7 +44,6 @@
             box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
         }
         
-        /* 布幕皺褶感 */
         .curtain-panel::after {
             content: '';
             position: absolute;
@@ -55,11 +54,10 @@
             background: repeating-linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 5%, transparent 10%);
         }
 
-        /* 啟動時加入這個 class 讓布幕拉開 */
         .curtain-open .left-panel { transform: translateX(-100%); }
         .curtain-open .right-panel { transform: translateX(100%); }
 
-        /* === 2. 老式電影螢幕 (主視覺) === */
+        /* === 2. 老式電影螢幕 === */
         .cinema-screen-container {
             position: relative;
             width: 90%;
@@ -75,274 +73,174 @@
             border: 8px solid #333;
             border-radius: 10px;
             box-shadow: 
-                0 0 0 10px #1a1a1a, /* 外框層次 */
-                0 20px 50px rgba(0,0,0,0.8), /* 底部陰影 */
-                0 0 100px rgba(255, 255, 255, 0.1); /* 投影光暈 */
+                0 0 0 10px #1a1a1a,
+                0 20px 50px rgba(0,0,0,0.8),
+                0 0 100px rgba(255, 255, 255, 0.1);
             overflow: hidden;
+            z-index: 30; /* 確保螢幕層級 */
         }
 
-        /* 螢幕紋理 (不影響圖片清晰度，但增加質感) */
         .screen-texture {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.4) 100%);
             z-index: 10;
             pointer-events: none;
         }
 
-        /* 幻燈片圖片 */
         .slide-img {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 確保填滿螢幕 */
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
             opacity: 0;
             z-index: 1;
+            transition: opacity 0.8s ease-in-out;
         }
 
-        .slide-img.active {
-            opacity: 1;
-            z-index: 2;
-        }
+        .slide-img.active { opacity: 1; z-index: 2; }
 
-        /* 幻燈片切換特效：模擬機械卡換 + 閃爍 */
-        @keyframes slideJam {
-            0% { transform: translateY(-5%); opacity: 0.8; filter: brightness(1.5); }
-            50% { transform: translateY(2%); opacity: 1; filter: brightness(0.9); }
-            100% { transform: translateY(0); opacity: 1; filter: brightness(1); }
-        }
-
-        .slide-transition {
-            animation: slideJam 0.6s ease-out;
-        }
-
-        /* === 3. 內容簡介區 (電影燈箱風格) === */
-        .info-lightbox {
-            max-width: 800px;
-            margin: 60px auto;
-            border: 4px solid var(--cinema-gold);
-            padding: 4px; /* 內框距離 */
-            border-radius: 4px;
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            background: #111;
-        }
-
-        .info-inner {
-            border: 2px solid rgba(241, 196, 15, 0.5);
-            padding: 40px;
-            background: radial-gradient(circle at center, #222 0%, #0d0d0d 100%);
-            color: #ddd;
-            text-align: center;
-        }
-
-        /* 互動觸碰回饋 */
-        .info-lightbox:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 40px rgba(241, 196, 15, 0.4);
-        }
-
-        .info-lightbox:hover .info-inner {
-            background: radial-gradient(circle at center, #2a2a2a 0%, #0f0f0f 100%);
-            border-color: rgba(241, 196, 15, 0.9);
-        }
-
-        /* 動態流光邊框 */
-        .info-lightbox::before {
-            content: '';
+        /* === 3. 字幕系統 (修正消失問題) === */
+        .subtitle-container {
             position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, var(--cinema-gold), transparent, var(--cinema-gold));
-            z-index: -1;
-            background-size: 200% 200%;
-            animation: borderFlow 4s linear infinite;
-            opacity: 0.5;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 50; /* 提高層級至最前 */
+            pointer-events: none;
         }
 
-        @keyframes borderFlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        .subtitle-text {
+            background: rgba(0, 0, 0, 0.85);
+            color: var(--cinema-gold);
+            padding: 8px 25px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-radius: 4px;
+            display: inline-block;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            border-bottom: 2px solid var(--cinema-gold);
+            transition: opacity 0.3s ease;
         }
 
-        /* === 4. 頁尾跑馬燈與 LOGO === */
-        .footer-marquee-container {
-            background: #000;
-            border-top: 4px solid var(--cinema-red);
-            padding: 20px 0;
-            overflow: hidden;
-            white-space: nowrap;
+        /* === 4. 放映機與腳架系統 (修正光束位移) === */
+        .projector-unit-fixed {
+            position: absolute;
+            right: -180px;
+            top: 40px; /* 整體稍微上移對準螢幕 */
+            z-index: 99;
+            width: 200px;
+            height: 400px;
+        }
+
+        .projector-machine {
             position: relative;
-            box-shadow: 0 -10px 30px rgba(142, 0, 0, 0.3);
+            width: 100%;
+            height: 150px;
         }
 
-        .marquee-wrapper {
-            display: inline-flex;
-            animation: scrollText 20s linear infinite;
+        .machine-body {
+            position: absolute;
+            top: 60px;
+            right: 40px;
+            width: 90px;
+            height: 100px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.8);
         }
 
-        .marquee-item {
-            display: flex;
-            align-items: center;
-            margin-right: 60px; /* 每個循環的間距 */
+        .machine-lens {
+            position: absolute;
+            left: -30px;
+            top: 20px;
+            width: 40px;
+            height: 45px;
+            background: #000;
+            border-radius: 5px;
         }
 
-        .marquee-logo {
-            height: 50px;
-            width: auto;
-            margin-right: 15px;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-            /* 模擬燈光照在 Logo 上的微弱閃爍 */
-            animation: logoFlicker 3s infinite alternate;
+        .lens-glow {
+            position: absolute;
+            left: 0; top: 0; width: 8px; height: 100%;
+            background: #ffcc00;
+            box-shadow: -15px 0 30px #ffcc00;
         }
 
-        .marquee-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
-            letter-spacing: 2px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--cinema-red);
+        /* 修正後的光束：精準對齊鏡頭高度 */
+        .cinema-beam-fixed {
+            position: absolute;
+            right: 170px; /* 緊貼鏡頭 */
+            top: 85px;   /* 根據鏡頭 top 20 + 機身 top 60 調整 */
+            width: 1100px;
+            height: 650px;
+            background: radial-gradient(ellipse at right, rgba(255, 220, 100, 0.25) 0%, transparent 80%);
+            clip-path: polygon(0% 15%, 100% 48%, 100% 52%, 0% 85%);
+            pointer-events: none;
+            z-index: 40;
+            animation: lightFlicker 0.1s infinite alternate;
         }
 
-        @keyframes scrollText {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); } /* 移動一半，因為內容是複製兩份的 */
+        .reel {
+            position: absolute;
+            width: 85px; height: 85px;
+            border: 5px solid #2a2a2a;
+            border-radius: 50%;
+            background: repeating-conic-gradient(#111 0% 15%, #222 15% 30%);
+            animation: rotateMachine 3s linear infinite;
+        }
+        .reel-top { top: -40px; right: 60px; }
+        .reel-back { top: 20px; right: -10px; }
+
+        .tripod-stand {
+            position: absolute;
+            top: 160px;
+            right: 55px;
+            width: 60px;
         }
 
-        @keyframes logoFlicker {
-            0% { opacity: 0.8; filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)); }
-            100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255,255,255,0.8)); }
+        .leg {
+            position: absolute;
+            width: 4px; height: 200px;
+            background: linear-gradient(to bottom, #444, #111);
+            transform-origin: top;
         }
+        .l-1 { left: 50%; transform: rotate(15deg); }
+        .l-2 { left: 50%; transform: rotate(-15deg); }
+        .l-3 { left: 50%; height: 180px; transform: rotate(0deg); opacity: 0.7; }
 
-        /* 標題霓虹燈 */
+        @keyframes rotateMachine { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes lightFlicker { 0% { opacity: 0.6; } 100% { opacity: 0.9; } }
+
+        /* === 5. 燈箱、霓虹標題與跑馬燈 (保留原本設計) === */
         .neon-title {
             font-family: 'Bebas Neue', sans-serif;
             color: #fff;
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px var(--cinema-gold),
-                0 0 40px var(--cinema-gold);
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--cinema-gold), 0 0 40px var(--cinema-gold);
             animation: neonPulse 2s infinite alternate;
         }
-        @keyframes neonPulse {
-            from { opacity: 0.9; }
-            to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 50px var(--cinema-gold); }
+        @keyframes neonPulse { from { opacity: 0.9; } to { opacity: 1; text-shadow: 0 0 20px var(--cinema-gold), 0 0 50px var(--cinema-gold); } }
+
+        .info-lightbox {
+            max-width: 800px; margin: 60px auto; border: 4px solid var(--cinema-gold);
+            padding: 4px; border-radius: 4px; background: #111; position: relative;
         }
-/* 總容器定位 */
-.projector-unit-fixed {
-    position: absolute;
-    right: -140px; /* 根據截圖調整，讓它出現在螢幕右側 */
-    bottom: 20px;
-    z-index: 99;   /* 確保在最前方 */
-    width: 200px;
-    height: 350px;
-}
-
-/* 放映機主體 */
-.projector-machine {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-/* 實體機身：給予明確的背景色與大小 */
-.machine-body {
-    position: absolute;
-    top: 80px;
-    right: 20px;
-    width: 90px;
-    height: 110px;
-    background: #1a1a1a; /* 深黑色機身 */
-    border: 2px solid #333;
-    border-radius: 8px;
-    box-shadow: 10px 10px 20px rgba(0,0,0,0.8);
-}
-
-.body-detail {
-    position: absolute;
-    top: 20px; left: 10px;
-    width: 70px; height: 30px;
-    border-top: 2px solid #444;
-    border-bottom: 2px solid #444;
-}
-
-/* 膠卷盤：強化邊框感 */
-.reel {
-    position: absolute;
-    width: 90px;
-    height: 90px;
-    border: 6px solid #2a2a2a;
-    border-radius: 50%;
-    background: repeating-conic-gradient(#111 0% 15%, #222 15% 30%);
-    animation: rotateMachine 3s linear infinite;
-    z-index: -1; /* 位於機身後方 */
-}
-.reel-top { top: 0; right: 40px; }
-.reel-back { top: 50px; right: -30px; }
-
-@keyframes rotateMachine {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* 鏡頭與光束起始點 */
-.machine-lens {
-    position: absolute;
-    left: -30px;
-    top: 25px;
-    width: 40px;
-    height: 45px;
-    background: #000;
-    border-radius: 5px;
-}
-.lens-glow {
-    position: absolute;
-    left: 0; top: 0;
-    width: 8px; height: 100%;
-    background: #ffcc00;
-    box-shadow: -10px 0 20px #ffcc00;
-}
-
-/* 放射光束：精準對準鏡頭 */
-.cinema-beam-fixed {
-    position: absolute;
-    right: 150px; /* 從鏡頭噴出 */
-    top: 105px;
-    width: 1000px;
-    height: 600px;
-    background: radial-gradient(ellipse at right, rgba(255, 220, 100, 0.2) 0%, transparent 80%);
-    clip-path: polygon(0% 15%, 100% 48%, 100% 52%, 0% 85%);
-    pointer-events: none;
-    z-index: 40;
-    animation: lightFlicker 0.1s infinite alternate;
-}
-
-/* 穩固的三腳架 */
-.tripod-stand {
-    position: absolute;
-    top: 190px;
-    right: 35px;
-    width: 60px;
-}
-.tripod-head {
-    width: 20px; height: 15px; background: #222; margin: 0 auto;
-}
-.leg {
-    position: absolute;
-    width: 4px; height: 180px;
-    background: linear-gradient(to bottom, #444, #111);
-    transform-origin: top;
-}
-.l-1 { left: 50%; transform: rotate(15deg); }
-.l-2 { left: 50%; transform: rotate(-15deg); }
-.l-3 { left: 50%; height: 160px; transform: rotate(0deg) translateZ(-1px); }
-</style>
+        .info-inner {
+            border: 2px solid rgba(241, 196, 15, 0.5); padding: 40px;
+            background: radial-gradient(circle at center, #222 0%, #0d0d0d 100%); text-align: center;
+        }
+        
+        .footer-marquee-container {
+            background: #000; border-top: 4px solid var(--cinema-red);
+            padding: 20px 0; overflow: hidden; white-space: nowrap; position: relative;
+        }
+        .marquee-wrapper { display: inline-flex; animation: scrollText 20s linear infinite; }
+        .marquee-item { display: flex; align-items: center; margin-right: 60px; }
+        .marquee-logo { height: 50px; margin-right: 15px; }
+        .marquee-text { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: #fff; }
+        @keyframes scrollText { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    </style>
 </head>
 <body>
 
@@ -353,7 +251,7 @@
 
     <nav class="absolute top-0 left-0 w-full p-6 z-50 flex justify-between items-center bg-gradient-to-b from-black to-transparent">
         <a href="index.html" class="text-white hover:text-yellow-400 font-bold tracking-widest transition-colors flex items-center gap-2">
-            <span>🔙</span> 返回大廳
+            <span>🔙</span> 返回大樓大廳
         </a>
     </nav>
 
@@ -363,71 +261,61 @@
         <div class="w-24 h-1 bg-yellow-500 mx-auto mt-6 shadow-[0_0_10px_#f1c40f]"></div>
     </header>
 
- <section class="container mx-auto px-4 relative">
-    <div class="cinema-screen-container">
-        
-      <div class="projector-unit-fixed">
-    <div class="cinema-beam-fixed"></div>
-
-    <div class="projector-machine">
-        <div class="reel reel-top"></div>
-        <div class="reel reel-back"></div>
-        
-        <div class="machine-body">
-            <div class="body-detail"></div>
-            <div class="machine-lens">
-                <div class="lens-glow"></div>
-            </div>
-        </div>
-
-        <div class="tripod-stand">
-            <div class="tripod-head"></div>
-            <div class="leg l-1"></div>
-            <div class="leg l-2"></div>
-            <div class="leg l-3"></div>
-        </div>
-    </div>
-</div>
-
-        <div class="cinema-screen" id="projector-screen">
-            <div class="screen-texture" style="background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.6) 100%); z-index: 20;"></div>
+    <section class="container mx-auto px-4 relative">
+        <div class="cinema-screen-container">
             
-            <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="wro1">
-            <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="wro2">
-            <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽" alt="wro3">
-            <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽" alt="wro4">
-            <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="wro5">
-            <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="wro6">
-            <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃" alt="wro7">
-            
-            <div class="subtitle-container">
-                <span id="target-subtitle" class="subtitle-text">2019年馬來西亞足球機器人國際公開賽</span>
+            <div class="projector-unit-fixed">
+                <div class="cinema-beam-fixed"></div> <div class="projector-machine">
+                    <div class="reel reel-top"></div>
+                    <div class="reel reel-back"></div>
+                    <div class="machine-body">
+                        <div class="machine-lens">
+                            <div class="lens-glow"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tripod-stand">
+                    <div class="leg l-1"></div>
+                    <div class="leg l-2"></div>
+                    <div class="leg l-3"></div>
+                </div>
             </div>
+
+            <div class="cinema-screen" id="projector-screen">
+                <div class="screen-texture"></div>
+                
+                <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="wro1">
+                <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="wro2">
+                <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽" alt="wro3">
+                <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽" alt="wro4">
+                <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="wro5">
+                <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="wro6">
+                <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃展示" alt="wro7">
+                
+                <div class="subtitle-container">
+                    <span id="target-subtitle" class="subtitle-text">2019年馬來西亞足球機器人國際公開賽</span>
+                </div>
+            </div>
+            
+            <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
         </div>
-        
-        <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
-    </div>
-</section>
+    </section>
+
     <section class="container mx-auto px-4 pb-20">
         <div class="info-lightbox">
             <div class="info-inner">
                 <h3 class="text-3xl font-bold mb-6 text-yellow-500 font-serif">關於這部名為「成長」的電影</h3>
-                
                 <p class="text-lg leading-loose mb-6 text-gray-300">
                     在榮耀時光放映館裡，每一張膠卷都記錄著積動城市孩子的奮鬥軌跡。
                     從 <span class="text-white font-bold border-b border-yellow-600">哥斯大黎加 WRO 世界賽</span> 的巔峰對決，
                     到 <span class="text-white font-bold border-b border-yellow-600">泰國亞洲盃</span> 的穩健發揮，
                     這不只是一場場比賽，而是孩子們用汗水與創意編織的冒險故事。
                 </p>
-
                 <p class="text-lg leading-loose text-gray-300">
-                    在這裡，我們不只教程式，更教孩子如何面對挑戰。
-                    <br>
-                    看著照片中專注的眼神、與手作的創意獎盃，您會發現：
-                    <br>
+                    在這裡，我們不只教程式，更教孩子如何面對挑戰。<br>
+                    看著照片中專注的眼神、與手作的創意獎盃，您會發現：<br>
                     <span class="text-xl text-yellow-400 font-bold mt-4 block">「最好的獎牌，是孩子眼裡自信的光芒。」</span>
                 </p>
-                
                 <div class="mt-8">
                     <button class="px-8 py-3 border border-yellow-600 text-yellow-500 hover:bg-yellow-600 hover:text-black transition-all duration-300 uppercase tracking-widest text-sm font-bold">
                         預約下一場試聽
@@ -448,25 +336,8 @@
                     <img src="積動城市圖1.png" alt="MBC Logo" class="marquee-logo">
                     <span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span>
                 </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="MBC Logo" class="marquee-logo">
-                    <span class="marquee-text">積動城市 MBC ROBOT © 2026</span>
-                </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="MBC Logo" class="marquee-logo">
-                    <span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span>
-                </div>
             </div>
-            
             <div class="flex">
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="MBC Logo" class="marquee-logo">
-                    <span class="marquee-text">積動城市 MBC ROBOT © 2026</span>
-                </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="MBC Logo" class="marquee-logo">
-                    <span class="marquee-text">啟發創意 • 程式教育 • 未來領袖</span>
-                </div>
                 <div class="marquee-item">
                     <img src="積動城市圖1.png" alt="MBC Logo" class="marquee-logo">
                     <span class="marquee-text">積動城市 MBC ROBOT © 2026</span>
@@ -479,54 +350,41 @@
         </div>
     </footer>
 
- <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. 布幕自動拉開 (維持原樣)
-    setTimeout(() => {
-        const curtain = document.getElementById('intro-curtain');
-        if(curtain) curtain.classList.add('curtain-open');
-    }, 500);
-
-    // 2. 幻燈片與字幕邏輯
-    const slides = document.querySelectorAll('.slide-img');
-    const subtitleElement = document.getElementById('target-subtitle');
-    let currentSlide = 0;
-    const slideInterval = 4000;
-
-    function updateDisplay() {
-        if (!slides[currentSlide] || !subtitleElement) return;
-
-        // 取得當前圖片的字幕內容
-        const caption = slides[currentSlide].getAttribute('data-caption');
-        
-        // 字幕淡出再淡入效果
-        subtitleElement.style.opacity = 0;
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. 布幕自動拉開
         setTimeout(() => {
-            subtitleElement.innerText = caption;
-            subtitleElement.style.opacity = 1;
-        }, 300);
-    }
+            const curtain = document.getElementById('intro-curtain');
+            if(curtain) curtain.classList.add('curtain-open');
+        }, 500);
 
-    function nextSlide() {
-        // 移除當前圖片效果
-        slides[currentSlide].classList.remove('active', 'slide-transition');
+        // 2. 幻燈片邏輯
+        const slides = document.querySelectorAll('.slide-img');
+        const subtitleElement = document.getElementById('target-subtitle');
+        let currentSlide = 0;
+        const slideInterval = 4000;
 
-        // 計算下一張
-        currentSlide = (currentSlide + 1) % slides.length;
+        function updateDisplay() {
+            if (!slides[currentSlide] || !subtitleElement) return;
+            const caption = slides[currentSlide].getAttribute('data-caption');
+            subtitleElement.style.opacity = 0;
+            setTimeout(() => {
+                subtitleElement.innerText = caption;
+                subtitleElement.style.opacity = 1;
+            }, 300);
+        }
 
-        // 套用新圖片效果
-        slides[currentSlide].classList.add('active', 'slide-transition');
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+            updateDisplay();
+        }
 
-        // 更新字幕
-        updateDisplay();
-    }
-
-    // 初始化第一張字幕
-    if (slides.length > 0) {
-        updateDisplay();
-        setInterval(nextSlide, slideInterval);
-    }
-});
-</script>
+        if (slides.length > 0) {
+            setInterval(nextSlide, slideInterval);
+        }
+    });
+    </script>
 </body>
 </html>
