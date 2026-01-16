@@ -278,10 +278,11 @@
     <script>
   // 1. 全域變數
 const projectorAudio = document.getElementById('projector-sound');
-// 換成單次機械切換聲 (短促的噠噠聲)
-projectorAudio.src = "https://assets.mixkit.co/active_storage/sfx/2816/2816-preview.mp3"; 
-projectorAudio.loop = false; // 關閉循環，讓它只響一聲
-
+// 更換為：沉穩的機械換片聲
+projectorAudio.src = "https://assets.mixkit.co/active_storage/sfx/2811/2811-preview.mp3"; 
+projectorAudio.loop = false; 
+projectorAudio.volume = 0.6; // 稍微調低音量，讓它更自然，不刺耳
+        
 const audioBtn = document.getElementById('audioToggle');
 const audioTxt = audioBtn.querySelector('.audio-label');
 let isSoundEnabled = false; // 這裡改成「是否允許發聲」
@@ -314,15 +315,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let isTransitioning = false;
 
     // B. 核心換片函數
-    window.changeSlide = function(direction) {
-        if (isTransitioning) return;
-        isTransitioning = true;
+   window.changeSlide = function(direction) {
+    if (isTransitioning) return;
+    isTransitioning = true;
 
-        // --- 重點：只有換片時才播放聲音 ---
-        if(isSoundEnabled) {
-            projectorAudio.currentTime = 0; // 回到音效起點
-            projectorAudio.play();
-        }
+    // --- 優化後的音效觸發 ---
+    if(isSoundEnabled) {
+        projectorAudio.currentTime = 0; // 重置到起點
+        projectorAudio.play();
+        
+        // 如果音效結尾太長，可以在 500ms 後淡出或停止
+        setTimeout(() => {
+            if (!projectorAudio.paused) {
+                projectorAudio.pause();
+                projectorAudio.currentTime = 0;
+            }
+        }, 600); 
+    }
 
         reels.forEach(r => r.classList.add('spinning'));
 
