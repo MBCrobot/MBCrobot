@@ -276,72 +276,77 @@
     </footer>
 
     <script>
-    // 1. 全域變數定義
-    const projectorAudio = document.getElementById('projector-sound');
-    const audioBtn = document.getElementById('audioToggle');
-    const audioTxt = audioBtn.querySelector('.audio-label');
-    let isSoundPlaying = false;
+  // 1. 全域變數
+const projectorAudio = document.getElementById('projector-sound');
+// 換成單次機械切換聲 (短促的噠噠聲)
+projectorAudio.src = "https://assets.mixkit.co/active_storage/sfx/2816/2816-preview.mp3"; 
+projectorAudio.loop = false; // 關閉循環，讓它只響一聲
 
-    // 2. 開關聲音函數
-    function toggleAudio() {
-        if (!isSoundPlaying) {
-            projectorAudio.play();
-            audioBtn.classList.add('audio-on');
-            audioTxt.innerText = "SOUND ON";
-            isSoundPlaying = true;
-        } else {
-            projectorAudio.pause();
-            audioBtn.classList.remove('audio-on');
-            audioTxt.innerText = "SOUND OFF";
-            isSoundPlaying = false;
-        }
+const audioBtn = document.getElementById('audioToggle');
+const audioTxt = audioBtn.querySelector('.audio-label');
+let isSoundEnabled = false; // 這裡改成「是否允許發聲」
+
+// 2. 音效開關 (點擊齒輪只是開啟「權限」)
+function toggleAudio() {
+    isSoundEnabled = !isSoundEnabled;
+    if (isSoundEnabled) {
+        audioBtn.classList.add('audio-on');
+        audioTxt.innerText = "SOUND ON";
+        // 點擊時可以先試響一聲，讓使用者知道開了
+        projectorAudio.play();
+    } else {
+        audioBtn.classList.remove('audio-on');
+        audioTxt.innerText = "SOUND OFF";
     }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // A. 布幕自動拉開
+document.addEventListener('DOMContentLoaded', () => {
+    // A. 布幕拉開邏輯 (保留)
+    setTimeout(() => {
+        const curtain = document.getElementById('intro-curtain');
+        if(curtain) curtain.classList.add('curtain-open');
+    }, 500);
+
+    const slides = document.querySelectorAll('.slide-img');
+    const subtitleElement = document.getElementById('target-subtitle');
+    const reels = document.querySelectorAll('.reel');
+    let currentSlide = 0;
+    let isTransitioning = false;
+
+    // B. 核心換片函數
+    window.changeSlide = function(direction) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        // --- 重點：只有換片時才播放聲音 ---
+        if(isSoundEnabled) {
+            projectorAudio.currentTime = 0; // 回到音效起點
+            projectorAudio.play();
+        }
+
+        reels.forEach(r => r.classList.add('spinning'));
+
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + direction + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+
+        subtitleElement.style.opacity = 0;
         setTimeout(() => {
-            const curtain = document.getElementById('intro-curtain');
-            if(curtain) curtain.classList.add('curtain-open');
-        }, 500);
+            subtitleElement.innerText = slides[currentSlide].getAttribute('data-caption');
+            subtitleElement.style.opacity = 1;
+        }, 300);
 
-        // B. 幻燈片控制
-        const slides = document.querySelectorAll('.slide-img');
-        const subtitleElement = document.getElementById('target-subtitle');
-        const reels = document.querySelectorAll('.reel');
-        let currentSlide = 0;
-        let isTransitioning = false;
+        setTimeout(() => {
+            reels.forEach(r => r.classList.remove('spinning'));
+            isTransitioning = false;
+        }, 800);
+    };
 
-        window.changeSlide = function(direction) {
-            if (isTransitioning) return;
-            isTransitioning = true;
-
-            // --- 音效變速 ---
-            if(isSoundPlaying) projectorAudio.playbackRate = 1.5;
-
-            reels.forEach(r => r.classList.add('spinning'));
-
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + direction + slides.length) % slides.length;
-            slides[currentSlide].classList.add('active');
-
-            subtitleElement.style.opacity = 0;
-            setTimeout(() => {
-                subtitleElement.innerText = slides[currentSlide].getAttribute('data-caption');
-                subtitleElement.style.opacity = 1;
-            }, 300);
-
-            setTimeout(() => {
-                reels.forEach(r => r.classList.remove('spinning'));
-                // --- 音效恢復 ---
-                if(isSoundPlaying) projectorAudio.playbackRate = 1.0;
-                isTransitioning = false;
-            }, 800);
-        };
-
-        setInterval(() => {
-            if (!isTransitioning) changeSlide(1);
-        }, 6000);
-    });
+    // 自動換片 (同樣會觸發聲音)
+    setInterval(() => {
+        if (!isTransitioning) changeSlide(1);
+    }, 6000);
+});
     </script>
 </body>
 </html>
