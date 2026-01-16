@@ -261,10 +261,13 @@
             <div class="cinema-screen" id="projector-screen">
                 <div class="screen-texture"></div>
                 
-                <img src="https://via.placeholder.com/800x450/111/fff?text=Photo+1+WRO+Champion" class="slide-img active" alt="WRO World Champion">
-                <img src="https://via.placeholder.com/800x450/222/fff?text=Photo+2+Asian+Cup" class="slide-img" alt="Asian Robot Contest">
-                <img src="https://via.placeholder.com/800x450/333/fff?text=Photo+3+Team+Work" class="slide-img" alt="Team Working Together">
-                <img src="https://via.placeholder.com/800x450/444/fff?text=Photo+4+Creative+Trophy" class="slide-img" alt="Creative Lego Trophy">
+                <img src="wro1.jpg" class="slide-img active" data-caption="2019年馬來西亞足球機器人國際公開賽" alt="...">
+                <img src="wro2.jpg" class="slide-img" data-caption="2018 WRO 臺灣全國總決賽" alt="...">
+                <img src="wro3.jpg" class="slide-img" data-caption="2018 WRO 世界賽" alt="...">
+                <img src="wro4.jpg" class="slide-img" data-caption="2018 WRO 世界決賽" alt="...">
+                 <img src="wro5.jpg" class="slide-img" data-caption="2018 亞洲機器人運動競賽" alt="...">
+                 <img src="wro6.jpg" class="slide-img" data-caption="2019 亞洲智慧型機器人大賽" alt="...">
+                 <img src="wro7.jpg" class="slide-img" data-caption="各項獎盃" alt="...">
             </div>
 
             <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 w-3/4 h-20 bg-yellow-500 opacity-5 blur-[50px] pointer-events-none"></div>
@@ -342,38 +345,47 @@
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. 處理開場布幕
-            setTimeout(() => {
-                const curtain = document.getElementById('intro-curtain');
-                curtain.classList.add('curtain-open');
-                // 動畫結束後可選：將布幕移除或隱藏
-            }, 500); // 延遲 0.5 秒後開啟
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. 處理開場布幕 (維持原樣)
+        setTimeout(() => {
+            const curtain = document.getElementById('intro-curtain');
+            curtain.classList.add('curtain-open');
+        }, 500);
 
-            // 2. 處理幻燈片輪播
-            const slides = document.querySelectorAll('.slide-img');
-            let currentSlide = 0;
-            const slideInterval = 4000; // 每 4 秒換一張
+        // 2. 幻燈片與字幕邏輯
+        const slides = document.querySelectorAll('.slide-img');
+        const subtitleSpan = document.querySelector('#movie-subtitle span'); // 抓取字幕標籤
+        let currentSlide = 0;
+        const slideInterval = 4000; 
 
-            function nextSlide() {
-                // 移除當前圖片的 active
-                slides[currentSlide].classList.remove('active');
-                slides[currentSlide].classList.remove('slide-transition');
+        function nextSlide() {
+            // A. 移除當前圖片的 active 與 動畫效果
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.remove('slide-transition');
 
-                // 計算下一張 (如果到底了就回到 0)
-                currentSlide = (currentSlide + 1) % slides.length;
+            // B. 計算下一張
+            currentSlide = (currentSlide + 1) % slides.length;
 
-                // 加上新圖片的 active 和 特效 class
-                slides[currentSlide].classList.add('active');
-                slides[currentSlide].classList.add('slide-transition');
+            // C. 加上新圖片的 active 與 幻燈片機械感特效 (這保留了你想要的感覺)
+            slides[currentSlide].classList.add('active');
+            slides[currentSlide].classList.add('slide-transition');
 
-                // 播放換片音效的邏輯可以在這裡加 (如果是純視覺則不需要)
+            // D. 同步更新字幕內容
+            const newCaption = slides[currentSlide].getAttribute('data-caption');
+            if (subtitleSpan && newCaption) {
+                subtitleSpan.innerText = newCaption;
             }
+        }
 
-            // 啟動輪播
-            setInterval(nextSlide, slideInterval);
-        });
-    </script>
+        // 初始化：頁面一載入先放第一張圖片的字幕
+        if (subtitleSpan && slides[0]) {
+            subtitleSpan.innerText = slides[0].getAttribute('data-caption');
+        }
+
+        // 啟動輪播
+        setInterval(nextSlide, slideInterval);
+    });
+</script>
 </body>
 </html>
