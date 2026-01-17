@@ -226,16 +226,73 @@
         .play-btn:hover { background: rgba(212, 175, 55, 0.4); transform: translate(-50%, -50%) scale(1.1); }
         .video-active .play-btn { display: none; }
 
-        /* 影片下方文字框 */
+      /* === 7. 羊皮紙質感文字框 (極致細節版) === */
         .royal-text-box {
-            max-width: 600px; margin: 40px auto 0;
-            background: rgba(0, 0, 0, 0.6); border: 1px solid var(--royal-gold);
-            padding: 20px; color: var(--royal-gold);
-            font-family: 'Noto Serif TC', serif; letter-spacing: 1px; line-height: 1.8;
+            max-width: 700px;
+            margin: 50px auto 0;
+            padding: 40px 50px;
             position: relative;
+            
+            /* 羊皮紙噴砂背景效果 */
+            background-color: #e4d5b7;
+            background-image: 
+                url("https://www.transparenttextures.com/patterns/paper-fibers.png"), /* 纖維質感 */
+                radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.1) 100%);
+            
+            /* 羊皮紙焦邊與立體感 */
+            border: 2px solid #b39152;
+            box-shadow: 
+                0 0 0 8px #2c0e0e, /* 內層深色邊 */
+                0 15px 35px rgba(0,0,0,0.6), /* 外陰影 */
+                inset 0 0 50px rgba(139, 69, 19, 0.2); /* 內部暈染感 */
+            
+            /* 邊角裝飾 */
+            border-radius: 5px;
+            transform: rotate(-0.5deg); /* 輕微歪斜顯得更真實 */
+            transition: all 0.5s ease;
         }
-        .royal-text-box::before { content: '❝'; font-size: 3rem; position: absolute; top: -20px; left: 10px; opacity: 0.5; }
-        .royal-text-box::after { content: '❞'; font-size: 3rem; position: absolute; bottom: -40px; right: 10px; opacity: 0.5; }
+
+        .royal-text-box:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 
+                0 0 0 8px #3d1e1e,
+                0 20px 45px rgba(0,0,0,0.8),
+                inset 0 0 60px rgba(139, 69, 19, 0.3);
+        }
+
+        /* 噴砂質感的文字呈現 */
+        .royal-text-box h3 {
+            color: #4a2c0f;
+            font-family: 'Noto Serif TC', serif;
+            font-weight: 900;
+            border-bottom: 1px solid rgba(74, 44, 15, 0.3);
+            display: inline-block;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+        }
+
+        .royal-text-box p {
+            color: #3e2723;
+            font-weight: 600;
+            line-height: 2;
+            text-align: justify;
+            text-shadow: 0.5px 0.5px 0px rgba(255,255,255,0.3);
+        }
+
+        /* 詔書捲軸裝飾細節 */
+        .royal-text-box::before, .royal-text-box::after {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 100%;
+            background: linear-gradient(to right, #8b4513 0%, #d4af37 50%, #8b4513 100%);
+            top: 0;
+            border-radius: 5px;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.5);
+            z-index: -1;
+        }
+        .royal-text-box::before { left: -15px; }
+        .royal-text-box::after { right: -15px; }
 
         /* === 6. 守衛與飛鳥增強特效 === */
         
@@ -442,9 +499,12 @@
             </iframe>
         </div>
 
-        <div class="royal-text-box">
-            <h3 class="text-xl font-bold mb-2 text-white">點亮孩子的科技夢</h3>
-            <p>在這座充滿魔法與邏輯的城堡裡，我們不只教授程式，更點燃孩子心中的火苗。<br>每一個指令、每一次除錯，都是通往未來的堅實階梯。</p>
+       <div class="royal-text-box">
+            <h3 class="text-2xl">致 每一位夢想建築師的家長</h3>
+            <p>
+                在這座「夢幻要塞」裡，我們深知每一位孩子都是獨一無二的創世神。積木不僅是手中的零件，更是通往邏輯思考的門票。透過程式的賦能，我們讓靜態的積木產生動態的生命。<br><br>
+                在這裡，失敗只是程式碼中的一個待修復的 Bug，而每一次的除錯，都是在磨練孩子面對未來的勇氣與智慧。讓我們一起見證，孩子如何從零開始，一磚一瓦搭建出屬於他們的數位時代。
+            </p>
         </div>
     </section>
 
