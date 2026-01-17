@@ -237,6 +237,74 @@
         .royal-text-box::before { content: '❝'; font-size: 3rem; position: absolute; top: -20px; left: 10px; opacity: 0.5; }
         .royal-text-box::after { content: '❞'; font-size: 3rem; position: absolute; bottom: -40px; right: 10px; opacity: 0.5; }
 
+        /* === 6. 守衛與飛鳥增強特效 === */
+        
+        /* 騎士守衛 */
+        .guardian-container {
+            position: fixed;
+            bottom: -20px;
+            width: 280px; /* 根據騎士圖片比例調整 */
+            z-index: 100;
+            pointer-events: auto;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .g-left { left: 20px; animation: guardBreath 4s ease-in-out infinite; }
+        .g-right { right: 20px; animation: guardBreath 4s ease-in-out infinite 0.5s; }
+
+        /* 守衛呼吸與敬禮 */
+        @keyframes guardBreath {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.03) translateY(-10px); }
+        }
+        .g-left:hover { transform: rotate(5deg) scale(1.1); cursor: help; }
+        .g-right:hover { transform: rotate(-5deg) scale(1.1); cursor: help; }
+
+        /* 飛鳥容器 (負責路徑飛行) */
+        .bird-path {
+            position: absolute;
+            width: 120px;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .bird-1 { top: 15%; animation: flyPathRight 20s linear infinite; }
+        .bird-2 { top: 30%; animation: flyPathLeft 25s linear infinite; }
+
+        /* 飛鳥圖片本體 (負責拍翅視覺) */
+        .bird-body {
+            width: 100%;
+            animation: wingFlap 0.4s ease-in-out infinite alternate;
+        }
+
+        /* 飛行路徑動畫 (加入上下波動) */
+        @keyframes flyPathRight {
+            0% { left: -15%; transform: translateY(0); }
+            25% { transform: translateY(-30px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(30px); }
+            100% { left: 115%; transform: translateY(0); }
+        }
+        @keyframes flyPathLeft {
+            0% { right: -15%; transform: translateY(0) scaleX(-1); } /* scaleX 讓鳥頭轉向 */
+            25% { transform: translateY(40px) scaleX(-1); }
+            50% { transform: translateY(0) scaleX(-1); }
+            75% { transform: translateY(-40px) scaleX(-1); }
+            100% { right: 115%; transform: translateY(0) scaleX(-1); }
+        }
+
+        /* 拍翅特效 (利用 skew 與 scale 模擬) */
+        @keyframes wingFlap {
+            from { transform: skewY(0deg) scaleY(1); }
+            to { transform: skewY(10deg) scaleY(0.8); }
+        }
+
+        /* 手機版優化：避免守衛遮擋內容 */
+        @media (max-width: 1024px) {
+            .guardian-container { width: 150px; bottom: -10px; }
+            .g-left { left: -20px; }
+            .g-right { right: -20px; }
+        }
+
         /* === 5. 頁尾打字機 === */
         footer { background: #111; padding: 40px; text-align: center; color: #fff; }
         .typing-container {
@@ -257,6 +325,19 @@
         <div class="cloud c1"></div>
         <div class="cloud c2"></div>
         <div class="cloud c3"></div>
+    </div>
+    <div class="bird-path bird-1">
+        <img src="bird.jpg" class="bird-body" alt="飛鳥">
+    </div>
+    <div class="bird-path bird-2">
+        <img src="bird.jpg" class="bird-body" alt="飛鳥">
+    </div>
+
+    <div class="guardian-container g-left">
+        <img src="guard-left.jpg" class="w-full" alt="左守衛">
+    </div>
+    <div class="guardian-container g-right">
+        <img src="guard-right.jpg" class="w-full" alt="右守衛">
     </div>
 
     <nav class="absolute top-0 left-0 w-full p-6 z-50">
