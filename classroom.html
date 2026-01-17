@@ -227,18 +227,73 @@
         .play-btn::after { content: ''; border-left: 25px solid var(--royal-gold); border-top: 15px solid transparent; border-bottom: 15px solid transparent; margin-left: 8px; }
         .video-active .play-btn { display: none; }
 
-        /* === 5. 羊皮紙文字框 === */
+       /* === 7. 羊皮紙質感文字框 (極致細節版) === */
         .royal-text-box {
-            max-width: 750px; margin: 60px auto; padding: 50px; position: relative;
+            max-width: 700px;
+            margin: 50px auto 0;
+            padding: 40px 50px;
+            position: relative;
+            
+            /* 羊皮紙噴砂背景效果 */
             background-color: #e4d5b7;
-            background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
-            border: 2px solid #b39152; border-radius: 5px;
-            box-shadow: 0 0 0 8px #2c0e0e, 0 15px 35px rgba(0,0,0,0.6);
-            transform: rotate(-0.5deg);
+            background-image: 
+                url("https://www.transparenttextures.com/patterns/paper-fibers.png"), /* 纖維質感 */
+                radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.1) 100%);
+            
+            /* 羊皮紙焦邊與立體感 */
+            border: 2px solid #b39152;
+            box-shadow: 
+                0 0 0 8px #2c0e0e, /* 內層深色邊 */
+                0 15px 35px rgba(0,0,0,0.6), /* 外陰影 */
+                inset 0 0 50px rgba(139, 69, 19, 0.2); /* 內部暈染感 */
+            
+            /* 邊角裝飾 */
+            border-radius: 5px;
+            transform: rotate(-0.5deg); /* 輕微歪斜顯得更真實 */
+            transition: all 0.5s ease;
         }
-        .royal-text-box h3 { color: #4a2c0f; font-weight: 900; border-bottom: 1px solid rgba(74, 44, 15, 0.3); margin-bottom: 20px; display: inline-block; }
-        .royal-text-box p { color: #3e2723; font-weight: 600; line-height: 2; text-align: justify; }
 
+        .royal-text-box:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 
+                0 0 0 8px #3d1e1e,
+                0 20px 45px rgba(0,0,0,0.8),
+                inset 0 0 60px rgba(139, 69, 19, 0.3);
+        }
+
+        /* 噴砂質感的文字呈現 */
+        .royal-text-box h3 {
+            color: #4a2c0f;
+            font-family: 'Noto Serif TC', serif;
+            font-weight: 900;
+            border-bottom: 1px solid rgba(74, 44, 15, 0.3);
+            display: inline-block;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+        }
+
+        .royal-text-box p {
+            color: #3e2723;
+            font-weight: 600;
+            line-height: 2;
+            text-align: justify;
+            text-shadow: 0.5px 0.5px 0px rgba(255,255,255,0.3);
+        }
+
+        /* 詔書捲軸裝飾細節 */
+        .royal-text-box::before, .royal-text-box::after {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 100%;
+            background: linear-gradient(to right, #8b4513 0%, #d4af37 50%, #8b4513 100%);
+            top: 0;
+            border-radius: 5px;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.5);
+            z-index: -1;
+        }
+        .royal-text-box::before { left: -15px; }
+        .royal-text-box::after { right: -15px; }
         /* === 6. 守衛與飛鳥 === */
         .guardian-container { position: fixed; bottom: -20px; width: 220px; z-index: 100; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); animation: guardBreath 4s ease-in-out infinite; }
         .g-left { left: 20px; } .g-right { right: 20px; animation-delay: 0.5s; }
