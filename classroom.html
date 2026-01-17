@@ -417,22 +417,20 @@
 
     align-items: center;
 
-    color: #ffd700;
-
+   /* 文字發光效果 */
+    color: #ffffff;      /* 將文字改為白色或淺金色，發光更明顯 */
+    text-shadow: 
+        0 0 10px #ffd700, 
+        0 0 20px #ffcc00, 
+        0 0 30px #ffaa00;
+    
     font-weight: bold;
-
     font-family: "Microsoft JhengHei", sans-serif;
-
-    writing-mode: vertical-rl; /* 文字直排 */
-
+    writing-mode: vertical-rl;
     text-orientation: upright;
-
-    letter-spacing: 5px;
-
+    letter-spacing: 8px; /* 增加字距 */
     animation: wave 4s ease-in-out infinite alternate;
-
     transform-origin: top center;
-
 }
 
 
