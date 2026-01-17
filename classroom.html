@@ -389,99 +389,39 @@
         .cursor { display: inline-block; width: 3px; height: 20px; background: #f1c40f; animation: blink 0.8s infinite; margin-left: 5px; }
         @keyframes blink { 50% { opacity: 0; } }
 
-/* 皇室掛毯 - 優化版 */
+/* 尋找並覆蓋原本的 .tapestry 樣式 */
 .tapestry {
     position: absolute;
-    top: 0; /* 從頂部開始掛 */
+    /* 這裡原本是 0，現在改為配合影片區塊的高度 */
+    /* 根據截圖(55)，建議設定在 1200px 左右 */
+    top: 1200px; 
     width: 60px;
-    height: 180px;
+    /* 這裡大幅加長地毯 */
+    height: 800px; 
     background: linear-gradient(180deg, #a52a2a 0%, #800000 100%);
     border: 4px solid #ffd700;
-    border-top: none; /* 頂部不需要邊框，模擬掛在桿子上 */
+    border-top: none;
     box-shadow: 0 15px 25px rgba(0,0,0,0.6);
-    z-index: 1;
+    z-index: 10; /* 提高層級，確保在牆面上方 */
     display: flex;
     justify-content: center;
     align-items: center;
     color: #ffd700;
     font-weight: bold;
     font-family: "Microsoft JhengHei", sans-serif;
-    writing-mode: vertical-rl; /* 文字直排 */
+    writing-mode: vertical-rl;
     text-orientation: upright;
     letter-spacing: 5px;
     animation: wave 4s ease-in-out infinite alternate;
     transform-origin: top center;
 }
 
-/* 增加掛毯頂部的裝飾桿效果 */
-.tapestry::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    width: 80px;
-    height: 10px;
-    background: #ffd700;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+/* 確保左右位置正確 */
+.tapestry.left { 
+    left: 12%; 
 }
-
-.tapestry.left { left: 10%; }
-.tapestry.right { right: 10%; }
-
-@keyframes wave {
-    0% { transform: rotate(-2deg); }
-    100% { transform: rotate(2deg); }
-}
-
-/* 金色粒子裝飾 */
-.particle {
-    position: absolute;
-    background: rgba(255, 215, 0, 0.3);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: floatUp 10s linear infinite;
-    z-index: 2;
-}
-
-@keyframes floatUp {
-    0% { transform: translateY(0) translateX(0); opacity: 0; }
-    50% { opacity: 0.6; }
-    100% { transform: translateY(-500px) translateX(50px); opacity: 0; }
-}
-        /* 左側掛軸 (SPARK) - 移動至影片區塊兩側 */
-.left-banner {
-    position: absolute;
-    top: 1100px;          /* 根據你的截圖位置，大幅增加數值移至影片區 */
-    left: 15%;            /* 調整與影片框的水平距離 */
-    width: 50px;          /* 寬度稍微修細以符合比例 */
-    height: 750px;        /* 加長長度，使其更有地毯垂墜感 */
-    background: linear-gradient(to bottom, #d4af37, #b22222);
-    border: 3px solid #ffd700;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    writing-mode: vertical-rl;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
-    border-radius: 0 0 10px 10px; /* 底部稍微圓角化 */
-}
-
-/* 右側掛軸 (積動城市) - 移動至影片區塊兩側 */
-.right-banner {
-    position: absolute;
-    top: 1100px;          /* 與左側對齊 */
-    right: 15%;           /* 對稱調整 */
-    width: 50px;
-    height: 750px;        /* 加長長度 */
-    background: linear-gradient(to bottom, #d4af37, #b22222);
-    border: 3px solid #ffd700;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    writing-mode: vertical-rl;
-    box-shadow: -5px 5px 15px rgba(0,0,0,0.5);
-    border-radius: 0 0 10px 10px;
+.tapestry.right { 
+    right: 12%; 
 }
     </style>
 </head>
