@@ -504,6 +504,34 @@
     100% { transform: translateY(-500px) translateX(50px); opacity: 0; }
 
 }
+        /* 1. 優化電影區背景：增加漸層光影與積木紋理 */
+.movie-section {
+    position: relative;
+    /* 背景組合：1. 螢幕放射光暈 2. 積木圓點紋理 3. 深棕底色 */
+    background: 
+        radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 70%), /* 中心發光 */
+        radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), /* 積木凸點 */
+        #2a0a0a; /* 你的深棕色底色 */
+    
+    background-size: 100% 100%, 30px 30px, 100% 100%; /* 設定圓點間距為 30px */
+    padding: 100px 0;
+    overflow: hidden;
+}
+
+/* 2. 增加螢幕後方的「光牆」效果 (偽元素) */
+.movie-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 60%;
+    background: rgba(255, 215, 0, 0.05);
+    filter: blur(80px); /* 強力模糊，營造電影院螢幕反光感 */
+    pointer-events: none;
+    z-index: 0;
+}
 
     
     </style>
