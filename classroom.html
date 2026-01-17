@@ -64,15 +64,13 @@
         @keyframes floatCloud { 0% { transform: translateX(0); } 100% { transform: translateX(120vw); } }
 
         /* === 3. 積木城堡結構 (The Dream Fortress) === */
-       /* 升級後的城堡容器：改為橫向排列以容納塔樓 */
+       /* 確保主堡與塔樓水平對齊的關鍵 */
         .castle-container {
             display: flex; 
-            align-items: flex-end; /* 讓主堡與塔樓底部對齊 */
+            align-items: flex-end; 
             justify-content: center;
-            padding-top: 100px; 
-            padding-bottom: 50px; 
-            perspective: 1500px; /* 增加透視深度，讓立體感更強 */
-            gap: 0px; /* 塔樓與主堡的間距 */
+            gap: 20px; /* 增加一點間距讓層次分明 */
+            perspective: 1500px;
         }
 
         /* 城堡中央主體區域 */
@@ -131,18 +129,21 @@
 
         /* 樓層懸停特效：浮出 + 介紹框顯示 */
 /* 強化的立體懸停特效 */
+     /* === 強化後的唯一懸停特效 (請保留這一段，刪除其他重複的) === */
         .castle-floor:hover {
             /* 強力向螢幕前方噴射 (translateZ) 並大幅放大 */
             transform: translateZ(150px) scale(1.15) translateY(-10px); 
-            z-index: 100; /* 確保懸停層絕對在最前方 */
+            z-index: 150 !important; /* 提升層級，確保絕對破框不被擋住 */
             filter: brightness(1.1);
-            box-shadow: 0 40px 70px rgba(0,0,0,0.6); /* 增加投影讓它像浮起來 */
+            box-shadow: 0 40px 70px rgba(0,0,0,0.6); /* 增加重陰影，營造懸浮感 */
         }
 
-        /* 側邊資訊框同步增加 3D 位移 */
+        /* 側邊資訊框同步彈射 */
         .castle-floor:hover .floor-info { 
             opacity: 1; 
-            transform: translateY(-50%) translateX(100px) translateZ(50px); /* 文字彈射得更遠更立體 */
+            /* 同步增加 translateZ，讓文字也具有 3D 深度 */
+            transform: translateY(-50%) translateX(100px) translateZ(50px); 
+        }
         }
         /* 樓層內容裝飾 */
         .floor-content {
@@ -544,7 +545,7 @@
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
             </iframe>
         </div>
-        <section class="castle-container">
+       <section class="castle-container">
         
         <div class="side-tower">
             <div class="flag-pole" style="height: 40px; transform: scale(0.7); top: -20px;">
@@ -561,20 +562,66 @@
 
             <div class="castle-floor floor-3f">
                 <div class="studs-row"><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div></div>
-                <div class="floor-content"><img src="3F教室.jpg" class="floor-bg-img"></div>
-                <div class="floor-info"><h4>3F 競賽實踐室</h4><p>培育未來領袖的搖籃。</p></div>
+                <div class="floor-content">
+                    <img src="3A教室.jpg" alt="3F 教室" class="floor-bg-img">
+                </div>
+                <div class="floor-info">
+                    <h4>3F 競賽實踐室</h4>
+                    <p>培育未來領袖的搖籃，在高階的學習場域，迎接每一次技術挑戰。</p>
+                </div>
             </div>
 
+            <div class="castle-floor floor-2f">
+                <div class="studs-row"><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div></div>
+                <div class="floor-content">
+                    <img src="2A教室.jpg" alt="2F 教室" class="floor-bg-img">
+                </div>
+                <div class="floor-info">
+                    <h4>2F 專業教室</h4>
+                    <p>專注於邏輯的深度對話，舒適明亮的空間，讓思考不再受限。</p>
+                </div>
             </div>
 
-        <div class="side-tower">
+            <div class="castle-floor floor-1f">
+                <div class="studs-row"><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div></div>
+                <div class="floor-content grid grid-cols-3 gap-1 p-1">
+                    <div class="relative w-full h-full overflow-hidden group">
+                        <img src="1F積木區.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute bottom-0 left-0 bg-black/60 text-white text-xs p-1 w-full text-center">創意工坊</div>
+                    </div>
+                    <div class="relative w-full h-full overflow-hidden group">
+                        <img src="書櫃.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute bottom-0 left-0 bg-black/60 text-white text-xs p-1 w-full text-center">知識寶庫</div>
+                    </div>
+                    <div class="relative w-full h-full overflow-hidden group">
+                        <img src="1F遊戲區.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute bottom-0 left-0 bg-black/60 text-white text-xs p-1 w-full text-center">遊戲區</div>
+                    </div>
+                </div>
+                <div class="floor-info">
+                    <h4>1F 探索基地</h4>
+                    <p>激發無限想像的起點，動手實踐的奇蹟空間。</p>
+                </div>
+            </div>
+
+            <div class="castle-floor floor-gf">
+                <div class="studs-row"><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div></div>
+                <div class="floor-content">
+                    <img src="積動城市門面.jpg" alt="店面" class="floor-bg-img">
+                </div>
+                <div class="floor-info">
+                    <h4>積動城市總部</h4>
+                    <p>通往未來程式世界的入口，夢想從這裡啟航。</p>
+                </div>
+            </div>
+
+        </div> <div class="side-tower">
             <div class="flag-pole" style="height: 40px; transform: scale(0.7); top: -20px;">
                 <div class="flag" style="background: #3498db;">CREATE</div>
             </div>
         </div>
 
     </section>
-
        <div class="royal-text-box">
             <h3 class="text-2xl">致 每一位夢想建築師的家長</h3>
             <p>
