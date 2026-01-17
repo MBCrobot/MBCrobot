@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>積動城市‧夢幻要塞 - 教室環境導覽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === 1. 全局設定與變數 === */
+        :root {
+            --brick-red: #e74c3c;
+            --brick-yellow: #f1c40f;
+            --brick-blue: #3498db;
+            --brick-green: #2ecc71;
+            --royal-gold: #d4af37;
+            --royal-dark: #2c0e0e;
+        }
+
+        body {
+            font-family: 'Noto Serif TC', serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-color: #87CEEB; /* 天空藍底色 */
+        }
+
+        /* === 2. 動態背景：希望之光 === */
+        .sky-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            overflow: hidden;
+        }
+        
+        /* 旋轉的太陽光芒 */
+        .sun-burst {
+            position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+            width: 150vw; height: 150vw;
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(255, 255, 255, 0.1) 0deg 10deg,
+                transparent 10deg 20deg
+            );
+            animation: rotateSun 60s linear infinite;
+            pointer-events: none;
+        }
+        .sun-core {
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 200px; background: radial-gradient(circle, #fff 20%, rgba(255,255,200,0.8) 60%, transparent 80%);
+            filter: blur(20px); animation: pulseSun 4s ease-in-out infinite;
+        }
+
+        /* 飄浮積木雲朵 */
+        .cloud {
+            position: absolute; background: rgba(255,255,255,0.8); border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); animation: floatCloud linear infinite;
+        }
+        .c1 { top: 10%; left: -20%; width: 120px; height: 40px; animation-duration: 35s; }
+        .c2 { top: 25%; left: -10%; width: 180px; height: 60px; animation-duration: 45s; animation-delay: 5s; }
+        .c3 { top: 15%; left: -15%; width: 100px; height: 35px; animation-duration: 28s; animation-delay: 15s; }
+
+        @keyframes rotateSun { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
+        @keyframes pulseSun { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; } 50% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+        @keyframes floatCloud { 0% { transform: translateX(0); } 100% { transform: translateX(120vw); } }
+
+        /* === 3. 積木城堡結構 (The Dream Fortress) === */
+        .castle-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-top: 100px; padding-bottom: 50px; perspective: 1000px;
+        }
+
+        .castle-title {
+            font-family: 'Fredoka One', cursive; color: #fff; text-shadow: 4px 4px 0px #333;
+            font-size: 3.5rem; margin-bottom: 40px; text-align: center; letter-spacing: 2px;
+            animation: floatTitle 3s ease-in-out infinite;
+        }
+
+        /* 每一層樓的共通樣式 */
+        .castle-floor {
+            position: relative; width: 600px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; transform-style: preserve-3d;
+            margin-bottom: -5px; /* 消除縫隙 */
+        }
+        
+        /* 積木凸起顆粒 (Studs) */
+        .studs-row {
+            position: absolute; top: -15px; left: 0; width: 100%; height: 15px;
+            display: flex; justify-content: space-evenly; z-index: -1;
+        }
+        .stud {
+            width: 30px; height: 15px; background: inherit; filter: brightness(1.1);
+            border-radius: 5px 5px 0 0; box-shadow: inset 0 2px 5px rgba(255,255,255,0.4);
+        }
+
+        /* 樓層懸停特效：浮出 + 介紹框顯示 */
+        .castle-floor:hover {
+            transform: translateZ(30px) scale(1.05); z-index: 50;
+        }
+        .castle-floor:hover .floor-info { opacity: 1; transform: translateY(-50%) translateX(20px); }
+
+        /* 樓層內容裝飾 */
+        .floor-content {
+            height: 200px; border: 4px solid rgba(0,0,0,0.1); border-radius: 8px;
+            overflow: hidden; position: relative;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2), inset 0 0 20px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .floor-bg-img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
+        }
+        .castle-floor:hover .floor-bg-img { transform: scale(1.1); }
+
+        /* 側邊浮出的介紹框 (3D Pop-up) */
+        .floor-info {
+            position: absolute; top: 50%; right: -280px; width: 260px;
+            background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 10px;
+            border-left: 5px solid var(--brick-yellow);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            opacity: 0; transform: translateY(-50%) translateX(0); transition: all 0.3s ease;
+            pointer-events: none; /* 避免擋住滑鼠 */
+        }
+        .floor-info h4 { margin: 0 0 5px 0; color: #333; font-weight: 900; }
+        .floor-info p { margin: 0; color: #666; font-size: 0.9rem; line-height: 1.5; }
+
+        /* === 個別樓層設定 === */
+        /* 3F - 頂層 (藍色系) */
+        .floor-3f { width: 400px; z-index: 4; }
+        .floor-3f .floor-content { background: var(--brick-blue); height: 150px; }
+        .floor-3f .stud { background: var(--brick-blue); }
+        
+        /* 2F - 中層 (黃色系) */
+        .floor-2f { width: 500px; z-index: 3; }
+        .floor-2f .floor-content { background: var(--brick-yellow); height: 160px; }
+        .floor-2f .stud { background: var(--brick-yellow); }
+
+        /* 1F - 底層 (綠色系) */
+        .floor-1f { width: 600px; z-index: 2; }
+        .floor-1f .floor-content { background: var(--brick-green); height: 180px; }
+        .floor-1f .stud { background: var(--brick-green); }
+
+        /* GF - 店面基座 (紅色系) */
+        .floor-gf { width: 640px; z-index: 1; }
+        .floor-gf .floor-content { background: var(--brick-red); height: 140px; border-radius: 0 0 10px 10px; }
+        .floor-gf .stud { background: var(--brick-red); }
+
+        /* 城堡頂端旗幟 */
+        .flag-pole {
+            width: 8px; height: 80px; background: #555; margin: 0 auto; position: relative; z-index: 0; top: 10px;
+        }
+        .flag {
+            position: absolute; top: 5px; left: 8px; width: 80px; height: 50px;
+            background: #e74c3c; transform-origin: left center;
+            animation: waveFlag 2s ease-in-out infinite alternate;
+            display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 12px;
+        }
+        @keyframes waveFlag { 
+            0% { transform: skewY(0deg) rotate(0deg); border-radius: 0; }
+            50% { transform: skewY(-5deg) rotate(2deg); border-radius: 0 10px 0 10px; }
+            100% { transform: skewY(5deg) rotate(-2deg); border-radius: 10px 0 10px 0; }
+        }
+        @keyframes floatTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* === 4. 皇宮密室影片區 (The Royal Chamber) === */
+        .palace-section {
+            background: radial-gradient(circle at center, #3e1e1e 0%, #1a0a0a 100%);
+            padding: 80px 20px; text-align: center; position: relative; overflow: hidden;
+            border-top: 10px solid var(--royal-gold);
+            box-shadow: inset 0 10px 50px rgba(0,0,0,0.8);
+        }
+
+        /* 漂浮塵埃 */
+        .dust-particle {
+            position: absolute; background: rgba(255, 215, 0, 0.4); border-radius: 50%;
+            pointer-events: none; animation: floatDust linear infinite;
+        }
+        @keyframes floatDust { 0% { transform: translateY(0) translateX(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-100px) translateX(20px); opacity: 0; } }
+
+        /* 影片外框：皇宮風格 */
+        .royal-frame {
+            width: 800px; max-width: 90%; margin: 0 auto;
+            border: 20px solid transparent;
+            border-image: linear-gradient(to bottom, #d4af37, #8a6e2f) 1;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), 0 20px 60px rgba(0,0,0,0.9);
+            position: relative; aspect-ratio: 16/9; background: #000;
+        }
+        /* 裝飾蠟燭 */
+        .candle-holder {
+            position: absolute; bottom: -10px; width: 30px; height: 60px; background: #8a6e2f; z-index: 20;
+            border-radius: 5px; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        .ch-left { left: -40px; } .ch-right { right: -40px; }
+        .candle {
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            width: 15px; height: 40px; background: #fff; border-radius: 3px;
+        }
+        .flame {
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            width: 10px; height: 15px; background: radial-gradient(circle, #fff 0%, #ffaa00 50%, #ff4500 100%);
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 0.1s infinite alternate; box-shadow: 0 0 10px #ffaa00;
+        }
+        @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.9; } 100% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; } }
+
+        /* 布幕系統 */
+        .curtain-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; display: flex; pointer-events: none;
+        }
+        .curtain-part {
+            width: 50%; height: 100%; background: #660000;
+            position: relative; transition: width 2s ease-in-out;
+            background-image: repeating-linear-gradient(90deg, #660000 0, #550000 20px, #770000 40px);
+            box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
+        }
+        .video-active .curtain-part { width: 0%; } /* 拉開動畫 */
+
+        /* 播放按鈕 */
+        .play-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80px; height: 80px; background: rgba(255,255,255,0.2);
+            border: 3px solid var(--royal-gold); border-radius: 50%; cursor: pointer;
+            z-index: 20; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; backdrop-filter: blur(5px);
+        }
+        .play-btn::after { content: ''; border-left: 25px solid var(--royal-gold); border-top: 15px solid transparent; border-bottom: 15px solid transparent; margin-left: 8px; }
+        .play-btn:hover { background: rgba(212, 175, 55, 0.4); transform: translate(-50%, -50%) scale(1.1); }
+        .video-active .play-btn { display: none; }
+
+        /* 影片下方文字框 */
+        .royal-text-box {
+            max-width: 600px; margin: 40px auto 0;
+            background: rgba(0, 0, 0, 0.6); border: 1px solid var(--royal-gold);
+            padding: 20px; color: var(--royal-gold);
+            font-family: 'Noto Serif TC', serif; letter-spacing: 1px; line-height: 1.8;
+            position: relative;
+        }
+        .royal-text-box::before { content: '❝'; font-size: 3rem; position: absolute; top: -20px; left: 10px; opacity: 0.5; }
+        .royal-text-box::after { content: '❞'; font-size: 3rem; position: absolute; bottom: -40px; right: 10px; opacity: 0.5; }
+
+        /* === 5. 頁尾打字機 === */
+        footer { background: #111; padding: 40px; text-align: center; color: #fff; }
+        .typing-container {
+            display: inline-flex; align-items: center; font-size: 1.2rem; font-weight: bold; color: #f1c40f;
+            min-height: 30px;
+        }
+        .typing-logo { width: 30px; height: 30px; margin-right: 10px; vertical-align: middle; }
+        .cursor { display: inline-block; width: 3px; height: 20px; background: #f1c40f; animation: blink 0.8s infinite; margin-left: 5px; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="sky-container">
+        <div class="sun-burst"></div>
+        <div class="sun-core"></div>
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+    </div>
+
+    <nav class="absolute top-0 left-0 w-full p-6 z-50">
+        <a href="index.html" class="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full font-bold shadow-lg transition-all flex w-fit items-center gap-2">
+            <span>🏰</span> 返回大廳
+        </a>
+    </nav>
+
+    <section class="castle-container">
+        <h1 class="castle-title">積動城市 ‧ 夢幻要塞</h1>
+
+        <div class="flag-pole">
+            <div class="flag">SPARK</div>
+        </div>
+
+        <div class="castle-floor floor-3f">
+            <div class="studs-row">
+                <div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div>
+            </div>
+            <div class="floor-content">
+                <img src="3A教室.jpg" alt="3F 教室" class="floor-bg-img">
+            </div>
+            <div class="floor-info">
+                <h4>3F 競賽實踐室</h4>
+                <p>培育未來領袖的搖籃，在高階的學習場域，迎接每一次技術挑戰。</p>
+            </div>
+        </div>
+
+        <div class="castle-floor floor-2f">
+            <div class="studs-row">
+                <div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div>
+            </div>
+            <div class="floor-content">
+                <img src="2A教室.jpg" alt="2F 教室" class="floor-bg-img">
+            </div>
+            <div class="floor-info">
+                <h4>2F 專業教室</h4>
+                <p>專注於邏輯的深度對話，舒適明亮的空間，讓思考不再受限。</p>
+            </div>
+        </div>
+
+        <div class="castle-floor floor-1f">
+            <div class="studs-row">
+                <div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div>
+            </div>
+            <div class="floor-content grid grid-cols-3 gap-1 p-1">
+                <div class="relative w-full h-full overflow-hidden group">
+                    <img src="1F積木區.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute bottom-0 left-0 bg-black/60 text-white text-xs p-1 w-full text-center">創意工坊</div>
+                </div>
+                <div class="relative w-full h-full overflow-hidden group">
+                    <img src="書櫃.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute bottom-0 left-0 bg-black/60 text-white text-xs p-1 w-full text-center">知識寶庫</div>
+                </div>
+                <div class="relative w-full h-full overflow-hidden group">
+                    <img src="1F遊戲區.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute bottom-0 left-0 bg-black/60 text-white text-xs p-1 w-full text-center">遊戲區</div>
+                </div>
+            </div>
+            <div class="floor-info">
+                <h4>1F 探索基地</h4>
+                <p>激發無限想像的起點，動手實踐的奇蹟空間。</p>
+            </div>
+        </div>
+
+        <div class="castle-floor floor-gf">
+            <div class="studs-row">
+                <div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div>
+            </div>
+            <div class="floor-content">
+                <img src="積動城市門面.jpg" alt="店面" class="floor-bg-img">
+            </div>
+            <div class="floor-info">
+                <h4>積動城市總部</h4>
+                <p>通往未來程式世界的入口，夢想從這裡啟航。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="palace-section">
+        <div id="dust-container"></div>
+
+        <div class="royal-frame" id="videoFrame">
+            <div class="candle-holder ch-left">
+                <div class="candle"><div class="flame"></div></div>
+            </div>
+            <div class="candle-holder ch-right">
+                <div class="candle"><div class="flame"></div></div>
+            </div>
+
+            <div class="curtain-overlay" id="curtainOverlay">
+                <div class="curtain-part"></div>
+                <div class="curtain-part"></div>
+            </div>
+
+            <div class="play-btn" id="playBtn" onclick="playVideo()"></div>
+
+            <iframe id="promoVideo" class="w-full h-full object-cover" 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" 
+                title="積動城市介紹" frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="royal-text-box">
+            <h3 class="text-xl font-bold mb-2 text-white">點亮孩子的科技夢</h3>
+            <p>在這座充滿魔法與邏輯的城堡裡，我們不只教授程式，更點燃孩子心中的火苗。<br>每一個指令、每一次除錯，都是通往未來的堅實階梯。</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="typing-container">
+            <img src="積動城市圖1.png" alt="Logo" class="typing-logo">
+            <span id="typing-text"></span><span class="cursor"></span>
+        </div>
+    </footer>
+
+    <script>
+        // === 1. 皇宮影片互動邏輯 ===
+        function playVideo() {
+            const frame = document.getElementById('videoFrame');
+            const iframe = document.getElementById('promoVideo');
+            
+            // 加入 class 觸發 CSS 布幕動畫
+            frame.classList.add('video-active');
+
+            // 觸發 YouTube 播放 (透過 URL添加 autoplay)
+            // 注意：為了示範，這裡使用 src 重整法。若要更精準控制建議用 YouTube API，但這最簡單。
+            const src = iframe.src;
+            if(!src.includes("autoplay=1")) {
+                iframe.src = src + "&autoplay=1";
+            }
+        }
+
+        // === 2. 產生漂浮塵埃 ===
+        const dustContainer = document.getElementById('dust-container');
+        for(let i=0; i<20; i++) {
+            let dust = document.createElement('div');
+            dust.className = 'dust-particle';
+            dust.style.left = Math.random() * 100 + '%';
+            dust.style.top = Math.random() * 100 + '%';
+            dust.style.width = Math.random() * 4 + 2 + 'px';
+            dust.style.height = dust.style.width;
+            dust.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            dust.style.animationDelay = Math.random() * 5 + 's';
+            dustContainer.appendChild(dust);
+        }
+
+        // === 3. 頁尾打字機邏輯 (精準計時) ===
+        const textToType = "積動城市 MBC ROBOT © 2026";
+        const typingElement = document.getElementById('typing-text');
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeWriter() {
+            if (!isDeleting && charIndex < textToType.length) {
+                // 打字階段
+                typingElement.innerHTML += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 150); // 打字速度
+            } else if (!isDeleting && charIndex === textToType.length) {
+                // 停留階段 (10秒)
+                setTimeout(() => {
+                    isDeleting = true;
+                    typeWriter();
+                }, 10000);
+            } else if (isDeleting && charIndex > 0) {
+                // 消失階段 (雖然你說0.5秒消失，但逐字刪除視覺較好，我設快一點)
+                // 若要瞬間消失： typingElement.innerHTML = ""; charIndex = 0; 
+                // 這裡採用: 瞬間清空模擬消失
+                typingElement.innerHTML = "";
+                charIndex = 0;
+                isDeleting = false;
+                // 消失後停 0.5 秒再開始
+                setTimeout(typeWriter, 500); 
+            }
+        }
+
+        // 啟動打字機
+        document.addEventListener('DOMContentLoaded', typeWriter);
+    </script>
+</body>
+</html>
