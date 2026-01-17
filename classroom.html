@@ -64,9 +64,46 @@
         @keyframes floatCloud { 0% { transform: translateX(0); } 100% { transform: translateX(120vw); } }
 
         /* === 3. 積木城堡結構 (The Dream Fortress) === */
+       /* 升級後的城堡容器：改為橫向排列以容納塔樓 */
         .castle-container {
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-            padding-top: 100px; padding-bottom: 50px; perspective: 1000px;
+            display: flex; 
+            align-items: flex-end; /* 讓主堡與塔樓底部對齊 */
+            justify-content: center;
+            padding-top: 100px; 
+            padding-bottom: 50px; 
+            perspective: 1500px; /* 增加透視深度，讓立體感更強 */
+            gap: 0px; /* 塔樓與主堡的間距 */
+        }
+
+        /* 城堡中央主體區域 */
+        .main-keep {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* 實心塔樓樣式 */
+        .side-tower {
+            width: 100px;
+            height: 450px; /* 塔樓高度 */
+            background: linear-gradient(145deg, #444, #222);
+            border: 4px solid #b39152;
+            position: relative;
+            z-index: 5;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        /* 塔樓頂部的鋸齒積木細節 */
+        .side-tower::before {
+            content: "";
+            position: absolute; top: -15px;
+            width: 100%; height: 15px;
+            background-image: repeating-linear-gradient(90deg, #b39152 0, #b39152 20px, transparent 20px, transparent 40px);
         }
 
         .castle-title {
@@ -93,11 +130,20 @@
         }
 
         /* 樓層懸停特效：浮出 + 介紹框顯示 */
+/* 強化的立體懸停特效 */
         .castle-floor:hover {
-            transform: translateZ(30px) scale(1.05); z-index: 50;
+            /* 強力向螢幕前方噴射 (translateZ) 並大幅放大 */
+            transform: translateZ(150px) scale(1.15) translateY(-10px); 
+            z-index: 100; /* 確保懸停層絕對在最前方 */
+            filter: brightness(1.1);
+            box-shadow: 0 40px 70px rgba(0,0,0,0.6); /* 增加投影讓它像浮起來 */
         }
-        .castle-floor:hover .floor-info { opacity: 1; transform: translateY(-50%) translateX(20px); }
 
+        /* 側邊資訊框同步增加 3D 位移 */
+        .castle-floor:hover .floor-info { 
+            opacity: 1; 
+            transform: translateY(-50%) translateX(100px) translateZ(50px); /* 文字彈射得更遠更立體 */
+        }
         /* 樓層內容裝飾 */
         .floor-content {
             height: 200px; border: 4px solid rgba(0,0,0,0.1); border-radius: 8px;
@@ -498,6 +544,36 @@
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
             </iframe>
         </div>
+        <section class="castle-container">
+        
+        <div class="side-tower">
+            <div class="flag-pole" style="height: 40px; transform: scale(0.7); top: -20px;">
+                <div class="flag" style="background: #3498db;">DEFEND</div>
+            </div>
+        </div>
+
+        <div class="main-keep">
+            <h1 class="castle-title">積動城市 ‧ 夢幻要塞</h1>
+
+            <div class="flag-pole">
+                <div class="flag">SPARK</div>
+            </div>
+
+            <div class="castle-floor floor-3f">
+                <div class="studs-row"><div class="stud"></div><div class="stud"></div><div class="stud"></div><div class="stud"></div></div>
+                <div class="floor-content"><img src="3F教室.jpg" class="floor-bg-img"></div>
+                <div class="floor-info"><h4>3F 競賽實踐室</h4><p>培育未來領袖的搖籃。</p></div>
+            </div>
+
+            </div>
+
+        <div class="side-tower">
+            <div class="flag-pole" style="height: 40px; transform: scale(0.7); top: -20px;">
+                <div class="flag" style="background: #3498db;">CREATE</div>
+            </div>
+        </div>
+
+    </section>
 
        <div class="royal-text-box">
             <h3 class="text-2xl">致 每一位夢想建築師的家長</h3>
