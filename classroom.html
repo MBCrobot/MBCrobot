@@ -389,6 +389,65 @@
         .cursor { display: inline-block; width: 3px; height: 20px; background: #f1c40f; animation: blink 0.8s infinite; margin-left: 5px; }
         @keyframes blink { 50% { opacity: 0; } }
 
+/* 皇室掛毯 - 優化版 */
+.tapestry {
+    position: absolute;
+    top: 0; /* 從頂部開始掛 */
+    width: 60px;
+    height: 180px;
+    background: linear-gradient(180deg, #a52a2a 0%, #800000 100%);
+    border: 4px solid #ffd700;
+    border-top: none; /* 頂部不需要邊框，模擬掛在桿子上 */
+    box-shadow: 0 15px 25px rgba(0,0,0,0.6);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffd700;
+    font-weight: bold;
+    font-family: "Microsoft JhengHei", sans-serif;
+    writing-mode: vertical-rl; /* 文字直排 */
+    text-orientation: upright;
+    letter-spacing: 5px;
+    animation: wave 4s ease-in-out infinite alternate;
+    transform-origin: top center;
+}
+
+/* 增加掛毯頂部的裝飾桿效果 */
+.tapestry::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    width: 80px;
+    height: 10px;
+    background: #ffd700;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.tapestry.left { left: 10%; }
+.tapestry.right { right: 10%; }
+
+@keyframes wave {
+    0% { transform: rotate(-2deg); }
+    100% { transform: rotate(2deg); }
+}
+
+/* 金色粒子裝飾 */
+.particle {
+    position: absolute;
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatUp 10s linear infinite;
+    z-index: 2;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    50% { opacity: 0.6; }
+    100% { transform: translateY(-500px) translateX(50px); opacity: 0; }
+}
     </style>
 </head>
 <body>
@@ -412,6 +471,9 @@
     </nav>
 
     <section class="castle-container">
+
+        <div class="tapestry left">SPARK</div>
+    <div class="tapestry right">積動城市</div>
         
         <div class="side-tower">
             <div class="flag-pole" style="height: 40px; transform: scale(0.7); top: -20px;">
@@ -589,6 +651,29 @@
         // (原本的 typeWriter 監聽器在下面)
         // document.addEventListener('DOMContentLoaded', typeWriter);
         document.addEventListener('DOMContentLoaded', typeWriter);
+
+        function createParticles() {
+    const container = document.querySelector('.castle-container'); // 確保這是你皇宮區域的 class
+    if (!container) return;
+
+    for (let i = 0; i < 20; i++) {
+        let particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // 隨機尺寸與位置
+        let size = Math.random() * 5 + 2 + 'px';
+        particle.style.width = size;
+        particle.style.height = size;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        
+        // 隨機動畫延遲
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        
+        container.appendChild(particle);
+    }
+}
+document.addEventListener('DOMContentLoaded', createParticles);
     </script>
 </body>
 </html>
