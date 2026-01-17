@@ -254,15 +254,15 @@
         @keyframes floatTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         /* === 4. 皇宮影片區 === */
-        /* === 修正後的皇宮影片區背景 === */
+/* === 皇宮影片區背景：整合積木紋理與放射光暈 === */
 .palace-section {
-    /* 這裡加入了三層背景：1.中心金色光暈 2.積木圓點紋理 3.原本的深棕色漸層 */
+    /* 這裡組合了：1.中心金色光暈 2.積木圓點紋理 3.深棕色底層漸層 */
     background: 
         radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%),
         radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
         radial-gradient(circle at center, #3e1e1e 0%, #1a0a0a 100%);
     
-    background-size: 100% 100%, 30px 30px, 100% 100%; /* 積木點點間距 30px */
+    background-size: 100% 100%, 30px 30px, 100% 100%;
     padding: 80px 20px; 
     text-align: center; 
     position: relative; 
@@ -270,33 +270,50 @@
     border-top: 10px solid var(--royal-gold);
 }
 
-/* 增加螢幕後方的「電影院反光」霧面效果 */
+/* 強化電影院銀幕後的氛圍反光 */
 .palace-section::before {
     content: '';
     position: absolute;
-    top: 40%;
+    top: 50%; /* 修正為 50% 讓光從正中間發出 */
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60%;
-    height: 40%;
-    background: rgba(212, 175, 55, 0.08);
-    filter: blur(80px); /* 模糊光暈 */
+    width: 80%; /* 稍微加寬讓光暈更散開 */
+    height: 50%;
+    background: rgba(212, 175, 55, 0.12); /* 稍微增加亮度 */
+    filter: blur(80px); 
     pointer-events: none;
-    z-index: 0;
+    z-index: 0; /* 確保在背景上方，但在影片框 royal-frame 下方 */
 }
-        .dust-particle {
-            position: absolute; background: rgba(255, 215, 0, 0.4); border-radius: 50%;
-            pointer-events: none; animation: floatDust linear infinite;
-        }
-        @keyframes floatDust { 0% { transform: translateY(0) translateX(0); opacity: 0; } 100% { transform: translateY(-100px) translateX(20px); opacity: 0; } }
 
-        .royal-frame {
-            width: 800px; max-width: 95%; margin: 0 auto;
-            border: 20px solid transparent;
-            border-image: linear-gradient(to bottom, #d4af37, #8a6e2f) 1;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), 0 20px 60px rgba(0,0,0,0.9);
-            position: relative; aspect-ratio: 16/9; background: #000;
-        }
+/* 灰塵粒子動畫 */
+.dust-particle {
+    position: absolute; 
+    background: rgba(255, 215, 0, 0.4); 
+    border-radius: 50%;
+    pointer-events: none; 
+    animation: floatDust linear infinite;
+    z-index: 1; /* 讓粒子在背景與光暈之間飄動 */
+}
+
+@keyframes floatDust { 
+    0% { transform: translateY(0) translateX(0); opacity: 0; } 
+    50% { opacity: 0.5; }
+    100% { transform: translateY(-100px) translateX(20px); opacity: 0; } 
+}
+
+/* 皇室影片外框 */
+.royal-frame {
+    width: 800px; 
+    max-width: 95%; 
+    margin: 0 auto;
+    border: 20px solid transparent;
+    border-image: linear-gradient(to bottom, #d4af37, #8a6e2f) 1;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), 0 20px 60px rgba(0,0,0,0.9);
+    position: relative; 
+    aspect-ratio: 16/9; 
+    background: #000;
+    z-index: 5; /* 確保影片框高於所有裝飾元素 */
+}
 
         /* 蠟燭 */
         .candle-holder { position: absolute; bottom: -10px; width: 30px; height: 60px; background: #8a6e2f; z-index: 20; border-radius: 5px; }
