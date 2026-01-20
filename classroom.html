@@ -546,69 +546,88 @@
 
 } 
 
-    /* === 皇宮火把樣式 === */
-.torch-container {
+/* 牆掛式火把容器 */
+.wall-torch {
     position: absolute;
-    top: 40%; /* 調整高度，使其位於影片框兩側 */
-    width: 40px;
-    height: 120px;
-    z-index: 6; /* 確保在背景之上，略高於影片框 */
+    top: 50%; /* 垂直位置 */
+    transform: translateY(-50%);
+    z-index: 15; /* 確保在地毯之上，但不遮擋內容 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.t-left { left: 8%; }  /* 左側火把位置 */
-.t-right { right: 8%; } /* 右側火把位置 */
+/* 具體位置調整：在地毯內部兩側 */
+.torch-left { left: 40px; }
+.torch-right { right: 40px; }
 
-/* 火把支架 - 樂高/金屬質感 */
-.torch-base {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 80%;
-    background: linear-gradient(to right, #444, #666, #333);
-    border: 2px solid #b39152;
-    border-radius: 5px 5px 2px 2px;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+/* 火把金屬支架（掛牆座） */
+.torch-mount {
+    width: 12px;
+    height: 40px;
+    background: linear-gradient(to right, #2c2c2c, #4a4a4a, #2c2c2c);
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 }
 
-/* 火焰本體 */
-.torch-flame {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
+/* 支撐斜臂 */
+.torch-arm {
     width: 25px;
-    height: 45px;
-    background: radial-gradient(circle at bottom, #fff 0%, #ffcc00 40%, #ff4500 80%, transparent 100%);
-    border-radius: 50% 50% 20% 20%;
-    filter: blur(1px);
-    animation: torchFlicker 0.15s infinite alternate;
+    height: 8px;
+    background: #333;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform-origin: left center;
+    transform: rotate(-30deg); /* 營造斜向支撐感 */
 }
 
-/* 火焰對牆面的光暈效果 (偽元素) */
-.torch-flame::after {
-    content: '';
+/* 火把柄部 */
+.torch-handle {
+    width: 16px;
+    height: 50px;
+    background: linear-gradient(to bottom, #444, #222);
+    border-radius: 4px;
+    margin-top: -15px;
+    position: relative;
+    z-index: 2;
+    border: 1px solid #555;
+}
+
+/* 火焰效果增強 */
+.flame-container {
+    width: 30px;
+    height: 45px;
     position: absolute;
-    top: 0;
+    top: -40px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, rgba(255, 69, 0, 0.3) 0%, transparent 70%);
-    filter: blur(10px);
-    z-index: -1;
-    animation: lightPulse 2s infinite ease-in-out;
 }
 
-/* 火焰搖曳動畫 */
-@keyframes torchFlicker {
-    0% { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.9; }
-    100% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; }
+.flame {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at bottom, #ffeb3b 20%, #ff9800 50%, #f44336 80%);
+    border-radius: 50% 50% 20% 20%;
+    filter: blur(4px);
+    animation: flicker 0.15s infinite alternate;
+    opacity: 0.9;
 }
 
-/* 牆面光暈脈動動畫 */
-@keyframes lightPulse {
-    0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
-    50% { opacity: 0.7; transform: translateX(-50%) scale(1.2); }
+/* 火光渲染感 */
+.torch-glow {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(255, 152, 0, 0.2) 0%, transparent 70%);
+    top: -80px;
+    pointer-events: none;
+}
+
+@keyframes flicker {
+    0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    100% { transform: translateX(-50%) scale(1.1) skewX(2deg); opacity: 1; }
 }
     </style>
 </head>
@@ -713,20 +732,32 @@
 
     <section class="palace-section">
         <div id="dust-container"></div>
+        <div class="wall-torch torch-left">
+    <div class="torch-glow"></div>
+    <div class="torch-mount">
+        <div class="torch-arm"></div>
+    </div>
+    <div class="torch-handle">
+        <div class="flame-container">
+            <div class="flame"></div>
+        </div>
+    </div>
+</div>
+
+<div class="wall-torch torch-right">
+    <div class="torch-glow"></div>
+    <div class="torch-mount">
+        <div class="torch-arm"></div>
+    </div>
+    <div class="torch-handle">
+        <div class="flame-container">
+            <div class="flame"></div>
+        </div>
+    </div>
+</div>
          <div class="tapestry left">SPARK</div>
     <div class="tapestry right">積動城市</div> 
-
-        <div class="palace-section">
-    <div class="torch-container t-left">
-        <div class="torch-base"></div>
-        <div class="torch-flame"></div>
-    </div>
-    
-    <div class="torch-container t-right">
-        <div class="torch-base"></div>
-        <div class="torch-flame"></div>
-    </div>
-
+        
         <div class="royal-frame" id="videoFrame">
             <div class="candle-holder ch-left"><div class="candle"><div class="flame"></div></div></div>
             <div class="candle-holder ch-right"><div class="candle"><div class="flame"></div></div></div>
