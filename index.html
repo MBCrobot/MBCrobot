@@ -253,6 +253,75 @@
     /* 95% 到 100%：極短暫的空白，隨即重頭開始循環 */
     100% { transform: translateX(-120vw); opacity: 1; }
     }
+        /* 定義呼吸燈動畫 */
+@keyframes core-breathing {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    50% {
+        transform: scale(1.02); /* 輕微放大 */
+        /* 這裡的 shadow 顏色會在下方個別定義 */
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+}
+
+/* 應用動畫到 4C 框框 */
+.core-card {
+    transition: all 0.3s ease;
+    animation: core-breathing 4s ease-in-out infinite;
+}
+
+/* 為四種顏色設定專屬的呼吸燈光效果 */
+/* Connect - 藍色燈光 */
+.core-card-blue:nth-child(1) { animation-delay: 0s; }
+.core-card-blue {
+    animation-name: breathing-blue;
+}
+@keyframes breathing-blue {
+    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 113, 188, 0.1); }
+    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(0, 113, 188, 0.4); }
+}
+
+/* Construct - 紅色燈光 */
+.core-card-red:nth-child(2) { animation-delay: 1s; } /* 交錯發光感 */
+.core-card-red {
+    animation-name: breathing-red;
+}
+@keyframes breathing-red {
+    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(227, 6, 19, 0.1); }
+    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(227, 6, 19, 0.4); }
+}
+
+/* Contemplate - 橘色燈光 */
+.core-card-orange:nth-child(3) { animation-delay: 2s; }
+.core-card-orange {
+    animation-name: breathing-orange;
+}
+@keyframes breathing-orange {
+    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(243, 146, 0, 0.1); }
+    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(243, 146, 0, 0.4); }
+}
+
+/* Continue - 綠色燈光 */
+.core-card-green:nth-child(4) { animation-delay: 3s; }
+.core-card-green {
+    animation-name: breathing-green;
+}
+@keyframes breathing-green {
+    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 150, 64, 0.1); }
+    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(0, 150, 64, 0.4); }
+}
+
+/* 當滑鼠懸停時暫停動畫，讓使用者好閱讀 */
+.core-card:hover {
+    animation-play-state: paused;
+    transform: scale(1.05) !important;
+    z-index: 10;
+}
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -345,50 +414,41 @@
             <p class="text-gray-500 mt-4 text-lg">透過 LEGO 循環學習模式，引導孩子從想像到實現。</p>
         </div>
 
-        <div class="max-w-5xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
-                <div class="p-8 bg-[#0071BC]/10 border-t-8 border-[#0071BC] rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-2 group">
-                    <div class="flex items-center mb-4">
-                        <span class="text-4xl font-black text-[#0071BC] mr-4">1</span>
-                        <h3 class="text-2xl font-bold text-[#0071BC]">Connect 聯想</h3>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        連結新舊知識，透過圖像與故事導入，激發孩子不經意間萌發新主意，讓想像力自由發揮。
-                    </p>
-                </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    
+    <div class="core-card core-card-blue p-8 bg-[#0071BC]/10 border-t-8 border-[#0071BC] rounded-2xl transition-all">
+        <div class="flex items-center mb-4">
+            <span class="text-4xl font-black text-[#0071BC] mr-4">1</span>
+            <h3 class="text-2xl font-bold text-[#0071BC]">Connect 聯想</h3>
+        </div>
+        <p class="text-gray-700 leading-relaxed text-lg">連結新舊知識，透過圖像與故事導入，激發孩子不經意間萌發新主意。</p>
+    </div>
 
-                <div class="p-8 bg-[#E30613]/10 border-t-8 border-[#E30613] rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-2">
-                    <div class="flex items-center mb-4">
-                        <span class="text-4xl font-black text-[#E30613] mr-4">2</span>
-                        <h3 class="text-2xl font-bold text-[#E30613]">Construct 建構</h3>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        將想像力轉化為實體形象。孩子學習設置規劃並動手實作，在達成目標課標的過程中解決問題。
-                    </p>
-                </div>
+    <div class="core-card core-card-red p-8 bg-[#E30613]/10 border-t-8 border-[#E30613] rounded-2xl transition-all">
+        <div class="flex items-center mb-4">
+            <span class="text-4xl font-black text-[#E30613] mr-4">2</span>
+            <h3 class="text-2xl font-bold text-[#E30613]">Construct 建構</h3>
+        </div>
+        <p class="text-gray-700 leading-relaxed text-lg">將想像力轉化為實體形象。孩子學習設置規劃並動手實作。</p>
+    </div>
 
-                <div class="p-8 bg-[#F39200]/10 border-t-8 border-[#F39200] rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-2">
-                    <div class="flex items-center mb-4">
-                        <span class="text-4xl font-black text-[#F39200] mr-4">3</span>
-                        <h3 class="text-2xl font-bold text-[#F39200]">Contemplate 反思</h3>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        這是一個關鍵階段，孩子透過深度思考與回顧過程，擷取經驗並內化為解決問題的智慧。
-                    </p>
-                </div>
+    <div class="core-card core-card-orange p-8 bg-[#F39200]/10 border-t-8 border-[#F39200] rounded-2xl transition-all">
+        <div class="flex items-center mb-4">
+            <span class="text-4xl font-black text-[#F39200] mr-4">3</span>
+            <h3 class="text-2xl font-bold text-[#F39200]">Contemplate 反思</h3>
+        </div>
+        <p class="text-gray-700 leading-relaxed text-lg">孩子透過深度思考與回顧過程，擷取經驗並內化為解決問題的智慧。</p>
+    </div>
 
-                <div class="p-8 bg-[#009640]/10 border-t-8 border-[#009640] rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-2">
-                    <div class="flex items-center mb-4">
-                        <span class="text-4xl font-black text-[#009640] mr-4">4</span>
-                        <h3 class="text-2xl font-bold text-[#009640]">Continue 延續</h3>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        解決問題引發無限興趣，進而提高學習積極性，勇敢克服困難去解決更高層級的挑戰。
-                    </p>
-                </div>
+    <div class="core-card core-card-green p-8 bg-[#009640]/10 border-t-8 border-[#009640] rounded-2xl transition-all">
+        <div class="flex items-center mb-4">
+            <span class="text-4xl font-black text-[#009640] mr-4">4</span>
+            <h3 class="text-2xl font-bold text-[#009640]">Continue 延續</h3>
+        </div>
+        <p class="text-gray-700 leading-relaxed text-lg">提高學習積極性，勇敢克服困難去解決更高層級的挑戰。</p>
+    </div>
 
-            </div>
+</div>
         </div>
     </div>
 </section>
