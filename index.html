@@ -358,6 +358,33 @@
     pointer-events: none;
     z-index: 1;
 }
+        /* 積木零件基礎樣式 */
+.dynamic-lego {
+    position: absolute;
+    opacity: 0.15;
+    z-index: 2;
+    transition: all 0.5s ease-out;
+}
+
+/* 定義複雜的隨機漂浮動畫 */
+@keyframes super-float {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    33% {
+        transform: translate(var(--move-x), var(--move-y)) rotate(120deg) scale(1.2);
+    }
+    66% {
+        transform: translate(calc(var(--move-x) * -0.5), calc(var(--move-y) * 1.5)) rotate(240deg) scale(0.8);
+    }
+    100% {
+        transform: translate(0, 0) rotate(360deg) scale(1);
+    }
+}
+
+.animate-lego {
+    animation: super-float var(--duration) infinite ease-in-out;
+}
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -385,10 +412,7 @@
     <div class="soft-glow pointer-events-none"></div>
     <div class="soft-glow pointer-events-none" style="right: -10%; top: 20%; animation-delay: -5s; background: radial-gradient(circle, rgba(220, 240, 255, 0.4) 0%, transparent 70%);"></div>
 
-    <div class="lego-particle float-animation pointer-events-none" style="top: 15%; left: 10%; width: 40px; height: 40px; border: 4px solid #F39200; border-radius: 50%;"></div>
-    <div class="lego-particle float-animation pointer-events-none" style="bottom: 25%; left: 15%; width: 60px; height: 30px; background: #0071BC; border-radius: 4px; animation-delay: -2s;"></div>
-    <div class="lego-particle float-animation pointer-events-none" style="top: 25%; right: 15%; width: 25px; height: 25px; background: #E30613; transform: rotate(45deg); animation-delay: -7s;"></div>
-    <div class="lego-particle float-animation pointer-events-none" style="bottom: 15%; right: 10%; width: 80px; height: 20px; background: #009640; opacity: 0.15; animation-delay: -4s;"></div>
+    <div id="lego-particle-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
     <div class="container mx-auto px-4 relative z-10 text-center">
         
@@ -446,6 +470,56 @@
         });
     });
 </script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('lego-particle-container');
+    const particleCount = 18; // 設定為 18 個
+    const colors = ['#0071BC', '#E30613', '#F39200', '#009640']; // 品牌藍、紅、橘、綠
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'dynamic-lego animate-lego';
+        
+        // 1. 隨機形狀 (0: 圓形, 1: 正方形, 2: 長方形)
+        const shapeType = Math.floor(Math.random() * 3);
+        const size = Math.random() * 40 + 20; // 20px ~ 60px
+        
+        if (shapeType === 0) {
+            particle.style.borderRadius = '50%';
+            particle.style.border = `4px solid ${colors[Math.floor(Math.random() * colors.length)]}`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+        } else if (shapeType === 1) {
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.borderRadius = '4px';
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+        } else {
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.borderRadius = '4px';
+            particle.style.width = `${size * 1.5}px`;
+            particle.style.height = `${size * 0.6}px`;
+        }
+
+        // 2. 隨機初始位置 (分散在四周)
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+
+        // 3. 隨機運動參數 (CSS 變數)
+        // 讓每個零件移動的方向與距離都不同
+        const moveX = (Math.random() - 0.5) * 200; // -100px 到 100px
+        const moveY = (Math.random() - 0.5) * 200;
+        const duration = Math.random() * 10 + 10; // 10s 到 20s 的循環
+        
+        particle.style.setProperty('--move-x', `${moveX}px`);
+        particle.style.setProperty('--move-y', `${moveY}px`);
+        particle.style.setProperty('--duration', `${duration}s`);
+        
+        // 隨機延遲，讓動作錯開
+        particle.style.animationDelay = `${Math.random() * -20}s`;
+
+        container.appendChild(particle);
+    }
+});
          
 <section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
     <div class="container mx-auto px-4">
