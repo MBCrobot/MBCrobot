@@ -322,56 +322,41 @@
     transform: scale(1.05) !important;
     z-index: 10;
 }
-        /* 首頁溫馨背景容器 */
+/* 修正背景容器 */
 .warm-hero-bg {
     position: relative;
     width: 100%;
-    min-height: 100vh;
-    /* 使用溫暖的漸層色：淺米黃到淡粉藍 */
-    background: linear-gradient(135deg, #fffdf5 0%, #f7fbff 100%);
+    min-height: 80vh; /* 調整高度，避免撐得太開 */
+    background: linear-gradient(135deg, #fffdf5 0%, #f7fbff 100%) !important;
     overflow: hidden;
+    display: block; /* 改回 block，不強制內容縱向排列 */
 }
 
-/* 柔和的彩色光暈（模擬陽光灑落） */
+/* 確保光暈在最底層，不干涉排版 */
 .soft-glow {
     position: absolute;
     width: 600px;
     height: 600px;
     background: radial-gradient(circle, rgba(255, 245, 200, 0.4) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(50px);
+    filter: blur(60px);
     animation: glow-move 20s infinite alternate ease-in-out;
-    z-index: 1;
-}
-
-@keyframes glow-move {
-    0% { transform: translate(-10%, -10%); }
-    100% { transform: translate(20%, 30%); }
-}
-
-/* 溫馨感積木零件漂浮 (使用細線條或半透明填充) */
-.lego-particle {
-    position: absolute;
-    opacity: 0.15; /* 極低透明度，不干擾視線 */
-    z-index: 2;
     pointer-events: none;
-    filter: grayscale(0.2);
+    z-index: 0; /* 設為 0 */
 }
 
-/* 模擬漂浮在空中的感覺 */
-.float-animation {
-    animation: warm-float 15s infinite ease-in-out alternate;
-}
-
-@keyframes warm-float {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(-40px) rotate(15deg); }
-}
-
-/* 文字與內容的層級，確保閱讀清晰 */
-.hero-content {
+/* 確保火車內容在光暈之上 */
+.container.z-10 {
     position: relative;
     z-index: 10;
+}
+
+/* 漂浮零件同樣設為不干涉佈局 */
+.lego-particle {
+    position: absolute;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 1;
 }
     </style>
 </head>
@@ -396,17 +381,18 @@
             <button class="md:hidden text-mbc-blue text-3xl">☰</button>
         </div>
     </nav>
-<header class="warm-hero-bg relative w-full py-24 flex items-center justify-center overflow-hidden">
-    
-    <div class="soft-glow"></div>
-    <div class="soft-glow" style="right: -10%; top: 20%; animation-delay: -5s; background: radial-gradient(circle, rgba(220, 240, 255, 0.4) 0%, transparent 70%);"></div>
+<header class="warm-hero-bg relative w-full py-24 overflow-hidden">
+    <div class="soft-glow pointer-events-none"></div>
+    <div class="soft-glow pointer-events-none" style="right: -10%; top: 20%; animation-delay: -5s; background: radial-gradient(circle, rgba(220, 240, 255, 0.4) 0%, transparent 70%);"></div>
 
-    <div class="lego-particle float-animation" style="top: 15%; left: 10%; width: 40px; height: 40px; border: 4px solid #F39200; border-radius: 50%;"></div>
-    <div class="lego-particle float-animation" style="bottom: 25%; left: 15%; width: 60px; height: 30px; background: #0071BC; border-radius: 4px; animation-delay: -2s;"></div>
-    <div class="lego-particle float-animation" style="top: 25%; right: 15%; width: 25px; height: 25px; background: #E30613; transform: rotate(45deg); animation-delay: -7s;"></div>
-    <div class="lego-particle float-animation" style="bottom: 15%; right: 10%; width: 80px; height: 20px; background: #009640; opacity: 0.15; animation-delay: -4s;"></div>   
+    <div class="lego-particle float-animation pointer-events-none" style="top: 15%; left: 10%; width: 40px; height: 40px; border: 4px solid #F39200; border-radius: 50%;"></div>
+    <div class="lego-particle float-animation pointer-events-none" style="bottom: 25%; left: 15%; width: 60px; height: 30px; background: #0071BC; border-radius: 4px; animation-delay: -2s;"></div>
+    <div class="lego-particle float-animation pointer-events-none" style="top: 25%; right: 15%; width: 25px; height: 25px; background: #E30613; transform: rotate(45deg); animation-delay: -7s;"></div>
+    <div class="lego-particle float-animation pointer-events-none" style="bottom: 15%; right: 10%; width: 80px; height: 20px; background: #009640; opacity: 0.15; animation-delay: -4s;"></div>
+
+    <div class="container mx-auto px-4 relative z-10 text-center">
+        
         <div class="train-total-wrap">
-            
             <div class="train-part engine-blue">
                 <div class="chimney-wrap">
                     <div class="smoke-cloud s-1"></div>
@@ -427,8 +413,8 @@
             <div class="train-part car-green">
                 <span class="text-3xl md:text-5xl">城市</span>
             </div>
-
         </div>
+
         <p class="text-xl text-gray-600 mt-16 font-bold">讓創意與程式，成為孩子未來的超能力！</p>
         
         <div class="mt-8 relative w-full max-w-lg mx-auto">
