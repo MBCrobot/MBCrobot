@@ -385,6 +385,38 @@
 .animate-lego {
     animation: super-float var(--duration) infinite ease-in-out;
 }
+        /* 紙屑基礎樣式 */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    z-index: 0;
+    opacity: 0;
+}
+
+/* 噴發與飄落動畫 */
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(100%) translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+    25% {
+        transform: translateY(20%) translateX(var(--move-x)) rotate(90deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-20%) translateX(calc(var(--move-x) * 1.5)) rotate(180deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(150%) translateX(calc(var(--move-x) * 2)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.animate-confetti {
+    animation: confetti-fall var(--duration) linear infinite;
+}
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -519,6 +551,35 @@
         container.appendChild(particle);
     }
 });
+    document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('confetti-container');
+    const confettiCount = 30; // 紙屑數量
+    const colors = ['#FFD700', '#FF6347', '#1E90FF', '#32CD32', '#FF69B4', '#8A2BE2'];
+
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti animate-confetti';
+        
+        // 隨機顏色與形狀 (正方形或圓形)
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
+
+        // 隨機初始位置 (主要從底部中央噴發)
+        confetti.style.left = `${45 + Math.random() * 10}%`; 
+        confetti.style.bottom = '0%';
+
+        // 隨機運動參數
+        const moveX = (Math.random() - 0.5) * 600; // 左右噴發寬度
+        const duration = Math.random() * 3 + 4; // 飄落速度 4s ~ 7s
+        const delay = Math.random() * 5; // 隨機延遲，讓彩帶陸續噴出
+
+        confetti.style.setProperty('--move-x', `${moveX}px`);
+        confetti.style.setProperty('--duration', `${duration}s`);
+        confetti.style.animationDelay = `${delay}s`;
+
+        container.appendChild(confetti);
+    }
+});
 </script>
          
 <section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
@@ -574,10 +635,11 @@
             <path d="M0 100 C 20 0 50 0 100 100 Z" fill="#FF9F43" />
         </svg>
 
-       <section id="glory" class="py-20 bg-mbc-cream relative overflow-hidden">
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-black text-mbc-orange mb-4 inline-block border-b-4 border-mbc-green pb-2">
+  <section id="honors" class="relative py-20 overflow-hidden bg-white">
+    
+    <div id="confetti-container" class="absolute inset-0 pointer-events-none"></div>
+
+    <div class="container mx-auto px-4 relative z-10 text-center">
                 🏆 光榮瞬間
             </h2>
             <p class="text-gray-500 mt-4">每一滴汗水，都化作台上最耀眼的笑容。</p>
