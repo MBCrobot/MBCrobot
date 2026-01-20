@@ -545,6 +545,71 @@
     100% { transform: translateY(-500px) translateX(50px); opacity: 0; }
 
 } 
+
+    /* === 皇宮火把樣式 === */
+.torch-container {
+    position: absolute;
+    top: 40%; /* 調整高度，使其位於影片框兩側 */
+    width: 40px;
+    height: 120px;
+    z-index: 6; /* 確保在背景之上，略高於影片框 */
+}
+
+.t-left { left: 8%; }  /* 左側火把位置 */
+.t-right { right: 8%; } /* 右側火把位置 */
+
+/* 火把支架 - 樂高/金屬質感 */
+.torch-base {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80%;
+    background: linear-gradient(to right, #444, #666, #333);
+    border: 2px solid #b39152;
+    border-radius: 5px 5px 2px 2px;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+}
+
+/* 火焰本體 */
+.torch-flame {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 45px;
+    background: radial-gradient(circle at bottom, #fff 0%, #ffcc00 40%, #ff4500 80%, transparent 100%);
+    border-radius: 50% 50% 20% 20%;
+    filter: blur(1px);
+    animation: torchFlicker 0.15s infinite alternate;
+}
+
+/* 火焰對牆面的光暈效果 (偽元素) */
+.torch-flame::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 69, 0, 0.3) 0%, transparent 70%);
+    filter: blur(10px);
+    z-index: -1;
+    animation: lightPulse 2s infinite ease-in-out;
+}
+
+/* 火焰搖曳動畫 */
+@keyframes torchFlicker {
+    0% { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.9; }
+    100% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; }
+}
+
+/* 牆面光暈脈動動畫 */
+@keyframes lightPulse {
+    0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.7; transform: translateX(-50%) scale(1.2); }
+}
     </style>
 </head>
 <body>
@@ -650,6 +715,17 @@
         <div id="dust-container"></div>
          <div class="tapestry left">SPARK</div>
     <div class="tapestry right">積動城市</div> 
+
+        <div class="palace-section">
+    <div class="torch-container t-left">
+        <div class="torch-base"></div>
+        <div class="torch-flame"></div>
+    </div>
+    
+    <div class="torch-container t-right">
+        <div class="torch-base"></div>
+        <div class="torch-flame"></div>
+    </div>
 
         <div class="royal-frame" id="videoFrame">
             <div class="candle-holder ch-left"><div class="candle"><div class="flame"></div></div></div>
