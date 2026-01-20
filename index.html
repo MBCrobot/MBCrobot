@@ -385,31 +385,37 @@
 .animate-lego {
     animation: super-float var(--duration) infinite ease-in-out;
 }
-        /* 紙屑基礎樣式 */
+/* 確保標題大小不被縮放影響 */
+#honors h2 {
+    font-size: 2.25rem !important; /* 強制恢復 4xl 大小 */
+    line-height: 2.5rem;
+}
+
+/* 修正彩帶：讓它們可以從不同高度開始 */
 .confetti {
     position: absolute;
     width: 10px;
     height: 10px;
-    z-index: 0;
+    z-index: 1; /* 提升層級，讓它在背景之上 */
     opacity: 0;
 }
 
-/* 噴發與飄落動畫 */
 @keyframes confetti-fall {
     0% {
-        transform: translateY(100%) translateX(0) rotate(0deg);
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
         opacity: 1;
     }
-    25% {
-        transform: translateY(20%) translateX(var(--move-x)) rotate(90deg);
+    /* 噴發到高處 */
+    30% {
+        transform: translateY(-400px) translateX(var(--move-x)) rotate(90deg);
         opacity: 1;
     }
-    50% {
-        transform: translateY(-20%) translateX(calc(var(--move-x) * 1.5)) rotate(180deg);
-        opacity: 0.8;
-    }
+    /* 緩慢飄落 */
     100% {
-        transform: translateY(150%) translateX(calc(var(--move-x) * 2)) rotate(360deg);
+        transform: translateY(600px) translateX(calc(var(--move-x) * 2)) rotate(720deg);
         opacity: 0;
     }
 }
@@ -551,27 +557,27 @@
         container.appendChild(particle);
     }
 });
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('confetti-container');
-    const confettiCount = 30; // 紙屑數量
+    // 增加數量到 50 個，視覺效果更好
+    const confettiCount = 50; 
     const colors = ['#FFD700', '#FF6347', '#1E90FF', '#32CD32', '#FF69B4', '#8A2BE2'];
 
     for (let i = 0; i < confettiCount; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti animate-confetti';
         
-        // 隨機顏色與形狀 (正方形或圓形)
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
 
-        // 隨機初始位置 (主要從底部中央噴發)
-        confetti.style.left = `${45 + Math.random() * 10}%`; 
-        confetti.style.bottom = '0%';
+        // 修正噴發起始位置：分散在容器底部中央區塊
+        confetti.style.left = `${10 + Math.random() * 80}%`; 
+        confetti.style.bottom = "-20px"; // 從稍微下方一點的地方噴出來
 
-        // 隨機運動參數
-        const moveX = (Math.random() - 0.5) * 600; // 左右噴發寬度
-        const duration = Math.random() * 3 + 4; // 飄落速度 4s ~ 7s
-        const delay = Math.random() * 5; // 隨機延遲，讓彩帶陸續噴出
+        // 設置隨機參數
+        const moveX = (Math.random() - 0.5) * 400; // 左右飄移
+        const duration = Math.random() * 3 + 5; // 掉落時間 5-8 秒
+        const delay = Math.random() * 8; // 讓彩帶陸續出現，不擠在一起
 
         confetti.style.setProperty('--move-x', `${moveX}px`);
         confetti.style.setProperty('--duration', `${duration}s`);
@@ -634,35 +640,33 @@
         <svg class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path d="M0 100 C 20 0 50 0 100 100 Z" fill="#FF9F43" />
         </svg>
-
-  <section id="honors" class="relative py-20 overflow-hidden bg-white">
-    
+<section id="honors" class="relative py-20 overflow-hidden bg-white">
     <div id="confetti-container" class="absolute inset-0 pointer-events-none"></div>
 
-    <div class="container mx-auto px-4 relative z-10 text-center">
-                🏆 光榮瞬間
-            </h2>
-            <p class="text-gray-500 mt-4">每一滴汗水，都化作台上最耀眼的笑容。</p>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-black text-mbc-orange">🏆 光榮瞬間</h2>
+            <p class="text-gray-500 mt-4 font-bold">每一滴汗水，都化作台上最耀眼的笑容。</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-            <div class="glory-frame-new bg-white aspect-video cursor-pointer group">
-                <img src="glory-1.jpg" alt="比賽獲獎照片1" class="w-full h-full object-cover">
-                <div class="absolute bottom-0 left-0 w-full bg-black/60 text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform">
-                    <p class="font-bold text-lg">各類獎項獎盃</p>
+            <div class="glory-frame-new relative bg-white aspect-video cursor-pointer group overflow-hidden rounded-xl shadow-xl hover:-translate-y-2 transition-all duration-500">
+                <img src="glory-1.jpg" alt="比賽獲獎照片1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute bottom-0 left-0 w-full bg-black/60 text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <p class="font-bold text-lg text-center">各類獎項獎盃</p>
                 </div>
             </div>
 
-            <div class="glory-frame-new bg-white aspect-video cursor-pointer group" style="animation-delay: 1.5s;">
-                <img src="glory-2.jpg" alt="比賽獲獎照片2" class="w-full h-full object-cover">
-                <div class="absolute bottom-0 left-0 w-full bg-black/60 text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform">
-                    <p class="font-bold text-lg">臺中市政府頒發傑出青年獎</p>
+            <div class="glory-frame-new relative bg-white aspect-video cursor-pointer group overflow-hidden rounded-xl shadow-xl hover:-translate-y-2 transition-all duration-500">
+                <img src="glory-2.jpg" alt="比賽獲獎照片2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute bottom-0 left-0 w-full bg-black/60 text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <p class="font-bold text-lg text-center">臺中市政府頒發傑出青年獎</p>
                 </div>
             </div>
         </div>
         
         <div class="text-center mt-12">
-            <a href="award.html" class="inline-block px-8 py-3 bg-mbc-blue text-white font-bold rounded-full shadow-lg hover:bg-mbc-red transition-colors">
+            <a href="award.html" class="inline-block px-10 py-4 bg-mbc-blue text-white font-black rounded-full shadow-lg hover:bg-mbc-red transform hover:scale-110 transition-all duration-300">
                 查看完整得獎紀錄 ➔
             </a>
         </div>
