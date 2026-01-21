@@ -3,332 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>積動城市 - 課程夢想號</title>
+    <title>積動城市 - 夢想號出發</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
 
     <style>
-        /* 字體與全局設定 */
-        body { font-family: "Microsoft JhengHei", sans-serif; overflow-x: hidden; background-color: #f0f9ff; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f0f7ff; overflow-x: hidden; }
         
-        /* 霓虹燈標題動畫 */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
-        }
-        @keyframes neon-pulse {
-            0%, 100% { text-shadow: 0 0 10px #3b82f6, 0 0 20px #2563eb, 0 0 40px #1d4ed8; color: #fff; }
-            50% { text-shadow: 0 0 5px #60a5fa, 0 0 10px #3b82f6, 0 0 20px #2563eb; color: #e0f2fe; }
-        }
-        .dream-title {
-            animation: float 4s ease-in-out infinite;
-        }
-        .neon-text {
-            animation: neon-pulse 2s infinite alternate;
-        }
+        /* 頁首標題動態 */
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(1deg); } }
+        @keyframes neon { 0%, 100% { text-shadow: 0 0 10px #3b82f6, 0 0 20px #2563eb; color: #fff; } 50% { text-shadow: 0 0 5px #60a5fa, 0 0 15px #3b82f6; color: #dbeafe; } }
+        .dream-header { animation: float 4s ease-in-out infinite; }
+        .neon-text { animation: neon 1.5s infinite alternate; }
 
-        /* 軌道 SVG 設定 */
-        #track-svg {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none; /* 讓軌道不會擋住點擊 */
-        }
-        
-        /* 火車本體 */
-        #train-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 20;
-            width: 120px; /* 火車寬度，可自行調整 */
-            height: auto;
-            /* 預設隱藏，等 JS 載入後顯示 */
-            opacity: 0; 
-        }
-
-        /* 車站樣式 */
+        /* 車站建築物造型 */
         .station-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 2px solid #e5e7eb;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            background: #ffffff;
+            border: 3px solid #3b82f6;
+            border-radius: 0 0 1.5rem 1.5rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            z-index: 10;
         }
-        .station-card:hover {
-            transform: translateY(-5px);
-            border-color: #3b82f6;
+        .station-card:hover { transform: translateY(-8px); border-color: #2563eb; }
+
+        /* 車站屋頂造型 */
+        .station-roof {
+            height: 45px;
+            background: #1e3a8a;
+            width: calc(100% + 24px);
+            margin-left: -12px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        .station-roof::after {
+            content: ''; position: absolute; bottom: -12px; left: 0; width: 100%; height: 12px;
+            background-image: radial-gradient(circle, #1e3a8a 6px, transparent 7px);
+            background-size: 24px 24px;
         }
 
-        /* 跑馬燈 */
-        .marquee-footer {
+        /* 圖片容器：解決切圖問題 */
+        .image-container {
+            background-color: #f8fafc; /* 淺灰色底，讓 object-contain 的圖片邊緣不突兀 */
+            display: flex; align-items: center; justify-content: center;
             overflow: hidden;
-            white-space: nowrap;
-            background: #1e3a8a;
-            color: white;
-            padding: 10px 0;
-            font-family: 'Courier New', Courier, monospace;
+            border-bottom: 2px solid #f1f5f9;
         }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 20s linear infinite;
+        .image-container img {
+            width: 100%; height: 100%;
+            object-fit: contain; /* 關鍵：顯示全部圖片內容 */
         }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+
+        /* 軌道與火車 */
+        #track-svg { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        #train-container { position: absolute; z-index: 50; width: 130px; height: auto; will-change: transform; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
+
+        /* 跑馬燈頁尾 */
+        .marquee-footer { overflow: hidden; white-space: nowrap; background: #1e3a8a; color: white; padding: 12px 0; }
+        .marquee-content { display: inline-block; animation: scroll 20s linear infinite; }
+        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
 </head>
-<body class="relative">
+<body class="pt-24">
 
-    <header class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm py-4">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="dream-title text-2xl md:text-4xl font-black italic tracking-wider flex items-center gap-2">
-                <span class="text-blue-900">積動城市</span>
-                <span class="text-gray-400">.</span>
-                <span class="neon-text text-blue-600">夢想號 出發</span>
-                <span class="text-3xl">🚀</span>
+    <header class="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-md shadow-md py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="dream-header flex items-center gap-4">
+                <span class="text-3xl font-black text-blue-900 tracking-tighter">積動城市</span>
+                <span class="neon-text text-xl font-bold bg-blue-600 text-white px-5 py-2 rounded-xl shadow-lg">夢想號 出發 🚀</span>
             </div>
-            
-            <nav class="hidden md:flex gap-2">
-                <button onclick="goToStation(0)" class="px-3 py-1 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-bold transition">1.造型</button>
-                <button onclick="goToStation(1)" class="px-3 py-1 rounded-full bg-green-100 hover:bg-green-200 text-green-800 text-sm font-bold transition">2.簡易</button>
-                <button onclick="goToStation(2)" class="px-3 py-1 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 text-sm font-bold transition">3.動力</button>
-                <button onclick="goToStation(3)" class="px-3 py-1 rounded-full bg-cyan-100 hover:bg-cyan-200 text-cyan-800 text-sm font-bold transition">4.WeDo</button>
-                <button onclick="goToStation(4)" class="px-3 py-1 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-sm font-bold transition">5.EV3</button>
-                <button onclick="goToStation(5)" class="px-3 py-1 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm font-bold transition">6.Scratch</button>
+            <nav class="hidden lg:flex gap-3">
+                <button onclick="goToStation(0)" class="px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-600 hover:text-white font-bold transition-all border border-blue-200 shadow-sm">1.造型</button>
+                <button onclick="goToStation(1)" class="px-4 py-2 rounded-full bg-green-50 hover:bg-green-600 hover:text-white font-bold transition-all border border-green-200 shadow-sm">2.簡易</button>
+                <button onclick="goToStation(2)" class="px-4 py-2 rounded-full bg-orange-50 hover:bg-orange-600 hover:text-white font-bold transition-all border border-orange-200 shadow-sm">3.動力</button>
+                <button onclick="goToStation(3)" class="px-4 py-2 rounded-full bg-cyan-50 hover:bg-cyan-600 hover:text-white font-bold transition-all border border-cyan-200 shadow-sm">4.WeDo</button>
+                <button onclick="goToStation(4)" class="px-4 py-2 rounded-full bg-indigo-50 hover:bg-indigo-600 hover:text-white font-bold transition-all border border-indigo-200 shadow-sm">5.EV3</button>
+                <button onclick="goToStation(5)" class="px-4 py-2 rounded-full bg-purple-50 hover:bg-purple-600 hover:text-white font-bold transition-all border border-purple-200 shadow-sm">6.Scratch</button>
             </nav>
         </div>
     </header>
 
-    <div class="relative w-full max-w-6xl mx-auto mt-24 mb-24" style="min-height: 2800px;">
+    <div class="relative w-full max-w-7xl mx-auto" style="min-height: 4200px;">
         
-        <svg id="track-svg" viewBox="0 0 1000 2800" preserveAspectRatio="none">
-            <path id="track-path" d="M 500 0 C 500 200, 200 400, 200 600 C 200 800, 800 1000, 800 1200 C 800 1400, 200 1600, 200 1800 C 200 2000, 800 2200, 800 2400 C 800 2600, 500 2700, 500 2800" 
-                  fill="none" stroke="#e5e7eb" stroke-width="40" stroke-linecap="round"/>
-            <path d="M 500 0 C 500 200, 200 400, 200 600 C 200 800, 800 1000, 800 1200 C 800 1400, 200 1600, 200 1800 C 200 2000, 800 2200, 800 2400 C 800 2600, 500 2700, 500 2800" 
-                  fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="20,10"/>
+        <svg id="track-svg" viewBox="0 0 1200 4200" preserveAspectRatio="none">
+            <path id="rail-path" d="M 600 0 C 600 300, 150 400, 150 700 C 150 1000, 1050 1200, 1050 1500 C 1050 1800, 150 2000, 150 2300 C 150 2600, 1050 2800, 1050 3100 C 1050 3400, 600 3600, 600 4200" 
+                  fill="none" stroke="#e2e8f0" stroke-width="60" stroke-linecap="round"/>
+            <path d="M 600 0 C 600 300, 150 400, 150 700 C 150 1000, 1050 1200, 1050 1500 C 1050 1800, 150 2000, 150 2300 C 150 2600, 1050 2800, 1050 3100 C 1050 3400, 600 3600, 600 4200" 
+                  fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="20,15"/>
         </svg>
 
         <div id="train-container">
-            <div class="relative">
-                 <img src="train.png" alt="積動城市夢想號" class="w-full h-auto drop-shadow-2xl">
-                    🚂 夢想號
-                 </div>
-            </div>
+            <img id="train-img" src="train.png" alt="夢想號" class="w-full h-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="hidden bg-blue-700 text-white p-3 rounded-xl font-black text-center border-4 border-yellow-400 shadow-2xl">🚂 夢想號</div>
         </div>
 
-        <div class="station-trigger absolute w-full md:w-[45%] left-4 md:left-[5%]" style="top: 10%;">
-            <div class="station-card rounded-2xl p-6 relative">
-                <div class="absolute -top-6 -left-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-xl z-10 border-2 border-white">
-                    Station 1. 造型積木
-                </div>
-                <div class="carousel-container h-64 rounded-xl overflow-hidden mb-4 relative bg-gray-200" data-interval="3000">
-                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                        <img src="造型積木1.jpg" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="造型積木2.png" class="w-full h-full object-cover flex-shrink-0">
+        <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 550px;">
+            <div class="station-card">
+                <div class="station-roof !bg-blue-600">STATION 1. 造型積木</div>
+                <div class="p-6">
+                    <div class="carousel-container image-container h-64 rounded-xl mb-4" data-interval="3000">
+                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                            <img src="造型積木1.jpg" class="flex-shrink-0">
+                            <img src="造型積木2.png" class="flex-shrink-0">
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">樂高以外：啟蒙起點 (小班)</h3>
+                    <ul class="space-y-1 text-gray-600 text-sm">
+                        <li>🎯 <strong class="text-blue-700">特色：</strong>故事繪本引導 + 生活情境轉化</li>
+                        <li>🛠 <strong class="text-blue-700">重點：</strong>多元素材 (磁鐵、梳子、LASY)</li>
+                        <li>✨ <strong class="text-blue-700">能力：</strong>語言表達、想像力、自信心</li>
+                    </ul>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">樂高以外：啟蒙起點 (小班)</h3>
-                <ul class="space-y-1 text-gray-600 text-sm">
-                    <li>🎯 <strong class="text-blue-700">特色：</strong>故事繪本引導 + 生活情境轉化</li>
-                    <li>🛠 <strong class="text-blue-700">重點：</strong>多元素材 (磁鐵、梳子、LASY)</li>
-                    <li>✨ <strong class="text-blue-700">能力：</strong>語言表達、想像力、自信心</li>
-                </ul>
             </div>
         </div>
 
-        <div class="station-trigger absolute w-full md:w-[45%] right-4 md:right-[5%]" style="top: 25%;">
-            <div class="station-card rounded-2xl p-6 relative">
-                <div class="absolute -top-6 -right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-xl z-10 border-2 border-white">
-                    Station 2. 簡易機械
-                </div>
-                <div class="carousel-container h-64 rounded-xl overflow-hidden mb-4 relative bg-gray-200" data-interval="4000">
-                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                        <img src="簡易機械1.jpg" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="簡易機械.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="簡易機械2.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="簡易機械3.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="簡易機械教具.jpg" class="w-full h-full object-cover flex-shrink-0">
+        <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 1250px;">
+            <div class="station-card">
+                <div class="station-roof !bg-green-600">STATION 2. 簡易機械</div>
+                <div class="p-6">
+                    <div class="carousel-container image-container h-64 rounded-xl mb-4" data-interval="4000">
+                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                            <img src="簡易機械1.jpg" class="flex-shrink-0">
+                            <img src="簡易機械.png" class="flex-shrink-0">
+                            <img src="簡易機械2.png" class="flex-shrink-0">
+                            <img src="簡易機械3.png" class="flex-shrink-0">
+                            <img src="簡易機械教具.jpg" class="flex-shrink-0">
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">工程思維體系 (中班 | 80堂)</h3>
+                    <ul class="space-y-1 text-gray-600 text-sm">
+                        <li>⚙️ <strong class="text-green-700">重點：</strong>齒輪、槓桿、滑輪，理解力傳遞</li>
+                        <li>🧠 <strong class="text-green-700">能力：</strong>邏輯思考、問題觀察、手眼協調</li>
+                    </ul>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">工程思維體系 (中班 | 80堂)</h3>
-                <ul class="space-y-1 text-gray-600 text-sm">
-                    <li>⚙️ <strong class="text-green-700">重點：</strong>齒輪、槓桿、滑輪，理解力傳遞</li>
-                    <li>🧠 <strong class="text-green-700">能力：</strong>邏輯思考、問題觀察、手眼協調</li>
-                </ul>
             </div>
         </div>
 
-        <div class="station-trigger absolute w-full md:w-[45%] left-4 md:left-[5%]" style="top: 40%;">
-            <div class="station-card rounded-2xl p-6 relative">
-                <div class="absolute -top-6 -left-4 bg-orange-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-xl z-10 border-2 border-white">
-                    Station 3. 動力機械
-                </div>
-                <div class="carousel-container h-64 rounded-xl overflow-hidden mb-4 relative bg-gray-200" data-interval="4000">
-                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                        <img src="動力機械1.jpg" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="動力機械2.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="動力機械(車)3.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="動力機械5.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="動力機械.jpg" class="w-full h-full object-cover flex-shrink-0">
+        <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 1950px;">
+            <div class="station-card">
+                <div class="station-roof !bg-orange-600">STATION 3. 動力機械</div>
+                <div class="p-6">
+                    <div class="carousel-container image-container h-64 rounded-xl mb-4" data-interval="4000">
+                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                            <img src="動力機械1.jpg" class="flex-shrink-0">
+                            <img src="動力機械2.png" class="flex-shrink-0">
+                            <img src="動力機械(車)3.png" class="flex-shrink-0">
+                            <img src="動力機械5.png" class="flex-shrink-0">
+                            <img src="動力機械.jpg" class="flex-shrink-0">
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">機械動起來 (大班以上 | 150堂)</h3>
+                    <ul class="space-y-1 text-gray-600 text-sm">
+                        <li>⚡ <strong class="text-orange-700">重點：</strong>馬達、傳動系統、齒輪比、結構</li>
+                        <li>🏗 <strong class="text-orange-700">能力：</strong>工程分析、問題解決、耐心</li>
+                    </ul>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">機械動起來 (大班以上 | 150堂)</h3>
-                <ul class="space-y-1 text-gray-600 text-sm">
-                    <li>⚡ <strong class="text-orange-700">重點：</strong>馬達、傳動系統、齒輪比、結構</li>
-                    <li>🏗 <strong class="text-orange-700">能力：</strong>工程分析、問題解決、耐心</li>
-                </ul>
             </div>
         </div>
 
-        <div class="station-trigger absolute w-full md:w-[45%] right-4 md:right-[5%]" style="top: 55%;">
-            <div class="station-card rounded-2xl p-6 relative">
-                <div class="absolute -top-6 -right-4 bg-cyan-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-xl z-10 border-2 border-white">
-                    Station 4. WeDo 機器人
-                </div>
-                <div class="carousel-container h-64 rounded-xl overflow-hidden mb-4 relative bg-gray-200" data-interval="4000">
-                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                        <img src="wedo.jpg" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="WEDO教具.jpg" class="w-full h-full object-cover flex-shrink-0">
+        <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 2650px;">
+            <div class="station-card">
+                <div class="station-roof !bg-cyan-600">STATION 4. WeDo 機器人</div>
+                <div class="p-6">
+                    <div class="carousel-container image-container h-64 rounded-xl mb-4" data-interval="4000">
+                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                            <img src="wedo.jpg" class="flex-shrink-0">
+                            <img src="WEDO教具.jpg" class="flex-shrink-0">
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">自動化控制 (三年級+ | 100堂)</h3>
+                    <p class="text-xs text-red-500 font-bold mb-1">※ 需通過動力機械進階測試</p>
+                    <ul class="space-y-1 text-gray-600 text-sm">
+                        <li>📱 <strong class="text-cyan-700">重點：</strong>圖像化程式 + 感應器 + 自動控制</li>
+                        <li>🔗 <strong class="text-cyan-700">能力：</strong>因果關係、系統化思考、程式邏輯</li>
+                    </ul>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">自動化控制 (三年級+ | 100堂)</h3>
-                <p class="text-xs text-red-500 font-bold mb-1">※ 需通過動力機械進階測試</p>
-                <ul class="space-y-1 text-gray-600 text-sm">
-                    <li>📱 <strong class="text-cyan-700">重點：</strong>圖像化程式 + 感應器 + 自動控制</li>
-                    <li>🔗 <strong class="text-cyan-700">能力：</strong>因果關係、系統化思考、程式邏輯</li>
-                </ul>
             </div>
         </div>
 
-        <div class="station-trigger absolute w-full md:w-[45%] left-4 md:left-[5%]" style="top: 70%;">
-            <div class="station-card rounded-2xl p-6 relative">
-                <div class="absolute -top-6 -left-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-xl z-10 border-2 border-white">
-                    Station 5. EV3 機器人
-                </div>
-                <div class="carousel-container h-64 rounded-xl overflow-hidden mb-4 relative bg-gray-200" data-interval="5000">
-                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                        <img src="EV3 1.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="EV3 2.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="EV3 3.jpg" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="EV3 4.png" class="w-full h-full object-cover flex-shrink-0">
-                        <img src="EV3教具.jpg" class="w-full h-full object-cover flex-shrink-0">
+        <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 3350px;">
+            <div class="station-card">
+                <div class="station-roof !bg-indigo-600">STATION 5. EV3 機器人</div>
+                <div class="p-6">
+                    <div class="carousel-container image-container h-64 rounded-xl mb-4" data-interval="5000">
+                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                            <img src="EV3 1.png" class="flex-shrink-0">
+                            <img src="EV3 2.png" class="flex-shrink-0">
+                            <img src="EV3 3.jpg" class="flex-shrink-0">
+                            <img src="EV3 4.png" class="flex-shrink-0">
+                            <img src="EV3教具.jpg" class="flex-shrink-0">
+                        </div>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">競賽級挑戰 (四年級+ | 155堂)</h3>
+                    <ul class="space-y-1 text-gray-600 text-sm">
+                        <li>🏆 <strong class="text-indigo-700">重點：</strong>進階設計、任務程式、競賽模擬</li>
+                        <li>🤝 <strong class="text-indigo-700">能力：</strong>策略規劃、團隊合作、高壓解決問題</li>
+                    </ul>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">競賽級挑戰 (四年級+ | 155堂)</h3>
-                <ul class="space-y-1 text-gray-600 text-sm">
-                    <li>🏆 <strong class="text-indigo-700">重點：</strong>進階設計、任務程式、競賽模擬</li>
-                    <li>🤝 <strong class="text-indigo-700">能力：</strong>策略規劃、團隊合作、高壓解決問題</li>
-                </ul>
             </div>
         </div>
 
-        <div class="station-trigger absolute w-full md:w-[45%] right-4 md:right-[5%]" style="top: 85%;">
-            <div class="station-card rounded-2xl p-6 relative border-purple-200">
-                <div class="absolute -top-6 -right-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold text-xl z-10 border-2 border-white">
-                    Station 6. Scratch 程式
+        <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 4000px;">
+            <div class="station-card">
+                <div class="station-roof !bg-purple-600">STATION 6. Scratch 程式</div>
+                <div class="p-6">
+                    <div class="image-container h-64 rounded-xl mb-4">
+                        <img src="Scratch.jpg">
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">純程式路徑 (三年級以上)</h3>
+                    <ul class="space-y-1 text-gray-600 text-sm">
+                        <li>💻 <strong class="text-purple-700">重點：</strong>純程式邏輯、事件迴圈、遊戲動畫</li>
+                        <li>🎨 <strong class="text-purple-700">能力：</strong>運算思維、數位創作表達力</li>
+                    </ul>
                 </div>
-                <div class="h-64 rounded-xl overflow-hidden mb-4 relative bg-gray-200 border-4 border-purple-100">
-                    <img src="Scratch.jpg" class="w-full h-full object-cover">
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">純程式路徑 (三年級以上)</h3>
-                <ul class="space-y-1 text-gray-600 text-sm">
-                    <li>💻 <strong class="text-purple-700">重點：</strong>純程式邏輯、事件迴圈、遊戲動畫</li>
-                    <li>🎨 <strong class="text-purple-700">能力：</strong>運算思維、數位創作表達力</li>
-                </ul>
             </div>
         </div>
 
     </div>
 
-    <footer class="marquee-footer">
-        <div class="marquee-content">
-            ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 積動城市 Jidong Chengshi ★ 讓孩子在積木與程式中找到自信 ★ 夢想號列車 2026 啟航 ★
-            ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 積動城市 Jidong Chengshi ★ 讓孩子在積木與程式中找到自信 ★ 夢想號列車 2026 啟航 ★
+    <footer class="marquee-footer mt-20">
+        <div class="marquee-content font-bold">
+            ★ 積動城市 Jidong Chengshi ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 夢想號 2026 啟航 ★ 樂高、程式、機器人，打造孩子的自信未來 ★
         </div>
     </footer>
 
     <script>
-        // 1. 註冊 GSAP 外掛
         gsap.registerPlugin(MotionPathPlugin, ScrollToPlugin);
 
-        // 2. 自動輪播圖片邏輯 (Auto Carousel)
-        document.querySelectorAll('.carousel-container').forEach(container => {
-            const track = container.querySelector('.carousel-track');
-            const items = track.querySelectorAll('img');
-            const intervalTime = parseInt(container.getAttribute('data-interval'));
-            
-            if (items.length > 1) {
-                let index = 0;
-                setInterval(() => {
-                    index = (index + 1) % items.length;
-                    track.style.transform = `translateX(-${index * 100}%)`;
-                }, intervalTime);
+        // 1. 初始化火車位置
+        gsap.set("#train-container", {
+            motionPath: {
+                path: "#rail-path",
+                align: "#rail-path",
+                alignOrigin: [0.5, 0.5],
+                autoRotate: true,
+                start: 0.02
             }
         });
 
-        // 3. 火車動畫設定
-        // 火車初始顯示
-        gsap.to("#train-container", { autoAlpha: 1, duration: 1 });
-
-        // 設定軌道動畫 - 這會建立一個 timeline，讓火車位置與頁面捲動位置或是時間軸對應
-        // 這裡我們建立一個可以透過點擊控制進度的動畫
-        let trainTween = gsap.to("#train-container", {
-            motionPath: {
-                path: "#track-path",
-                align: "#track-path",
-                alignOrigin: [0.5, 0.5], // 火車中心對準軌道
-                autoRotate: true,       // 火車頭自動轉向
-                start: 0,
-                end: 1
-            },
-            ease: "power1.inOut",
-            paused: true, // 初始暫停，由按鈕控制
-            duration: 5   // 走完全程需要的基礎時間
-        });
-
-        // 4. 車站跳轉功能
-        // 定義每個車站對應的軌道進度 (0~1) 與 頁面捲動位置 (Pixel)
-        // 這些數值是對應上面的 style="top: XX%" 微調出來的
-        const stations = [
-            { progress: 0.11, scrollY: 0.10 }, // Station 1
-            { progress: 0.26, scrollY: 0.25 }, // Station 2
-            { progress: 0.41, scrollY: 0.40 }, // Station 3
-            { progress: 0.56, scrollY: 0.55 }, // Station 4
-            { progress: 0.71, scrollY: 0.70 }, // Station 5
-            { progress: 0.86, scrollY: 0.85 }  // Station 6
-        ];
+        // 2. 導航跳轉 (火車移動 + 頁面捲動)
+        // 這是根據車站 top 位置對應的軌道進度 (0~1)
+        const progressPoints = [0.13, 0.30, 0.47, 0.63, 0.80, 0.96];
 
         function goToStation(index) {
-            const target = stations[index];
-            const trackContainer = document.querySelector('.relative.max-w-6xl');
-            const trackHeight = trackContainer.offsetHeight;
-            const targetPixel = trackContainer.offsetTop + (trackHeight * target.scrollY) - 200; // -200 是為了留一點頭部空間
+            const stations = document.querySelectorAll('.station-building');
+            const targetY = stations[index].offsetTop - 150;
 
-            // A. 頁面平滑捲動到該車站
+            // 捲動頁面
             gsap.to(window, {
-                scrollTo: targetPixel,
-                duration: 1.5,
-                ease: "power2.out"
+                scrollTo: targetY,
+                duration: 2,
+                ease: "power2.inOut"
             });
 
-            // B. 火車行駛到該進度
-            trainTween.tweenTo(trainTween.duration() * target.progress, {
-                ease: "power2.inOut",
-                duration: 2 // 火車移動速度
+            // 行駛火車
+            gsap.to("#train-container", {
+                motionPath: {
+                    path: "#rail-path",
+                    align: "#rail-path",
+                    alignOrigin: [0.5, 0.5],
+                    autoRotate: true,
+                    start: gsap.getProperty("#train-container", "motionPath").progress || 0.02,
+                    end: progressPoints[index]
+                },
+                duration: 2.5,
+                ease: "power1.inOut"
             });
         }
 
-        // 初始化：先讓火車走到起點稍微出來一點的位置
-        trainTween.progress(0.02);
-
+        // 3. 自動翻頁圖片邏輯
+        document.querySelectorAll('.carousel-container').forEach(container => {
+            const track = container.querySelector('.carousel-track');
+            const imgs = track.querySelectorAll('img');
+            let idx = 0;
+            if (imgs.length > 1) {
+                setInterval(() => {
+                    idx = (idx + 1) % imgs.length;
+                    track.style.transform = `translateX(-${idx * 100}%)`;
+                }, parseInt(container.dataset.interval));
+            }
+        });
     </script>
 </body>
 </html>
