@@ -12,39 +12,47 @@
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f0f7ff; overflow-x: hidden; }
         
-        /* 頁首標題動態 */
+        /* --- 頁首動態 --- */
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(1deg); } }
         @keyframes neon { 0%, 100% { text-shadow: 0 0 10px #3b82f6, 0 0 20px #2563eb; color: #fff; } 50% { text-shadow: 0 0 5px #60a5fa, 0 0 15px #3b82f6; color: #dbeafe; } }
         .dream-header { animation: float 4s ease-in-out infinite; }
         .neon-text { animation: neon 1.5s infinite alternate; }
 
-        /* 車站建築物造型 */
+        /* --- 背景裝飾動態 --- */
+        .bg-element { position: absolute; pointer-events: none; z-index: 0; opacity: 0.6; }
+        @keyframes float-bg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-float { animation: float-bg 6s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+
+        /* --- 車站建築物造型 --- */
         .station-card {
             background: #ffffff;
-            border: 3px solid #3b82f6;
+            border: 4px solid #3b82f6;
             border-radius: 0 0 1.5rem 1.5rem;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
             transition: transform 0.3s ease, border-color 0.3s ease;
             position: relative;
             z-index: 10;
         }
         .station-card:hover { transform: translateY(-8px); border-color: #2563eb; }
 
-        /* 車站屋頂造型 */
+        /* --- 車站屋頂造型 --- */
         .station-roof {
-            height: 45px;
+            height: 50px;
             background: #1e3a8a;
-            width: calc(100% + 24px);
-            margin-left: -12px;
-            border-radius: 12px 12px 0 0;
+            width: calc(100% + 32px);
+            margin-left: -16px;
+            border-radius: 16px 16px 0 0;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             letter-spacing: 2px;
             position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .station-roof::after {
             content: ''; position: absolute; bottom: -12px; left: 0; width: 100%; height: 12px;
@@ -52,76 +60,104 @@
             background-size: 24px 24px;
         }
 
-        /* 圖片容器：解決切圖問題 */
+        /* --- 圖片容器 --- */
         .image-container {
-            background-color: #f8fafc; /* 淺灰色底，讓 object-contain 的圖片邊緣不突兀 */
+            background-color: #f8fafc;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
             border-bottom: 2px solid #f1f5f9;
         }
         .image-container img {
             width: 100%; height: 100%;
-            object-fit: contain; /* 關鍵：顯示全部圖片內容 */
+            object-fit: contain;
         }
 
-        /* 軌道與火車 */
-        #track-svg { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        #train-container { position: absolute; z-index: 50; width: 130px; height: auto; will-change: transform; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
+        /* --- 軌道與火車 --- */
+        #track-svg { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
+        /* 真實鐵軌樣式設定 */
+        .rail-sleepers { stroke: #475569; stroke-width: 50; stroke-dasharray: 10, 20; stroke-linecap: butt; opacity: 0.6; }
+        .rail-track-outer { stroke: #94a3b8; stroke-width: 14; }
+        .rail-track-inner { stroke: #f0f7ff; stroke-width: 8; } /* 鏤空效果，營造雙軌感 */
+        
+        #train-container { 
+            position: absolute; 
+            z-index: 50; 
+            width: 200px; /* 放大火車 */
+            height: auto; 
+            will-change: transform; 
+            filter: drop-shadow(0 20px 25px rgba(0,0,0,0.3)); 
+        }
 
-        /* 跑馬燈頁尾 */
-        .marquee-footer { overflow: hidden; white-space: nowrap; background: #1e3a8a; color: white; padding: 12px 0; }
-        .marquee-content { display: inline-block; animation: scroll 20s linear infinite; }
+        /* --- 跑馬燈頁尾 --- */
+        .marquee-footer { overflow: hidden; white-space: nowrap; background: #1e3a8a; color: white; padding: 16px 0; position: relative; z-index: 60; }
+        .marquee-content { display: inline-block; animation: scroll 25s linear infinite; font-size: 1.1rem; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
 </head>
 <body class="pt-24">
 
-    <header class="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-md shadow-md py-4">
+    <header class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-md shadow-lg py-4 border-b border-blue-100">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <div class="dream-header flex items-center gap-4">
                 <span class="text-3xl font-black text-blue-900 tracking-tighter">積動城市</span>
-                <span class="neon-text text-xl font-bold bg-blue-600 text-white px-5 py-2 rounded-xl shadow-lg">夢想號 出發 🚀</span>
+                <span class="neon-text text-xl font-bold bg-blue-600 text-white px-5 py-2 rounded-xl shadow-lg hidden md:block">夢想號 出發 🚀</span>
             </div>
-            <nav class="hidden lg:flex gap-3">
-                <button onclick="goToStation(0)" class="px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-600 hover:text-white font-bold transition-all border border-blue-200 shadow-sm">1.造型</button>
-                <button onclick="goToStation(1)" class="px-4 py-2 rounded-full bg-green-50 hover:bg-green-600 hover:text-white font-bold transition-all border border-green-200 shadow-sm">2.簡易</button>
-                <button onclick="goToStation(2)" class="px-4 py-2 rounded-full bg-orange-50 hover:bg-orange-600 hover:text-white font-bold transition-all border border-orange-200 shadow-sm">3.動力</button>
-                <button onclick="goToStation(3)" class="px-4 py-2 rounded-full bg-cyan-50 hover:bg-cyan-600 hover:text-white font-bold transition-all border border-cyan-200 shadow-sm">4.WeDo</button>
-                <button onclick="goToStation(4)" class="px-4 py-2 rounded-full bg-indigo-50 hover:bg-indigo-600 hover:text-white font-bold transition-all border border-indigo-200 shadow-sm">5.EV3</button>
-                <button onclick="goToStation(5)" class="px-4 py-2 rounded-full bg-purple-50 hover:bg-purple-600 hover:text-white font-bold transition-all border border-purple-200 shadow-sm">6.Scratch</button>
+            <nav class="hidden lg:flex gap-2">
+                <button onclick="goToStation(0)" class="px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-600 hover:text-white font-bold transition-all border border-blue-200 text-sm">1.造型</button>
+                <button onclick="goToStation(1)" class="px-3 py-1.5 rounded-full bg-green-50 hover:bg-green-600 hover:text-white font-bold transition-all border border-green-200 text-sm">2.簡易</button>
+                <button onclick="goToStation(2)" class="px-3 py-1.5 rounded-full bg-orange-50 hover:bg-orange-600 hover:text-white font-bold transition-all border border-orange-200 text-sm">3.動力</button>
+                <button onclick="goToStation(3)" class="px-3 py-1.5 rounded-full bg-cyan-50 hover:bg-cyan-600 hover:text-white font-bold transition-all border border-cyan-200 text-sm">4.WeDo</button>
+                <button onclick="goToStation(4)" class="px-3 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-600 hover:text-white font-bold transition-all border border-indigo-200 text-sm">5.EV3</button>
+                <button onclick="goToStation(5)" class="px-3 py-1.5 rounded-full bg-purple-50 hover:bg-purple-600 hover:text-white font-bold transition-all border border-purple-200 text-sm">6.Scratch</button>
             </nav>
         </div>
     </header>
 
-    <div class="relative w-full max-w-7xl mx-auto" style="min-height: 4200px;">
+    <div class="relative w-full max-w-7xl mx-auto" style="min-height: 5800px;">
         
-      <div class="relative w-full max-w-7xl mx-auto" style="min-height: 5000px;">
-    
-    <svg id="track-svg" viewBox="0 0 1200 5000" preserveAspectRatio="none">
-        <path id="rail-path" d="M 600 0 C 600 300, 150 400, 150 700 C 150 1100, 1050 1300, 1050 1700 C 1050 2100, 150 2300, 150 2700 C 150 3100, 1050 3300, 1050 3700 C 1050 4100, 600 4400, 600 5000" 
-              fill="none" stroke="#e2e8f0" stroke-width="60" stroke-linecap="round"/>
-        <path d="M 600 0 C 600 300, 150 400, 150 700 C 150 1100, 1050 1300, 1050 1700 C 1050 2100, 150 2300, 150 2700 C 150 3100, 1050 3300, 1050 3700 C 1050 4100, 600 4400, 600 5000" 
-              fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="20,15"/>
-    </svg>
+        <div class="bg-element top-[5%] left-[10%] animate-spin-slow">
+            <svg width="100" height="100" viewBox="0 0 24 24" fill="#fbbf24"><path d="M12 2L14 7L19 7L15 11L17 16L12 13L7 16L9 11L5 7L10 7Z"/></svg>
+        </div>
+        <div class="bg-element top-[15%] right-[10%] animate-float">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="#60a5fa"><circle cx="12" cy="12" r="10" opacity="0.3"/></svg>
+        </div>
+        <div class="bg-element top-[30%] left-[5%] animate-spin-slow">
+            <svg width="120" height="120" viewBox="0 0 24 24" fill="#e2e8f0"><path d="M12,15C13.66,15 15,13.66 15,12C15,10.34 13.66,9 12,9C10.34,9 9,10.34 9,12C9,13.66 10.34,15 12,15Z"/></svg>
+        </div>
+        <div class="bg-element top-[50%] right-[15%] animate-float" style="animation-delay: 1s;">
+            <svg width="60" height="60" viewBox="0 0 100 100" fill="#ef4444"><rect x="10" y="30" width="80" height="60" rx="5"/><rect x="15" y="10" width="20" height="20" rx="2"/><rect x="65" y="10" width="20" height="20" rx="2"/></svg>
+        </div>
+         <div class="bg-element top-[70%] left-[10%] animate-float" style="animation-delay: 2s;">
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="#3b82f6"><rect x="10" y="30" width="80" height="60" rx="5"/><rect x="15" y="10" width="20" height="20" rx="2"/><rect x="65" y="10" width="20" height="20" rx="2"/></svg>
+        </div>
 
-    <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 600px;"> ... </div>
-
-    <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 1450px;"> ... </div>
-
-    <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 2300px;"> ... </div>
-
-    <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 3150px;"> ... </div>
-
-    <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 4000px;"> ... </div>
-
-    <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 4800px;"> ... </div>
+        <svg id="track-svg" viewBox="0 0 1400 5800" preserveAspectRatio="xMidYMin slice">
+            <defs>
+                <path id="main-path" 
+                      d="M 700 -100 
+                         C 700 200, 1100 400, 1100 800 
+                         C 1100 1200, 300 1400, 300 1800 
+                         C 300 2200, 1100 2400, 1100 2800 
+                         C 1100 3200, 300 3400, 300 3800 
+                         C 300 4200, 1100 4400, 1100 4800 
+                         C 1100 5200, 700 5400, 700 5900" 
+                      fill="none" />
+            </defs>
+            
+            <use href="#main-path" class="rail-sleepers" />
+            
+            <use href="#main-path" class="rail-track-outer" fill="none" />
+            
+            <use href="#main-path" class="rail-track-inner" fill="none" />
+        </svg>
 
         <div id="train-container">
-            <img id="train-img" src="train.png" alt="夢想號" class="w-full h-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img id="train-img" src="train.png" alt="夢想號" class="w-full h-auto drop-shadow-2xl">
             <div class="hidden bg-blue-700 text-white p-3 rounded-xl font-black text-center border-4 border-yellow-400 shadow-2xl">🚂 夢想號</div>
         </div>
 
-        <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 550px;">
+        <div class="station-building absolute w-[85%] md:w-[450px] left-[5%]" style="top: 600px;">
             <div class="station-card">
                 <div class="station-roof !bg-blue-600">STATION 1. 造型積木</div>
                 <div class="p-6">
@@ -141,7 +177,7 @@
             </div>
         </div>
 
-        <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 1250px;">
+        <div class="station-building absolute w-[85%] md:w-[450px] right-[5%]" style="top: 1600px;">
             <div class="station-card">
                 <div class="station-roof !bg-green-600">STATION 2. 簡易機械</div>
                 <div class="p-6">
@@ -163,7 +199,7 @@
             </div>
         </div>
 
-        <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 1950px;">
+        <div class="station-building absolute w-[85%] md:w-[450px] left-[5%]" style="top: 2600px;">
             <div class="station-card">
                 <div class="station-roof !bg-orange-600">STATION 3. 動力機械</div>
                 <div class="p-6">
@@ -185,7 +221,7 @@
             </div>
         </div>
 
-        <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 2650px;">
+        <div class="station-building absolute w-[85%] md:w-[450px] right-[5%]" style="top: 3600px;">
             <div class="station-card">
                 <div class="station-roof !bg-cyan-600">STATION 4. WeDo 機器人</div>
                 <div class="p-6">
@@ -205,7 +241,7 @@
             </div>
         </div>
 
-        <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 3350px;">
+        <div class="station-building absolute w-[85%] md:w-[450px] left-[5%]" style="top: 4600px;">
             <div class="station-card">
                 <div class="station-roof !bg-indigo-600">STATION 5. EV3 機器人</div>
                 <div class="p-6">
@@ -227,7 +263,7 @@
             </div>
         </div>
 
-        <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 4000px;">
+        <div class="station-building absolute w-[85%] md:w-[450px] right-[5%]" style="top: 5400px;">
             <div class="station-card">
                 <div class="station-roof !bg-purple-600">STATION 6. Scratch 程式</div>
                 <div class="p-6">
@@ -245,7 +281,7 @@
 
     </div>
 
-    <footer class="marquee-footer mt-20">
+    <footer class="marquee-footer mt-10">
         <div class="marquee-content font-bold">
             ★ 積動城市 Jidong Chengshi ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 夢想號 2026 啟航 ★ 樂高、程式、機器人，打造孩子的自信未來 ★
         </div>
@@ -254,48 +290,58 @@
     <script>
         gsap.registerPlugin(MotionPathPlugin, ScrollToPlugin);
 
-        // 1. 初始化火車位置
+        // 1. 定義火車停靠點 (精準計算對應 S 型軌道的波峰與波谷)
+        // 這些數值經過計算，對應火車停在車站旁邊的時刻
+        const stops = [
+            0.155, // Station 1 (Left) -> 火車在右側軌道
+            0.320, // Station 2 (Right) -> 火車在左側軌道
+            0.485, // Station 3 (Left) -> 火車在右側軌道
+            0.655, // Station 4 (Right) -> 火車在左側軌道
+            0.820, // Station 5 (Left) -> 火車在右側軌道
+            0.985  // Station 6 (Right) -> 火車在左側軌道
+        ];
+
+        // 2. 初始化火車位置 (起點)
         gsap.set("#train-container", {
             motionPath: {
-                path: "#rail-path",
-                align: "#rail-path",
+                path: "#main-path",
+                align: "#main-path",
                 alignOrigin: [0.5, 0.5],
                 autoRotate: true,
-                start: 0.02
+                start: 0.01 // 從軌道最頂端開始
             }
         });
 
-     // 重新校準後的火車進度點 (0~1 之間)
-// 對應新的車站 top 位置與加長後的 path
-const progressPoints = [0.12, 0.29, 0.46, 0.63, 0.80, 0.96];
+        // 3. 核心導航功能
+        function goToStation(index) {
+            const stations = document.querySelectorAll('.station-building');
+            
+            // 計算頁面捲動位置：讓車站位於螢幕中央偏上
+            const targetY = stations[index].offsetTop - 100;
 
-function goToStation(index) {
-    const stations = document.querySelectorAll('.station-building');
-    const targetY = stations[index].offsetTop - 150;
+            // 步驟 A: 頁面平滑捲動
+            gsap.to(window, {
+                scrollTo: targetY,
+                duration: 2,
+                ease: "power2.inOut"
+            });
 
-    // 1. 頁面捲動 (保持原本邏輯)
-    gsap.to(window, {
-        scrollTo: targetY,
-        duration: 2,
-        ease: "power2.inOut"
-    });
+            // 步驟 B: 火車行駛到指定點
+            gsap.to("#train-container", {
+                motionPath: {
+                    path: "#main-path",
+                    align: "#main-path",
+                    alignOrigin: [0.5, 0.5],
+                    autoRotate: true,
+                    start: gsap.getProperty("#train-container", "motionPath").progress || 0.01,
+                    end: stops[index]
+                },
+                duration: 2.5,
+                ease: "power1.inOut"
+            });
+        }
 
-    // 2. 火車行駛 (確保終點與 progressPoints 同步)
-    gsap.to("#train-container", {
-        motionPath: {
-            path: "#rail-path",
-            align: "#rail-path",
-            alignOrigin: [0.5, 0.5],
-            autoRotate: true,
-            start: gsap.getProperty("#train-container", "motionPath").progress || 0.02,
-            end: progressPoints[index]
-        },
-        duration: 2.5,
-        ease: "power1.inOut"
-    });
-}
-
-        // 3. 自動翻頁圖片邏輯
+        // 4. 自動輪播圖片邏輯 (保持原有功能)
         document.querySelectorAll('.carousel-container').forEach(container => {
             const track = container.querySelector('.carousel-track');
             const imgs = track.querySelectorAll('img');
