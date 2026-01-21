@@ -95,12 +95,26 @@
 
     <div class="relative w-full max-w-7xl mx-auto" style="min-height: 4200px;">
         
-        <svg id="track-svg" viewBox="0 0 1200 4200" preserveAspectRatio="none">
-            <path id="rail-path" d="M 600 0 C 600 300, 150 400, 150 700 C 150 1000, 1050 1200, 1050 1500 C 1050 1800, 150 2000, 150 2300 C 150 2600, 1050 2800, 1050 3100 C 1050 3400, 600 3600, 600 4200" 
-                  fill="none" stroke="#e2e8f0" stroke-width="60" stroke-linecap="round"/>
-            <path d="M 600 0 C 600 300, 150 400, 150 700 C 150 1000, 1050 1200, 1050 1500 C 1050 1800, 150 2000, 150 2300 C 150 2600, 1050 2800, 1050 3100 C 1050 3400, 600 3600, 600 4200" 
-                  fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="20,15"/>
-        </svg>
+      <div class="relative w-full max-w-7xl mx-auto" style="min-height: 5000px;">
+    
+    <svg id="track-svg" viewBox="0 0 1200 5000" preserveAspectRatio="none">
+        <path id="rail-path" d="M 600 0 C 600 300, 150 400, 150 700 C 150 1100, 1050 1300, 1050 1700 C 1050 2100, 150 2300, 150 2700 C 150 3100, 1050 3300, 1050 3700 C 1050 4100, 600 4400, 600 5000" 
+              fill="none" stroke="#e2e8f0" stroke-width="60" stroke-linecap="round"/>
+        <path d="M 600 0 C 600 300, 150 400, 150 700 C 150 1100, 1050 1300, 1050 1700 C 1050 2100, 150 2300, 150 2700 C 150 3100, 1050 3300, 1050 3700 C 1050 4100, 600 4400, 600 5000" 
+              fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="20,15"/>
+    </svg>
+
+    <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 600px;"> ... </div>
+
+    <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 1450px;"> ... </div>
+
+    <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 2300px;"> ... </div>
+
+    <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 3150px;"> ... </div>
+
+    <div class="station-building absolute w-[90%] md:w-[500px] left-[5%]" style="top: 4000px;"> ... </div>
+
+    <div class="station-building absolute w-[90%] md:w-[500px] right-[5%]" style="top: 4800px;"> ... </div>
 
         <div id="train-container">
             <img id="train-img" src="train.png" alt="夢想號" class="w-full h-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
@@ -251,35 +265,35 @@
             }
         });
 
-        // 2. 導航跳轉 (火車移動 + 頁面捲動)
-        // 這是根據車站 top 位置對應的軌道進度 (0~1)
-        const progressPoints = [0.13, 0.30, 0.47, 0.63, 0.80, 0.96];
+     // 重新校準後的火車進度點 (0~1 之間)
+// 對應新的車站 top 位置與加長後的 path
+const progressPoints = [0.12, 0.29, 0.46, 0.63, 0.80, 0.96];
 
-        function goToStation(index) {
-            const stations = document.querySelectorAll('.station-building');
-            const targetY = stations[index].offsetTop - 150;
+function goToStation(index) {
+    const stations = document.querySelectorAll('.station-building');
+    const targetY = stations[index].offsetTop - 150;
 
-            // 捲動頁面
-            gsap.to(window, {
-                scrollTo: targetY,
-                duration: 2,
-                ease: "power2.inOut"
-            });
+    // 1. 頁面捲動 (保持原本邏輯)
+    gsap.to(window, {
+        scrollTo: targetY,
+        duration: 2,
+        ease: "power2.inOut"
+    });
 
-            // 行駛火車
-            gsap.to("#train-container", {
-                motionPath: {
-                    path: "#rail-path",
-                    align: "#rail-path",
-                    alignOrigin: [0.5, 0.5],
-                    autoRotate: true,
-                    start: gsap.getProperty("#train-container", "motionPath").progress || 0.02,
-                    end: progressPoints[index]
-                },
-                duration: 2.5,
-                ease: "power1.inOut"
-            });
-        }
+    // 2. 火車行駛 (確保終點與 progressPoints 同步)
+    gsap.to("#train-container", {
+        motionPath: {
+            path: "#rail-path",
+            align: "#rail-path",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true,
+            start: gsap.getProperty("#train-container", "motionPath").progress || 0.02,
+            end: progressPoints[index]
+        },
+        duration: 2.5,
+        ease: "power1.inOut"
+    });
+}
 
         // 3. 自動翻頁圖片邏輯
         document.querySelectorAll('.carousel-container').forEach(container => {
