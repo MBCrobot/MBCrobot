@@ -790,8 +790,8 @@
         </div>
     </footer>
 
-    <script>
-        // 影片播放邏輯
+   <script>
+        // 1. 影片播放邏輯
         function playVideo() {
             const frame = document.getElementById('videoFrame');
             const iframe = document.getElementById('promoVideo');
@@ -800,20 +800,17 @@
             if(!src.includes("autoplay=1")) { iframe.src = src + "&autoplay=1"; }
         }
 
-        // 產生漂浮塵埃
-        const dustContainer = document.getElementById('dust-container');
-        for(let i=0; i<20; i++) {
-            let dust = document.createElement('div');
-            dust.className = 'dust-particle';
-            dust.style.left = Math.random() * 100 + '%';
-            dust.style.top = Math.random() * 100 + '%';
-            dust.style.width = Math.random() * 4 + 2 + 'px';
-            dust.style.height = dust.style.width;
-            dust.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            dustContainer.appendChild(dust);
+        // 2. 標題文字 3D 化處理
+        function splitTitleText() {
+            const titleElement = document.querySelector('.castle-title');
+            if (!titleElement) return;
+            const text = titleElement.innerText;
+            titleElement.innerHTML = text.split('').map(char => 
+                char === ' ' ? ' ' : `<span>${char}</span>`
+            ).join('');
         }
 
-        // 頁尾打字機
+        // 3. 頁尾打字機
         const textToType = "積動城市 MBC ROBOT © 2026";
         const typingElement = document.getElementById('typing-text');
         let charIndex = 0;
@@ -831,53 +828,48 @@
                 }, 10000);
             }
         }
-        // === 新增功能：標題文字 3D 化處理 ===
-        // 這個函數會把 h1 裡的文字拆解成個別的 span
-        function splitTitleText() {
-            const titleElement = document.querySelector('.castle-title');
-            if (!titleElement) return;
 
-            const text = titleElement.innerText;
-            const splitText = text.split('').map((char) => {
-                // 如果是空格，保持原樣，不包 span
-                if (char === ' ') return ' ';
-                // 其他字元包上 span
-                return `<span>${char}</span>`;
-            }).join('');
+        // 4. 產生漂浮粒子 (整合版)
+        function initParticles() {
+            // 皇宮區域的塵埃
+            const dustContainer = document.getElementById('dust-container');
+            if(dustContainer) {
+                for(let i=0; i<20; i++) {
+                    let dust = document.createElement('div');
+                    dust.className = 'dust-particle';
+                    dust.style.left = Math.random() * 100 + '%';
+                    dust.style.top = Math.random() * 100 + '%';
+                    let size = Math.random() * 4 + 2 + 'px';
+                    dust.style.width = size;
+                    dust.style.height = size;
+                    dust.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                    dustContainer.appendChild(dust);
+                }
+            }
 
-            titleElement.innerHTML = splitText;
+            // 城堡區域的金色粒子
+            const castleContainer = document.querySelector('.castle-container');
+            if (castleContainer) {
+                for (let i = 0; i < 20; i++) {
+                    let p = document.createElement('div');
+                    p.className = 'particle';
+                    let size = Math.random() * 5 + 2 + 'px';
+                    p.style.width = size;
+                    p.style.height = size;
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.top = Math.random() * 100 + '%';
+                    p.style.animationDelay = Math.random() * 10 + 's';
+                    castleContainer.appendChild(p);
+                }
+            }
         }
 
-        // 在頁面載入完成後執行拆解
-        document.addEventListener('DOMContentLoaded', splitTitleText);
-
-        // (原本的 typeWriter 監聽器在下面)
-        // document.addEventListener('DOMContentLoaded', typeWriter);
-        document.addEventListener('DOMContentLoaded', typeWriter);
-
-        function createParticles() {
-    const container = document.querySelector('.castle-container'); // 確保這是你皇宮區域的 class
-    if (!container) return;
-
-    for (let i = 0; i < 20; i++) {
-        let particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        // 隨機尺寸與位置
-        let size = Math.random() * 5 + 2 + 'px';
-        particle.style.width = size;
-        particle.style.height = size;
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        
-        // 隨機動畫延遲
-        particle.style.animationDelay = Math.random() * 10 + 's';
-        
-        container.appendChild(particle);
-    }
-}
-document.addEventListener('DOMContentLoaded', createParticles);
+        // 統一初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            splitTitleText();
+            typeWriter();
+            initParticles();
+        });
     </script>
 </body>
-</html>
 </html>
