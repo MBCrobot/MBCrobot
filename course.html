@@ -250,9 +250,15 @@ body {
         <div id="intro-scene">
         <div id="gold-flash"></div>
             <div class="treasure-chest" id="chest-btn">
-                <div class="chest-lid"></div>
-                <div class="chest-body">點擊開啟冒險</div>
-            </div>
+             <div class="relative cursor-pointer hover:scale-105 transition-transform duration-300" id="chest-btn">
+    <img id="chest-closed" src="寶箱1.png" alt="寶箱關閉" class="w-64 h-auto block mx-auto">
+    
+    <img id="chest-open-img" src="寶箱2.png" alt="寶箱打開" class="w-64 h-auto hidden mx-auto">
+    
+    <div id="chest-label" class="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-brown-900 px-4 py-1 rounded-full font-bold shadow-md">
+        開啟冒險
+    </div>
+</div>
             <p class="text-white mt-4 text-lg animate-bounce">準備好探索了嗎？</p>
         </div>
 
@@ -430,10 +436,21 @@ for (let i = 0; i < jewelCount; i++) {
 
     // --- 4. 合併後的【開啟冒險】動畫 (金光 + 地圖 + 珠寶消失) ---
     chestBtn.addEventListener('click', () => {
-        chestBtn.classList.add('chest-open');
-        
-        const tl = gsap.timeline();
-        tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 }) // 寶箱震動
+       // 獲取兩張圖片的元素
+    const closedImg = document.getElementById('chest-closed');
+    const openImg = document.getElementById('chest-open-img');
+    const chestLabel = document.getElementById('chest-label');
+
+    const tl = gsap.timeline();
+
+    // 1. 寶箱震動 (原本的邏輯)
+    tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
+      
+      // 2. 切換圖片：隱藏關閉圖，顯示打開圖
+      .add(() => {
+          closedImg.classList.add('hidden');
+          openImg.classList.remove('hidden');
+          if(chestLabel) chestLabel.classList.add('hidden'); // 隱藏提示字
           .to(goldFlash, { duration: 1.2, scale: 200, opacity: 1, sine.inOut: "power4.in" }) // 噴發金光
           .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<") // 珠寶同時消失
           .set(introScene, { display: "none" })
@@ -455,13 +472,17 @@ for (let i = 0; i < jewelCount; i++) {
           .set(introScene, { display: "flex", opacity: 0, scale: 0.8 })
           .to(introScene, { duration: 0.8, opacity: 1, scale: 1, ease: "back.out(1.7)" })
           .to('.treasure-item', { duration: 0.8, opacity: 1, scale: 1, stagger: 0.02 }, "-=0.5") // 珠寶優雅浮現
-          .add(() => {
-              chestBtn.classList.remove('chest-open');
-              gsap.set(courseCards, { opacity: 0, y: 50 });
-              gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-          });
-    });
+         .add(() => {
+    // 讓寶箱圖片回到關閉狀態
+    document.getElementById('chest-closed').classList.remove('hidden');
+    document.getElementById('chest-open-img').classList.add('hidden');
+    if(document.getElementById('chest-label')) document.getElementById('chest-label').classList.remove('hidden');
+    
+    // (原本的重置邏輯...)
+    gsap.set(courseCards, { opacity: 0, y: 50 });
+    gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
     // --- 6. 圖片自動翻頁邏輯 (保留原功能) ---
     document.querySelectorAll('.carousel-container').forEach(container => {
