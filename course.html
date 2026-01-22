@@ -10,126 +10,91 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/CSSRulePlugin.min.js"></script>
 
     <style>
-      /* --- 背景與陽光風格 --- */
-body { 
-    font-family: 'Varela Round', "Microsoft JhengHei", sans-serif; 
-    background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%); /* 天空藍漸層 */
-    overflow-x: hidden;
-    min-height: 100vh;
-}
-
-/* 漂浮珠寶樣式 */
-.treasure-item {
-    position: absolute;
-    font-size: 2rem;
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* 金光特效 */
-#gold-flash {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    width: 10px; height: 10px;
-    background: radial-gradient(circle, #fff700 0%, #ffa502 50%, transparent 70%);
-    border-radius: 50%;
-    z-index: 60;
-    pointer-events: none;
-    opacity: 0;
-}
+        /* --- 背景與陽光風格 --- */
+        body { 
+            font-family: 'Varela Round', "Microsoft JhengHei", sans-serif; 
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* --- 1. 標題特效：圓胖立體 + 浮動 + 四色循環 --- */
+        /* 漂浮珠寶樣式 */
+        .treasure-item {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* 金光特效 - 修正為 fixed 確保覆蓋全螢幕 */
+        #gold-flash {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 10px; height: 10px;
+            background: radial-gradient(circle, #fff700 0%, #ffa502 50%, transparent 70%);
+            border-radius: 50%;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* --- 1. 標題特效 --- */
         @keyframes floatTitle { 0%, 100% { transform: translateY(0px) rotate(0.5deg); } 50% { transform: translateY(-15px) rotate(-0.5deg); } }
         @keyframes colorCycle {
-            0% { color: #ff4757; text-shadow: 3px 3px 0px #c0392b, 0 0 20px rgba(255,71,87,0.8); } /* 紅 */
-            25% { color: #ffa502; text-shadow: 3px 3px 0px #e67e22, 0 0 20px rgba(255,165,2,0.8); } /* 黃 */
-            50% { color: #3742fa; text-shadow: 3px 3px 0px #2980b9, 0 0 20px rgba(55,66,250,0.8); } /* 藍 */
-            75% { color: #2ed573; text-shadow: 3px 3px 0px #27ae60, 0 0 20px rgba(46,213,115,0.8); } /* 綠 */
+            0% { color: #ff4757; text-shadow: 3px 3px 0px #c0392b, 0 0 20px rgba(255,71,87,0.8); }
+            25% { color: #ffa502; text-shadow: 3px 3px 0px #e67e22, 0 0 20px rgba(255,165,2,0.8); }
+            50% { color: #3742fa; text-shadow: 3px 3px 0px #2980b9, 0 0 20px rgba(55,66,250,0.8); }
+            75% { color: #2ed573; text-shadow: 3px 3px 0px #27ae60, 0 0 20px rgba(46,213,115,0.8); }
             100% { color: #ff4757; text-shadow: 3px 3px 0px #c0392b, 0 0 20px rgba(255,71,87,0.8); }
         }
         .adventure-title {
             font-size: 3.5rem; font-weight: 900;
             animation: floatTitle 3s ease-in-out infinite, colorCycle 8s linear infinite;
             letter-spacing: 2px;
-            /* 讓字體看起來圓圓胖胖立體 */
             -webkit-text-stroke: 2px white; 
             paint-order: stroke fill;
         }
 
-        /* --- 2. 開場場景 (寶箱) --- */
+        /* --- 2. 開場場景 --- */
         #intro-scene {
             height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative; z-index: 50; transition: opacity 0.5s;
         }
-        /* 純 CSS 繪製簡單寶箱 (可用真實圖片替換) */
-        .treasure-chest {
-            width: 160px; height: 120px; background: #8d6e63; border: 4px solid #5d4037; border-radius: 10px 10px 0 0;
-            position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .chest-lid {
-            width: 104%; height: 40px; background: #a1887f; border: 4px solid #5d4037; border-radius: 10px 10px 0 0;
-            position: absolute; top: -4px; left: -2%; transform-origin: bottom center; transition: transform 0.5s ease-out;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .chest-lid::after { content: '🔒'; font-size: 20px; }
-        .chest-body {
-            width: 100%; height: 80px; background: #8d6e63; border-top: none;
-            display: flex; justify-content: center; align-items: center; color: #ffca28; font-weight: bold;
-        }
-        /* 寶箱打開狀態 */
-        .chest-open .chest-lid { transform: rotateX(-110deg); }
-        .chest-open .chest-lid::after { content: '✨'; }
 
-        /* --- 3. 冒險地圖容器 (捲軸攤開效果) --- */
+        /* --- 3. 冒險地圖容器 (修正層級) --- */
         #map-container {
-            display: none; /* 初始隱藏 */
-            background-color: #f3e5ab; /* 羊皮紙顏色 */
-            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png'); /* 老舊紙張紋理 */
+            display: none;
+            background-color: #f3e5ab;
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
             border-radius: 20px;
-            box-shadow: 
-                inset 0 0 100px rgba(139, 69, 19, 0.3), /* 內部舊化陰影 */
-                0 20px 50px rgba(0,0,0,0.5); /* 外部立體陰影 */
+            box-shadow: inset 0 0 100px rgba(139, 69, 19, 0.3), 0 20px 50px rgba(0,0,0,0.5);
             border: 8px solid #8b4513;
             padding: 40px;
             margin: 20px auto;
             max-width: 1400px;
-            /* 初始狀態：捲起來 */
             transform: perspective(1000px) rotateX(90deg) scale(0.5);
             transform-origin: center top;
             opacity: 0;
+            position: relative;
+            z-index: 60;
         }
-        /* 地圖邊緣裝飾 (捲軸感) */
-        #map-container::before, #map-container::after {
-            content: ''; position: absolute; left: 0; right: 0; height: 40px;
-            background: #8b4513; border-radius: 20px;
-            background: linear-gradient(to right, #5d4037, #8b4513, #5d4037);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-        }
-        #map-container::before { top: -20px; }
-        #map-container::after { bottom: -20px; }
 
-        /* --- 4. 課程卡片 (地圖上的物件) --- */
+        /* --- 4. 課程卡片與流光 --- */
         .course-card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 16px;
             padding: 1.5rem;
             position: relative;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 彈性過渡效果 */
-            /* 初始隱藏，由 GSAP 控制進場 */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             opacity: 0; transform: translateY(50px); 
-            border: 3px solid transparent; /* 預留給流光邊框 */
+            border: 3px solid transparent;
         }
-        
-        /* 🌟 破框浮出特效 (Hover) 🌟 */
         .course-card:hover {
-            transform: scale(1.1) translateY(-20px) !important; /* 強制放大上浮 */
+            transform: scale(1.1) translateY(-20px) !important;
             z-index: 100;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4); /* 強烈的立體陰影 */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
-
-        /* 🌟 流水變色燈邊框特效 🌟 */
         .course-card::before {
             content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px;
             z-index: -1; border-radius: 18px;
@@ -139,7 +104,6 @@ body {
         }
         @keyframes flowBorder { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        /* 各課程特定配色設定 (設定流光背景與標題色) */
         .card-blue::before { background-image: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6); } .card-blue h3, .card-blue strong { color: #1d4ed8; }
         .card-green::before { background-image: linear-gradient(90deg, #22c55e, #4ade80, #22c55e); } .card-green h3, .card-green strong { color: #15803d; }
         .card-orange::before { background-image: linear-gradient(90deg, #f97316, #fb923c, #f97316); } .card-orange h3, .card-orange strong { color: #c2410c; }
@@ -147,7 +111,6 @@ body {
         .card-indigo::before { background-image: linear-gradient(90deg, #6366f1, #818cf8, #6366f1); } .card-indigo h3, .card-indigo strong { color: #4338ca; }
         .card-purple::before { background-image: linear-gradient(90deg, #a855f7, #c084fc, #a855f7); } .card-purple h3, .card-purple strong { color: #7e22ce; }
 
-        /* 圖片容器設定 (保留原本邏輯) */
         .image-container { height: 200px; overflow: hidden; border-radius: 12px; margin-bottom: 1rem; background: #f0f9ff; }
         .image-container img { width: 100%; height: 100%; object-fit: contain; }
 
@@ -156,238 +119,157 @@ body {
         .marquee-content { display: inline-block; white-space: nowrap; animation: scroll 20s linear infinite; font-weight: bold; font-size: 1.1rem; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        /* RWD 調整 */
-        @media (max-width: 768px) {
-            .adventure-title { font-size: 2.5rem; }
-            #map-container { padding: 20px; margin: 10px; }
+        /* 導航按鈕 */
+        .nav-btn-flow { position: relative; overflow: hidden; transition: all 0.3s ease; }
+        .nav-btn-flow::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            z-index: -1; border-radius: 9999px;
+            background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa, #ff4757);
+            background-size: 300% 300%;
+            animation: flowBorder 3s linear infinite;
         }
-        /* 導航按鈕流水燈效果 */
-.nav-btn-flow {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-.nav-btn-flow::before {
-    content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-    z-index: -1; border-radius: 9999px;
-    background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa, #ff4757);
-    background-size: 300% 300%;
-    animation: flowBorder 3s linear infinite;
-}
-/* 按鈕懸浮稍微變大 */
-.nav-btn-flow:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+        .nav-btn-flow:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
 
-/* --- 可愛圓形 STEM 迴圈 --- */
-.stem-circle-container {
-    position: relative;
-    width: 500px;
-    height: 500px;
-    margin: 60px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* 核心標題文字 */
-.stem-core-text {
-    position: absolute;
-    text-align: center;
-    width: 180px;
-    font-weight: bold;
-    color: #8b4513;
-    z-index: 20;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 15px;
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-}
-
-.stem-step-node {
-    position: absolute;
-    width: 110px;
-    height: 110px;
-    background: white;
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* 做出可愛的不規則圓形 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    border: 4px solid #fff;
-}
-
-/* STEM 節點流水燈 (圓形版) */
-.stem-step-node::after {
-    content: ''; position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px;
-    z-index: -1; border-radius: inherit;
-    background: linear-gradient(45deg, #ff4757, #ffa502, #2ed573, #3742fa);
-    background-size: 300% 300%;
-    animation: flowBorder 3s linear infinite;
-}
-
-.stem-step-node:hover { transform: scale(1.2); z-index: 30; }
+        /* STEM 迴圈 */
+        .stem-circle-container {
+            position: relative; width: 500px; height: 500px; margin: 60px auto;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .stem-core-text {
+            position: absolute; text-align: center; width: 180px; font-weight: bold; color: #8b4513;
+            z-index: 20; background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .stem-step-node {
+            position: absolute; width: 110px; height: 110px; background: white;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 4px solid #fff;
+        }
+        .stem-step-node::after {
+            content: ''; position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px;
+            z-index: -1; border-radius: inherit;
+            background: linear-gradient(45deg, #ff4757, #ffa502, #2ed573, #3742fa);
+            background-size: 300% 300%; animation: flowBorder 3s linear infinite;
+        }
+        .stem-step-node:hover { transform: scale(1.2); z-index: 30; }
     </style>
 </head>
-<body>
+<body class="flex flex-col">
+
+<div id="gold-flash"></div>
+
 <div class="fixed top-6 left-0 w-full px-6 z-[100] flex justify-between pointer-events-none">
-    
     <button id="close-map-btn" class="nav-btn-flow pointer-events-auto flex items-center gap-2 bg-[#8b4513] text-[#f3e5ab] px-5 py-2.5 rounded-full border-2 border-[#f3e5ab] shadow-2xl opacity-0">
         <span>📦</span><span class="font-bold">收回地圖</span>
     </button>
-
     <a href="index.html" class="nav-btn-flow pointer-events-auto flex items-center gap-2 bg-blue-900 text-white px-5 py-2.5 rounded-full border-2 border-white shadow-2xl">
         <span>🏠</span><span class="font-bold">回官網首頁</span>
     </a>
 </div>
-    <header class="py-6 text-center relative z-50">
-        <h1 class="adventure-title">積動城市．冒險地圖</h1>
-    </header>
+
+<header class="py-6 text-center relative z-50">
+    <h1 class="adventure-title">積動城市．冒險地圖</h1>
+</header>
 
 <main class="flex-grow relative">
     <div id="treasure-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
         
-        <div id="intro-scene">
-        <div id="gold-flash"></div>
-            <div class="treasure-chest" id="chest-btn">
-             <div class="relative cursor-pointer hover:scale-105 transition-transform duration-300" id="chest-btn">
-    <img id="chest-closed" src="寶箱1.png" alt="寶箱關閉" class="w-64 h-auto block mx-auto">
-    
-    <img id="chest-open-img" src="寶箱2.png" alt="寶箱打開" class="w-64 h-auto hidden mx-auto">
-    
-    <div id="chest-label" class="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-brown-900 px-4 py-1 rounded-full font-bold shadow-md">
-        開啟冒險
-    </div>
-</div>
-            <p class="text-white mt-4 text-lg animate-bounce">準備好探索了嗎？</p>
-        </div>
-
-        <div id="map-container">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-                
-                <div class="course-card card-blue">
-                    <div class="carousel-container image-container" data-interval="3000">
-                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                            <img src="造型積木1.jpg" class="flex-shrink-0">
-                            <img src="造型積木2.png" class="flex-shrink-0">
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black mb-2">1. 造型積木 (小班)</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        <strong>啟蒙起點：</strong>運用磁鐵積木、LASY 等素材，結合故事繪本引導。<br>
-                        <strong>能力培養：</strong>語言表達、想像力、自信心建立。
-                    </p>
-                </div>
-
-                <div class="course-card card-green">
-                    <div class="carousel-container image-container" data-interval="4000">
-                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                            <img src="簡易機械1.jpg" class="flex-shrink-0">
-                            <img src="簡易機械.jpg" class="flex-shrink-0">
-                            <img src="簡易機械2.jpg" class="flex-shrink-0">
-                            <img src="簡易機械3.jpg" class="flex-shrink-0">
-                            <img src="簡易機械教具.jpg" class="flex-shrink-0">
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black mb-2">2. 簡易機械 (中班)</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        <strong>工程思維：</strong>認識齒輪、槓桿、滑輪，理解「力如何傳遞」。<br>
-                        <strong>能力培養：</strong>邏輯思考、問題觀察、手眼協調。
-                    </p>
-                </div>
-
-                <div class="course-card card-orange">
-                    <div class="carousel-container image-container" data-interval="4000">
-                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                            <img src="動力機械1.jpg" class="flex-shrink-0">
-                            <img src="動力機械2.jpg" class="flex-shrink-0">
-                            <img src="動力機械(車)3.jpg" class="flex-shrink-0">
-                            <img src="動力機械5.jpg" class="flex-shrink-0">
-                            <img src="動力機械.jpg" class="flex-shrink-0">
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black mb-2">3. 動力機械 (大班+)</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        <strong>機械動起來：</strong>馬達、傳動系統、齒輪比與結構穩定性實作。<br>
-                        <strong>能力培養：</strong>工程分析、問題解決、耐心。
-                    </p>
-                </div>
-
-                <div class="course-card card-cyan">
-                    <div class="carousel-container image-container" data-interval="4000">
-                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                            <img src="wedo.jpg" class="flex-shrink-0">
-                            <img src="WEDO教具.jpg" class="flex-shrink-0">
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black mb-2">4. WeDo 機器人 (三年級+)</h3>
-                    <p class="text-xs text-red-500 font-bold mb-1">※ 需通過動力機械進階測試</p>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        <strong>自動化控制：</strong>圖像化程式 + 感應器應用。<br>
-                        <strong>能力培養：</strong>因果關係理解、系統化思考、程式邏輯。
-                    </p>
-                </div>
-
-                <div class="course-card card-indigo">
-                    <div class="carousel-container image-container" data-interval="5000">
-                        <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
-                            <img src="EV3 1.jpg" class="flex-shrink-0">
-                            <img src="EV3 2.jpg" class="flex-shrink-0">
-                            <img src="EV3 3.jpg" class="flex-shrink-0">
-                            <img src="EV3 4.jpg" class="flex-shrink-0">
-                            <img src="EV3教具.jpg" class="flex-shrink-0">
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black mb-2">5. EV3 機器人 (四年級+)</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        <strong>競賽級挑戰：</strong>進階機械設計、任務型程式、競賽模擬。<br>
-                        <strong>能力培養：</strong>策略規劃、團隊合作、抗壓性。
-                    </p>
-                </div>
-
-                <div class="course-card card-purple">
-                    <div class="image-container">
-                        <img src="Scratch.jpg">
-                    </div>
-                    <h3 class="text-2xl font-black mb-2">6. Scratch 程式 (三年級+)</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        <strong>純程式路徑：</strong>純程式邏輯、事件迴圈、遊戲與動畫製作。<br>
-                        <strong>能力培養：</strong>運算思維、數位創作表達力。
-                    </p>
-                </div>
-
+    <div id="intro-scene">
+        <div class="relative cursor-pointer hover:scale-105 transition-transform duration-300" id="chest-btn">
+            <img id="chest-closed" src="寶箱1.png" alt="寶箱關閉" class="w-64 h-auto block mx-auto">
+            <img id="chest-open-img" src="寶箱2.png" alt="寶箱打開" class="w-64 h-auto hidden mx-auto">
+            <div id="chest-label" class="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-yellow-400 text-brown-900 px-4 py-1 rounded-full font-bold shadow-md whitespace-nowrap">
+                開啟冒險
             </div>
         </div>
-      <div class="mt-20 text-center">
-    <h2 class="text-3xl font-black text-[#8b4513] mb-4">📜 標準 STEM 智慧循環</h2>
-    <p class="text-lg text-brown-800 font-bold max-w-2xl mx-auto px-4">
-        「樂高機器人不是只學積木或程式，而是透過不斷循環的解決問題過程，培養孩子獨立思考的能力。」
-    </p>
-
-    <div class="stem-circle-container">
-        <div class="stem-core-text">
-            <img src="STEM.jpg" class="w-16 mx-auto mb-2 rounded-lg">
-            核心思考訓練
-        </div>
-
-        <div class="stem-step-node" data-index="0"><span>❓</span><b class="text-xs">提出問題</b></div>
-        <div class="stem-step-node" data-index="1"><span>💡</span><b class="text-xs">發想解法</b></div>
-        <div class="stem-step-node" data-index="2"><span>🛠️</span><b class="text-xs">動手做</b></div>
-        <div class="stem-step-node" data-index="3"><span>🧪</span><b class="text-xs">測試</b></div>
-        <div class="stem-step-node" data-index="4"><span>🔍</span><b class="text-xs">發現問題</b></div>
-        <div class="stem-step-node" data-index="5"><span>🔧</span><b class="text-xs">修正</b></div>
-        <div class="stem-step-node" data-index="6"><span>🔄</span><b class="text-xs">再測試</b></div>
+        <p class="text-white mt-12 text-lg animate-bounce">準備好探索了嗎？</p>
     </div>
-</div>
-    </main>
 
-    <footer class="marquee-footer">
-        <div class="marquee-content">
-            ★ 積動城市 Jidong Chengshi ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 冒險地圖版 ★ 讓孩子在積木與程式中找到自信，開啟智慧旅程！ ★
+    <div id="map-container">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+            <div class="course-card card-blue">
+                <div class="carousel-container image-container" data-interval="3000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="造型積木1.jpg" class="flex-shrink-0"><img src="造型積木2.png" class="flex-shrink-0">
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black mb-2">1. 造型積木 (小班)</h3>
+                <p class="text-sm text-gray-700 leading-relaxed"><strong>啟蒙起點：</strong>運用磁鐵積木、LASY 等素材。<br><strong>能力培養：</strong>語言表達、想像力。</p>
+            </div>
+
+            <div class="course-card card-green">
+                <div class="carousel-container image-container" data-interval="4000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="簡易機械1.jpg" class="flex-shrink-0"><img src="簡易機械.jpg" class="flex-shrink-0">
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black mb-2">2. 簡易機械 (中班)</h3>
+                <p class="text-sm text-gray-700 leading-relaxed"><strong>工程思維：</strong>認識齒輪、槓桿。<br><strong>能力培養：</strong>邏輯思考、手眼協調。</p>
+            </div>
+
+            <div class="course-card card-orange">
+                <div class="carousel-container image-container" data-interval="4000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="動力機械1.jpg" class="flex-shrink-0"><img src="動力機械2.jpg" class="flex-shrink-0">
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black mb-2">3. 動力機械 (大班+)</h3>
+                <p class="text-sm text-gray-700 leading-relaxed"><strong>機械動起來：</strong>馬達、傳動系統實作。<br><strong>能力培養：</strong>工程分析、問題解決。</p>
+            </div>
+
+            <div class="course-card card-cyan">
+                <div class="carousel-container image-container" data-interval="4000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="wedo.jpg" class="flex-shrink-0"><img src="WEDO教具.jpg" class="flex-shrink-0">
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black mb-2">4. WeDo 機器人 (三年級+)</h3>
+                <p class="text-sm text-gray-700 leading-relaxed"><strong>自動化控制：</strong>圖像化程式應用。<br><strong>能力培養：</strong>系統化思考。</p>
+            </div>
+
+            <div class="course-card card-indigo">
+                <div class="carousel-container image-container" data-interval="5000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="EV3 1.jpg" class="flex-shrink-0"><img src="EV3 2.jpg" class="flex-shrink-0">
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black mb-2">5. EV3 機器人 (四年級+)</h3>
+                <p class="text-sm text-gray-700 leading-relaxed"><strong>競賽級挑戰：</strong>進階機械設計。<br><strong>能力培養：</strong>策略規劃、團隊合作。</p>
+            </div>
+
+            <div class="course-card card-purple">
+                <div class="image-container"><img src="Scratch.jpg"></div>
+                <h3 class="text-2xl font-black mb-2">6. Scratch 程式 (三年級+)</h3>
+                <p class="text-sm text-gray-700 leading-relaxed"><strong>純程式路徑：</strong>遊戲與動畫製作。<br><strong>能力培養：</strong>運算思維。</p>
+            </div>
         </div>
-    </footer>
+
+        <div class="mt-20 text-center">
+            <h2 class="text-3xl font-black text-[#8b4513] mb-4">📜 標準 STEM 智慧循環</h2>
+            <p class="text-lg text-brown-800 font-bold max-w-2xl mx-auto px-4 mb-10">
+                「樂高機器人不是只學積木或程式，而是透過不斷循環的解決問題過程，培養孩子獨立思考的能力。」
+            </p>
+            <div class="stem-circle-container">
+                <div class="stem-core-text"><img src="STEM.jpg" class="w-16 mx-auto mb-2 rounded-lg">核心思考訓練</div>
+                <div class="stem-step-node" data-index="0"><span>❓</span><b class="text-xs">提出問題</b></div>
+                <div class="stem-step-node" data-index="1"><span>💡</span><b class="text-xs">發想解法</b></div>
+                <div class="stem-step-node" data-index="2"><span>🛠️</span><b class="text-xs">動手做</b></div>
+                <div class="stem-step-node" data-index="3"><span>🧪</span><b class="text-xs">測試</b></div>
+                <div class="stem-step-node" data-index="4"><span>🔍</span><b class="text-xs">發現問題</b></div>
+                <div class="stem-step-node" data-index="5"><span>🔧</span><b class="text-xs">修正</b></div>
+                <div class="stem-step-node" data-index="6"><span>🔄</span><b class="text-xs">再測試</b></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="marquee-footer">
+    <div class="marquee-content">
+        ★ 積動城市 Jidong Chengshi ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 冒險地圖版 ★ 讓孩子在積木與程式中找到自信，開啟智慧旅程！ ★
+    </div>
+</footer>
+
 <script>
-    // --- 1. 變數宣告 (統一放在最上方) ---
     const chestBtn = document.getElementById('chest-btn');
     const goldFlash = document.getElementById('gold-flash');
     const introScene = document.getElementById('intro-scene');
@@ -396,7 +278,7 @@ body {
     const closeMapBtn = document.getElementById('close-map-btn');
     const treasureContainer = document.getElementById('treasure-container');
 
-    // --- 2. 初始化：圓形佈局計算 ---
+    // --- STEM 佈局 ---
     const nodes = document.querySelectorAll('.stem-step-node');
     const radius = 200; 
     nodes.forEach((node, i) => {
@@ -407,107 +289,69 @@ body {
         node.style.top = `calc(50% + ${y}px - 55px)`;
     });
 
-  // --- 3. 初始化：生成漂浮珠寶 ---
-const treasures = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
-const jewelCount = 50; // 您可以在這裡統一設定數量，方便以後修改
+    // --- 漂浮珠寶 ---
+    const treasuresItems = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
+    for (let i = 0; i < 50; i++) {
+        const div = document.createElement('div');
+        div.className = 'treasure-item';
+        div.innerText = treasuresItems[Math.floor(Math.random() * treasuresItems.length)];
+        div.style.left = Math.random() * 100 + 'vw';
+        div.style.top = Math.random() * 100 + 'vh';
+        div.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
+        treasureContainer.appendChild(div);
+        gsap.to(div, {
+            y: "-=" + (30 + Math.random() * 50),
+            x: "+=" + (Math.random() * 40 - 20),
+            duration: 2 + Math.random() * 3,
+            repeat: -1, yoyo: true, ease: "sine.inOut"
+        });
+    }
 
-for (let i = 0; i < jewelCount; i++) {
-    const div = document.createElement('div');
-    div.className = 'treasure-item';
-    div.innerText = treasures[Math.floor(Math.random() * treasures.length)];
-    div.style.left = Math.random() * 100 + 'vw';
-    div.style.top = Math.random() * 100 + 'vh';
-    
-    // 新增：讓珠寶大小隨機，畫面更生動
-    div.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
-    
-    treasureContainer.appendChild(div);
-    
-    // 隨機漂浮動畫
-    gsap.to(div, {
-        y: "-=" + (30 + Math.random() * 50), // 隨機上升高度
-        x: "+=" + (Math.random() * 40 - 20), // 隨機左右偏移
-        duration: 2 + Math.random() * 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-    });
-}
-
-  // --- 4. 合併後的【開啟冒險】動畫 (金光 + 地圖 + 珠寶消失) ---
+    // --- 開啟冒險動畫 ---
     chestBtn.addEventListener('click', () => {
         const closedImg = document.getElementById('chest-closed');
         const openImg = document.getElementById('chest-open-img');
         const chestLabel = document.getElementById('chest-label');
 
         const tl = gsap.timeline();
-
-        // 1. 寶箱震動
         tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
-          
-          // 2. 開啟寶箱：切換圖片與噴發金光
           .add(() => {
               closedImg.classList.add('hidden');
               openImg.classList.remove('hidden');
               if(chestLabel) chestLabel.classList.add('hidden');
           })
-          .to(goldFlash, { 
-              duration: 1.2, 
-              scale: 200, 
-              opacity: 1, 
-              ease: "power4.in" 
-          }) 
-          .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<") // 珠寶同時消失
-          
-          // 3. 切換場景
+          .to(goldFlash, { duration: 1.2, scale: 200, opacity: 1, ease: "power4.in" })
+          .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<")
           .set(introScene, { display: "none" })
           .set(mapContainer, { display: "block" })
-          
-          // 4. 閃光退去與地圖攤開
           .to(goldFlash, { duration: 1, opacity: 0 })
           .to(mapContainer, { 
-              duration: 1.5, 
-              opacity: 1, 
-              rotateX: 0, 
-              scale: 1, 
-              ease: "back.out(1.2)", 
-              transformOrigin: "center top"
+              duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
+              ease: "back.out(1.2)", transformOrigin: "center top" 
           }, "-=0.5")
-          
-          // 5. 課程卡片進場
-          .to(courseCards, { 
-              duration: 0.8, 
-              opacity: 1, 
-              y: 0, 
-              stagger: 0.2, 
-              ease: "power3.out" 
-          }, "-=0.5")
-          .to(closeMapBtn, { duration: 0.5, opacity: 1, ease: "power2.out" });
+          .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out" }, "-=0.5")
+          .to(closeMapBtn, { duration: 0.5, opacity: 1 });
     });
 
-  // --- 5. 收回地圖邏輯 (珠寶重新浮現) ---
+    // --- 收回地圖 ---
     closeMapBtn.addEventListener('click', () => {
         const tl = gsap.timeline();
         tl.to([mapContainer, closeMapBtn], { duration: 0.5, opacity: 0, scale: 0.9 })
           .set(mapContainer, { display: "none" })
-          .set(introScene, { display: "flex", opacity: 0, scale: 0.8 })
+          .set(introScene, { display: "flex", opacity: 0 })
           .add(() => {
-              // 讓寶箱圖片回到關閉狀態
               document.getElementById('chest-closed').classList.remove('hidden');
               document.getElementById('chest-open-img').classList.add('hidden');
               if(document.getElementById('chest-label')) document.getElementById('chest-label').classList.remove('hidden');
-              
-              // 重置卡片狀態
               gsap.set(courseCards, { opacity: 0, y: 50 });
               gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
           })
-          .to(introScene, { duration: 0.8, opacity: 1, scale: 1, ease: "back.out(1.7)" })
-          .to('.treasure-item', { duration: 0.8, opacity: 1, scale: 1, stagger: 0.02 }, "-=0.5");
-        
+          .to(introScene, { duration: 0.8, opacity: 1 })
+          .to('.treasure-item', { duration: 0.8, opacity: 1, scale: 1, stagger: 0.02 });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // --- 6. 圖片自動翻頁邏輯 (保留原功能) ---
+    // --- 輪播邏輯 ---
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
         const imgs = track.querySelectorAll('img');
