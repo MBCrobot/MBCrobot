@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/CSSRulePlugin.min.js"></script>
 
     <style>
-        /* --- 背景與風格 --- */
+        /* --- 背景與陽光風格 --- */
         body { 
             font-family: 'Varela Round', "Microsoft JhengHei", sans-serif; 
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%);
@@ -18,6 +18,7 @@
             min-height: 100vh;
         }
 
+        /* 漂浮珠寶樣式 */
         .treasure-item {
             position: absolute;
             font-size: 2rem;
@@ -25,6 +26,7 @@
             z-index: 10;
         }
 
+        /* 金光特效 */
         #gold-flash {
             position: fixed;
             top: 50%; left: 50%;
@@ -54,6 +56,7 @@
             paint-order: stroke fill;
         }
 
+        /* --- 2. 開場場景 --- */
         #intro-scene {
             height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative; z-index: 50; transition: opacity 0.5s;
@@ -77,7 +80,7 @@
             z-index: 60;
         }
 
-        /* --- 4. 課程卡片、統一高度與流水燈 --- */
+        /* --- 4. 課程卡片微調與變色流水燈 --- */
         .course-card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 16px;
@@ -85,11 +88,11 @@
             position: relative;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             opacity: 0; transform: translateY(50px); 
-            /* 統一高度並預留空間 */
-            min-height: 550px; 
+            /* 1. 統一大小與預留空間 */
+            min-height: 520px; 
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* 確保特效不溢出 */
             z-index: 0;
         }
 
@@ -99,7 +102,7 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
 
-        /* 流水燈外框特效 */
+        /* 流水燈特效層 (旋轉彩虹) */
         .course-card::before {
             content: '';
             position: absolute;
@@ -113,13 +116,13 @@
             animation: rotateLight 4s linear infinite;
         }
 
-        /* 內層白色底，產生邊框感 */
+        /* 內層遮罩 (保持卡片內容乾淨) */
         .course-card::after {
             content: '';
             position: absolute;
-            inset: 5px; /* 邊框粗細 */
+            inset: 4px; /* 邊框粗細 */
             background: white;
-            border-radius: 11px;
+            border-radius: 12px;
             z-index: -1;
         }
 
@@ -128,30 +131,23 @@
             to { transform: rotate(360deg); }
         }
 
-        /* --- 輪播與圖片顯示修正 --- */
-        .carousel-container { 
+        /* 2. 圖片顯示微調 */
+        .image-container { 
             height: 220px; 
             width: 100%;
             overflow: hidden; 
             border-radius: 10px; 
             margin-bottom: 1rem; 
             background: #f8fafc; 
-            position: relative;
-            flex-shrink: 0;
-        }
-        
-        .carousel-track {
+            flex-shrink: 0; /* 確保圖片容器不被壓縮 */
             display: flex;
-            height: 100%;
-            width: 100%;
-            transition: transform 0.7s ease-in-out;
+            align-items: center;
+            justify-content: center;
         }
-
-        .carousel-track img { 
-            width: 100%; /* 強制每張圖佔滿寬度 */
-            height: 100%;
-            flex-shrink: 0; /* 防止圖片被縮小 */
-            object-fit: contain; /* 完整顯示照片，不裁切 */
+        .image-container img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; /* 保持比例完整顯示 */
         }
 
         /* --- 5. 其他元件 --- */
@@ -232,9 +228,9 @@
     <div id="map-container">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
             <div class="course-card">
-                <div class="carousel-container" data-interval="3000">
-                    <div class="carousel-track">
-                        <img src="造型積木1.jpg"><img src="造型積木2.png">
+                <div class="carousel-container image-container" data-interval="3000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="造型積木1.jpg" class="flex-shrink-0"><img src="造型積木2.png" class="flex-shrink-0">
                     </div>
                 </div>
                 <h3 class="text-2xl font-black mb-2 text-blue-700">1. 造型積木 (小班)</h3>
@@ -242,9 +238,9 @@
             </div>
 
             <div class="course-card">
-                <div class="carousel-container" data-interval="4000">
-                    <div class="carousel-track">
-                        <img src="簡易機械1.jpg"><img src="簡易機械.jpg">
+                <div class="carousel-container image-container" data-interval="4000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="簡易機械1.jpg" class="flex-shrink-0"><img src="簡易機械.jpg" class="flex-shrink-0">
                     </div>
                 </div>
                 <h3 class="text-2xl font-black mb-2 text-green-700">2. 簡易機械 (中班)</h3>
@@ -252,9 +248,9 @@
             </div>
 
             <div class="course-card">
-                <div class="carousel-container" data-interval="4000">
-                    <div class="carousel-track">
-                        <img src="動力機械1.jpg"><img src="動力機械2.jpg">
+                <div class="carousel-container image-container" data-interval="4000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="動力機械1.jpg" class="flex-shrink-0"><img src="動力機械2.jpg" class="flex-shrink-0">
                     </div>
                 </div>
                 <h3 class="text-2xl font-black mb-2 text-orange-700">3. 動力機械 (大班+)</h3>
@@ -262,9 +258,9 @@
             </div>
 
             <div class="course-card">
-                <div class="carousel-container" data-interval="4000">
-                    <div class="carousel-track">
-                        <img src="wedo.jpg"><img src="WEDO教具.jpg">
+                <div class="carousel-container image-container" data-interval="4000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="wedo.jpg" class="flex-shrink-0"><img src="WEDO教具.jpg" class="flex-shrink-0">
                     </div>
                 </div>
                 <h3 class="text-2xl font-black mb-2 text-cyan-700">4. WeDo 機器人 (三年級+)</h3>
@@ -272,9 +268,9 @@
             </div>
 
             <div class="course-card">
-                <div class="carousel-container" data-interval="5000">
-                    <div class="carousel-track">
-                        <img src="EV3 1.jpg"><img src="EV3 2.jpg">
+                <div class="carousel-container image-container" data-interval="5000">
+                    <div class="carousel-track h-full flex transition-transform duration-700 ease-in-out">
+                        <img src="EV3 1.jpg" class="flex-shrink-0"><img src="EV3 2.jpg" class="flex-shrink-0">
                     </div>
                 </div>
                 <h3 class="text-2xl font-black mb-2 text-indigo-700">5. EV3 機器人 (四年級+)</h3>
@@ -282,11 +278,7 @@
             </div>
 
             <div class="course-card">
-                <div class="carousel-container">
-                    <div class="carousel-track">
-                        <img src="Scratch.jpg">
-                    </div>
-                </div>
+                <div class="image-container"><img src="Scratch.jpg"></div>
                 <h3 class="text-2xl font-black mb-2 text-purple-700">6. Scratch 程式 (三年級+)</h3>
                 <p class="text-sm text-gray-700 leading-relaxed"><strong>純程式路徑：</strong>遊戲與動畫製作。<br><strong>能力培養：</strong>運算思維。</p>
             </div>
@@ -308,10 +300,12 @@
                     </defs>
                     <g id="arrow-paths"></g>
                 </svg>
+
                 <div class="stem-core-text">
                     <img src="STEM.jpg" class="w-16 mx-auto mb-2 rounded-lg">
                     核心思考訓練
                 </div>
+
                 <div class="stem-step-node" data-index="0"><span>❓</span><b class="text-xs">提出問題</b></div>
                 <div class="stem-step-node" data-index="1"><span>💡</span><b class="text-xs">發想解法</b></div>
                 <div class="stem-step-node" data-index="2"><span>🛠️</span><b class="text-xs">動手做</b></div>
@@ -339,7 +333,7 @@
     const closeMapBtn = document.getElementById('close-map-btn');
     const treasureContainer = document.getElementById('treasure-container');
 
-    // STEM 佈局邏輯
+    // --- STEM 佈局 ---
     const nodes = document.querySelectorAll('.stem-step-node');
     const radius = 200; 
     nodes.forEach((node, i) => {
@@ -351,9 +345,11 @@
     });
 
     const arrowGroup = document.getElementById('arrow-paths');
-    for (let i = 0; i < nodes.length; i++) {
-        const startAngle = (i * (360 / nodes.length) - 90) * (Math.PI / 180);
-        const endAngle = (((i + 1) % nodes.length) * (360 / nodes.length) - 90) * (Math.PI / 180);
+    const totalNodes = nodes.length;
+
+    for (let i = 0; i < totalNodes; i++) {
+        const startAngle = (i * (360 / totalNodes) - 90) * (Math.PI / 180);
+        const endAngle = (((i + 1) % totalNodes) * (360 / totalNodes) - 90) * (Math.PI / 180);
         const r = 160; 
         const x1 = 250 + Math.cos(startAngle + 0.2) * r;
         const y1 = 250 + Math.sin(startAngle + 0.2) * r;
@@ -380,7 +376,7 @@
         });
     }
 
-    // 珠寶特效
+    // --- 漂浮珠寶 ---
     const treasuresItems = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
     for (let i = 0; i < 50; i++) {
         const div = document.createElement('div');
@@ -388,6 +384,7 @@
         div.innerText = treasuresItems[Math.floor(Math.random() * treasuresItems.length)];
         div.style.left = Math.random() * 100 + 'vw';
         div.style.top = Math.random() * 100 + 'vh';
+        div.style.fontSize = (Math.random() * 1.5 + 1) + 'rem'; 
         treasureContainer.appendChild(div);
         gsap.to(div, {
             y: "-=" + (30 + Math.random() * 50),
@@ -397,24 +394,33 @@
         });
     }
 
-    // 開啟地圖動畫
+    // --- 開啟冒險動畫 ---
     chestBtn.addEventListener('click', () => {
+        const closedImg = document.getElementById('chest-closed');
+        const openImg = document.getElementById('chest-open-img');
+        const chestLabel = document.getElementById('chest-label');
+
         const tl = gsap.timeline();
         tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
           .add(() => {
-              document.getElementById('chest-closed').classList.add('hidden');
-              document.getElementById('chest-open-img').classList.remove('hidden');
-              if(document.getElementById('chest-label')) document.getElementById('chest-label').classList.add('hidden');
+              closedImg.classList.add('hidden');
+              openImg.classList.remove('hidden');
+              if(chestLabel) chestLabel.classList.add('hidden');
           })
           .to(goldFlash, { duration: 1.2, scale: 200, opacity: 1, ease: "power4.in" })
+          .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<")
           .set(introScene, { display: "none" })
           .set(mapContainer, { display: "block" })
           .to(goldFlash, { duration: 1, opacity: 0 })
-          .to(mapContainer, { duration: 1.5, opacity: 1, rotateX: 0, scale: 1, ease: "back.out(1.2)" }, "-=0.5")
-          .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2 }, "-=0.5")
+          .to(mapContainer, { 
+              duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
+              ease: "back.out(1.2)", transformOrigin: "center top" 
+          }, "-=0.5")
+          .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out" }, "-=0.5")
           .to(closeMapBtn, { duration: 0.5, opacity: 1 });
     });
 
+    // --- 收回地圖 ---
     closeMapBtn.addEventListener('click', () => {
         const tl = gsap.timeline();
         tl.to([mapContainer, closeMapBtn], { duration: 0.5, opacity: 0, scale: 0.9 })
@@ -423,13 +429,16 @@
           .add(() => {
               document.getElementById('chest-closed').classList.remove('hidden');
               document.getElementById('chest-open-img').classList.add('hidden');
+              if(document.getElementById('chest-label')) document.getElementById('chest-label').classList.remove('hidden');
               gsap.set(courseCards, { opacity: 0, y: 50 });
+              gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
           })
-          .to(introScene, { duration: 0.8, opacity: 1 });
+          .to(introScene, { duration: 0.8, opacity: 1 })
+          .to('.treasure-item', { duration: 0.8, opacity: 1, scale: 1, stagger: 0.02 });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // 輪播邏輯修正
+    // --- 輪播邏輯 ---
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
         const imgs = track.querySelectorAll('img');
@@ -437,9 +446,8 @@
         if (imgs.length > 1) {
             setInterval(() => {
                 idx = (idx + 1) % imgs.length;
-                // 每次移動 100% 的寬度，確保一張一張翻頁
                 track.style.transform = `translateX(-${idx * 100}%)`;
-            }, parseInt(container.dataset.interval) || 3000);
+            }, parseInt(container.dataset.interval));
         }
     });
 </script>
