@@ -10,12 +10,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/CSSRulePlugin.min.js"></script>
 
     <style>
-        body { 
-            font-family: 'Varela Round', "Microsoft JhengHei", sans-serif; 
-            background-color: #1a202c; /* 深色背景襯托地圖 */
-            overflow-x: hidden;
-            min-height: 100vh;
-            display: flex; flex-direction: column;
+      /* --- 背景與陽光風格 --- */
+body { 
+    font-family: 'Varela Round', "Microsoft JhengHei", sans-serif; 
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%); /* 天空藍漸層 */
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* 漂浮珠寶樣式 */
+.treasure-item {
+    position: absolute;
+    font-size: 2rem;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* 金光特效 */
+#gold-flash {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 10px; height: 10px;
+    background: radial-gradient(circle, #fff700 0%, #ffa502 50%, transparent 70%);
+    border-radius: 50%;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+}
         }
 
         /* --- 1. 標題特效：圓胖立體 + 浮動 + 四色循環 --- */
@@ -155,44 +177,56 @@
 /* 按鈕懸浮稍微變大 */
 .nav-btn-flow:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
 
-        /* STEM 區塊樣式 */
-.stem-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    border-radius: 30px;
-    padding: 40px;
-    margin-top: 50px;
-    border: 2px dashed #f3e5ab;
-}
-
-.stem-step {
+/* --- 可愛圓形 STEM 迴圈 --- */
+.stem-circle-container {
     position: relative;
-    background: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    transition: all 0.3s ease;
-    border: 3px solid transparent;
+    width: 500px;
+    height: 500px;
+    margin: 60px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* STEM 步驟流水燈 */
-.stem-step::before {
-    content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
-    z-index: -1; border-radius: 19px;
-    background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa);
+/* 核心標題文字 */
+.stem-core-text {
+    position: absolute;
+    text-align: center;
+    width: 180px;
+    font-weight: bold;
+    color: #8b4513;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.stem-step-node {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    background: white;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* 做出可愛的不規則圓形 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 4px solid #fff;
+}
+
+/* STEM 節點流水燈 (圓形版) */
+.stem-step-node::after {
+    content: ''; position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px;
+    z-index: -1; border-radius: inherit;
+    background: linear-gradient(45deg, #ff4757, #ffa502, #2ed573, #3742fa);
     background-size: 300% 300%;
     animation: flowBorder 3s linear infinite;
-    opacity: 0; transition: opacity 0.3s;
 }
 
-.stem-step:hover::before { opacity: 1; }
-.stem-step:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
-
-/* 箭頭指示 */
-.step-arrow {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; color: #f3e5ab;
-}
+.stem-step-node:hover { transform: scale(1.2); z-index: 30; }
     </style>
 </head>
 <body>
@@ -210,9 +244,11 @@
         <h1 class="adventure-title">積動城市．冒險地圖</h1>
     </header>
 
-    <main class="flex-grow relative">
+<main class="flex-grow relative">
+    <div id="treasure-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
         
         <div id="intro-scene">
+        <div id="gold-flash"></div>
             <div class="treasure-chest" id="chest-btn">
                 <div class="chest-lid"></div>
                 <div class="chest-body">點擊開啟冒險</div>
@@ -316,56 +352,25 @@
 
             </div>
         </div>
-        <div class="stem-section mt-12">
-    <div class="text-center mb-10">
-        <h2 class="text-3xl font-black text-[#8b4513] mb-4">📜 標準 STEM 教學流程</h2>
-        <p class="text-lg text-brown-800 font-bold italic">
-            「樂高機器人不是只學積木或程式，而是用做機器人的過程，讓孩子學會怎麼思考、怎麼解決問題，這就是 STEM。」
-        </p>
-    </div>
+      <div class="mt-20 text-center">
+    <h2 class="text-3xl font-black text-[#8b4513] mb-4">📜 標準 STEM 智慧循環</h2>
+    <p class="text-lg text-brown-800 font-bold max-w-2xl mx-auto px-4">
+        「樂高機器人不是只學積木或程式，而是透過不斷循環的解決問題過程，培養孩子獨立思考的能力。」
+    </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-center">
-        <div class="stem-step shadow-md">
-            <div class="text-2xl mb-2">❓</div>
-            <div class="font-bold text-gray-800">1. 提出問題</div>
-            <div class="text-xs text-blue-600">(任務／情境)</div>
+    <div class="stem-circle-container">
+        <div class="stem-core-text">
+            <img src="STEM.jpg" class="w-16 mx-auto mb-2 rounded-lg">
+            核心思考訓練
         </div>
-        <div class="step-arrow hidden md:block">➔</div>
 
-        <div class="stem-step shadow-md">
-            <div class="text-2xl mb-2">💡</div>
-            <div class="font-bold text-gray-800">2. 發想解法</div>
-        </div>
-        <div class="step-arrow hidden md:block">➔</div>
-
-        <div class="stem-step shadow-md">
-            <div class="text-2xl mb-2">🛠️</div>
-            <div class="font-bold text-gray-800">3. 動手做</div>
-            <div class="text-xs text-blue-600">(組裝＋程式)</div>
-        </div>
-        <div class="step-arrow hidden md:block">➔</div>
-
-        <div class="stem-step shadow-md">
-            <div class="text-2xl mb-2">🧪</div>
-            <div class="font-bold text-gray-800">4. 測試</div>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center mt-6 max-w-3xl mx-auto">
-        <div class="stem-step shadow-md border-red-200">
-            <div class="text-2xl mb-2">🔍</div>
-            <div class="font-bold text-gray-800">5. 發現問題</div>
-        </div>
-        <div class="step-arrow hidden md:block">➔</div>
-        <div class="stem-step shadow-md">
-            <div class="text-2xl mb-2">🔧</div>
-            <div class="font-bold text-gray-800">6. 修正</div>
-        </div>
-        <div class="step-arrow hidden md:block">➔</div>
-        <div class="stem-step shadow-md border-green-200">
-            <div class="text-2xl mb-2">🔄</div>
-            <div class="font-bold text-gray-800">7. 再測試</div>
-        </div>
+        <div class="stem-step-node" data-index="0"><span>❓</span><b class="text-xs">提出問題</b></div>
+        <div class="stem-step-node" data-index="1"><span>💡</span><b class="text-xs">發想解法</b></div>
+        <div class="stem-step-node" data-index="2"><span>🛠️</span><b class="text-xs">動手做</b></div>
+        <div class="stem-step-node" data-index="3"><span>🧪</span><b class="text-xs">測試</b></div>
+        <div class="stem-step-node" data-index="4"><span>🔍</span><b class="text-xs">發現問題</b></div>
+        <div class="stem-step-node" data-index="5"><span>🔧</span><b class="text-xs">修正</b></div>
+        <div class="stem-step-node" data-index="6"><span>🔄</span><b class="text-xs">再測試</b></div>
     </div>
 </div>
     </main>
@@ -427,6 +432,58 @@
                 track.style.transform = `translateX(-${idx * 100}%)`;
             }, parseInt(container.dataset.interval));
         }
+    });
+    // --- 圓形佈局計算 ---
+    const nodes = document.querySelectorAll('.stem-step-node');
+    const radius = 200; // 圓形半徑
+    nodes.forEach((node, i) => {
+        const angle = (i * (360 / 7) - 90) * (Math.PI / 180);
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        node.style.left = `calc(50% + ${x}px - 55px)`;
+        node.style.top = `calc(50% + ${y}px - 55px)`;
+    });
+
+    // --- 生成漂浮珠寶 ---
+    const treasures = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
+    const container = document.getElementById('treasure-container');
+    for (let i = 0; i < 30; i++) {
+        const div = document.createElement('div');
+        div.className = 'treasure-item';
+        div.innerText = treasures[Math.floor(Math.random() * treasures.length)];
+        div.style.left = Math.random() * 100 + 'vw';
+        div.style.top = Math.random() * 100 + 'vh';
+        container.appendChild(div);
+        
+        // 隨機漂浮動畫
+        gsap.to(div, {
+            y: "-=50", x: "+=30",
+            duration: 2 + Math.random() * 3,
+            repeat: -1, yoyo: true, ease: "sine.inOut"
+        });
+    }
+    // --- 修改後的開箱動畫 ---
+    const chestBtn = document.getElementById('chest-btn');
+    const goldFlash = document.getElementById('gold-flash');
+
+    chestBtn.addEventListener('click', () => {
+        chestBtn.classList.add('chest-open');
+        
+        const tl = gsap.timeline();
+        tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
+          // 噴發金光
+          .to(goldFlash, { duration: 0.6, scale: 200, opacity: 1, ease: "power4.in" })
+          // 珠寶隨著地圖出現而消失
+          .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<")
+          .set(introScene, { display: "none" })
+          .set(mapContainer, { display: "block" })
+          // 閃光退去，地圖攤開
+          .to(goldFlash, { duration: 1, opacity: 0 })
+          .to(mapContainer, { 
+              duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
+              ease: "back.out(1.2)", transformOrigin: "center top"
+          }, "-=0.8")
+          .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2 }, "-=0.5");
     });
 </script>
 </body>
