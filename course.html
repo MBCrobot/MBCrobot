@@ -139,12 +139,34 @@
             .adventure-title { font-size: 2.5rem; }
             #map-container { padding: 20px; margin: 10px; }
         }
+        /* 導航按鈕流水燈效果 */
+.nav-btn-flow {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.nav-btn-flow::before {
+    content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+    z-index: -1; border-radius: 9999px;
+    background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa, #ff4757);
+    background-size: 300% 300%;
+    animation: flowBorder 3s linear infinite;
+}
+/* 按鈕懸浮稍微變大 */
+.nav-btn-flow:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
     </style>
 </head>
 <body>
-<button id="back-to-home" class="fixed top-6 left-6 z-[100] flex items-center gap-2 bg-[#8b4513] text-[#f3e5ab] px-4 py-2 rounded-full border-2 border-[#f3e5ab] shadow-xl hover:scale-110 hover:bg-[#5d4037] transition-all opacity-0 pointer-events-none">
-    <span>🏠</span><span class="font-bold">返回冒險起點</span>
-</button>
+<div class="fixed top-6 left-0 w-full px-6 z-[100] flex justify-between pointer-events-none">
+    
+    <button id="close-map-btn" class="nav-btn-flow pointer-events-auto flex items-center gap-2 bg-[#8b4513] text-[#f3e5ab] px-5 py-2.5 rounded-full border-2 border-[#f3e5ab] shadow-2xl opacity-0">
+        <span>📦</span><span class="font-bold">收回地圖</span>
+    </button>
+
+    <a href="index.html" class="nav-btn-flow pointer-events-auto flex items-center gap-2 bg-blue-900 text-white px-5 py-2.5 rounded-full border-2 border-white shadow-2xl">
+        <span>🏠</span><span class="font-bold">回官網首頁</span>
+    </a>
+</div>
     <header class="py-6 text-center relative z-50">
         <h1 class="adventure-title">積動城市．冒險地圖</h1>
     </header>
@@ -267,9 +289,9 @@
     const introScene = document.getElementById('intro-scene');
     const mapContainer = document.getElementById('map-container');
     const courseCards = document.querySelectorAll('.course-card');
-    const backBtn = document.getElementById('back-to-home'); // 新增這行
+    const closeMapBtn = document.getElementById('close-map-btn'); // 關閉地圖按鈕
 
-    // --- 您的原始開場動畫 (加入了顯示返回按鈕的邏輯) ---
+    // --- 1. 開啟冒險與地圖攤開 ---
     chestBtn.addEventListener('click', () => {
         chestBtn.classList.add('chest-open');
         const tl = gsap.timeline();
@@ -284,18 +306,18 @@
           .to(courseCards, {
               duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out"
           }, "-=0.5")
-          .to(backBtn, { duration: 0.5, opacity: 1, pointerEvents: "auto" }); // 新增：顯示按鈕
+          .to(closeMapBtn, { duration: 0.5, opacity: 1, ease: "power2.out" }); // 地圖出現後才顯示收回按鈕
     });
 
-    // --- 新增：回首頁邏輯 ---
-    backBtn.addEventListener('click', () => {
+    // --- 2. 收回地圖邏輯 (回到寶箱畫面) ---
+    closeMapBtn.addEventListener('click', () => {
         const tl = gsap.timeline();
-        tl.to([mapContainer, backBtn], { duration: 0.5, opacity: 0, scale: 0.9 })
+        tl.to([mapContainer, closeMapBtn], { duration: 0.5, opacity: 0, scale: 0.9 })
           .set(mapContainer, { display: "none" })
-          .set(backBtn, { pointerEvents: "none" })
           .set(introScene, { display: "flex", opacity: 0, scale: 0.8 })
           .to(introScene, { duration: 0.8, opacity: 1, scale: 1, ease: "back.out(1.7)" })
           .add(() => {
+              // 重置所有狀態
               chestBtn.classList.remove('chest-open');
               gsap.set(courseCards, { opacity: 0, y: 50 });
               gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
@@ -303,7 +325,7 @@
           });
     });
 
-    // --- 您的原始圖片翻頁邏輯 (完全保留) ---
+    // --- 3. 圖片自動翻頁邏輯 (保留原功能) ---
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
         const imgs = track.querySelectorAll('img');
