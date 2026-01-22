@@ -381,39 +381,71 @@ body {
         </div>
     </footer>
 <script>
+    // --- 1. 變數宣告 (統一放在最上方) ---
     const chestBtn = document.getElementById('chest-btn');
+    const goldFlash = document.getElementById('gold-flash');
     const introScene = document.getElementById('intro-scene');
     const mapContainer = document.getElementById('map-container');
     const courseCards = document.querySelectorAll('.course-card');
-    const closeMapBtn = document.getElementById('close-map-btn'); // 關閉地圖按鈕
+    const closeMapBtn = document.getElementById('close-map-btn');
+    const treasureContainer = document.getElementById('treasure-container');
 
-    // --- 1. 開啟冒險與地圖攤開 ---
+    // --- 2. 初始化：圓形佈局計算 ---
+    const nodes = document.querySelectorAll('.stem-step-node');
+    const radius = 200; 
+    nodes.forEach((node, i) => {
+        const angle = (i * (360 / 7) - 90) * (Math.PI / 180);
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        node.style.left = `calc(50% + ${x}px - 55px)`;
+        node.style.top = `calc(50% + ${y}px - 55px)`;
+    });
+
+    // --- 3. 初始化：生成漂浮珠寶 ---
+    const treasures = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
+    for (let i = 0; i < 30; i++) {
+        const div = document.createElement('div');
+        div.className = 'treasure-item';
+        div.innerText = treasures[Math.floor(Math.random() * treasures.length)];
+        div.style.left = Math.random() * 100 + 'vw';
+        div.style.top = Math.random() * 100 + 'vh';
+        treasureContainer.appendChild(div);
+        
+        gsap.to(div, {
+            y: "-=50", x: "+=30",
+            duration: 2 + Math.random() * 3,
+            repeat: -1, yoyo: true, ease: "sine.inOut"
+        });
+    }
+
+    // --- 4. 合併後的【開啟冒險】動畫 (金光 + 地圖 + 珠寶消失) ---
     chestBtn.addEventListener('click', () => {
         chestBtn.classList.add('chest-open');
+        
         const tl = gsap.timeline();
-        tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
-          .to(introScene, { duration: 0.5, opacity: 0, scale: 0.8, ease: "power2.in" }, "+=0.3")
+        tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 }) // 寶箱震動
+          .to(goldFlash, { duration: 0.6, scale: 200, opacity: 1, ease: "power4.in" }) // 噴發金光
+          .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<") // 珠寶同時消失
           .set(introScene, { display: "none" })
           .set(mapContainer, { display: "block" })
+          .to(goldFlash, { duration: 1, opacity: 0 }) // 閃光退去
           .to(mapContainer, { 
               duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
               ease: "back.out(1.2)", transformOrigin: "center top"
-          })
-          .to(courseCards, {
-              duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out"
-          }, "-=0.5")
-          .to(closeMapBtn, { duration: 0.5, opacity: 1, ease: "power2.out" }); // 地圖出現後才顯示收回按鈕
+          }, "-=0.8") // 地圖攤開
+          .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out" }, "-=0.5")
+          .to(closeMapBtn, { duration: 0.5, opacity: 1, ease: "power2.out" }); // 顯示關閉按鈕
     });
 
-    // --- 2. 收回地圖邏輯 (回到寶箱畫面) ---
+    // --- 5. 收回地圖邏輯 (珠寶重新浮現) ---
     closeMapBtn.addEventListener('click', () => {
         const tl = gsap.timeline();
         tl.to([mapContainer, closeMapBtn], { duration: 0.5, opacity: 0, scale: 0.9 })
           .set(mapContainer, { display: "none" })
           .set(introScene, { display: "flex", opacity: 0, scale: 0.8 })
           .to(introScene, { duration: 0.8, opacity: 1, scale: 1, ease: "back.out(1.7)" })
+          .to('.treasure-item', { duration: 0.8, opacity: 1, scale: 1, stagger: 0.02 }, "-=0.5") // 珠寶優雅浮現
           .add(() => {
-              // 重置所有狀態
               chestBtn.classList.remove('chest-open');
               gsap.set(courseCards, { opacity: 0, y: 50 });
               gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
@@ -421,7 +453,7 @@ body {
           });
     });
 
-    // --- 3. 圖片自動翻頁邏輯 (保留原功能) ---
+    // --- 6. 圖片自動翻頁邏輯 (保留原功能) ---
     document.querySelectorAll('.carousel-container').forEach(container => {
         const track = container.querySelector('.carousel-track');
         const imgs = track.querySelectorAll('img');
@@ -432,58 +464,6 @@ body {
                 track.style.transform = `translateX(-${idx * 100}%)`;
             }, parseInt(container.dataset.interval));
         }
-    });
-    // --- 圓形佈局計算 ---
-    const nodes = document.querySelectorAll('.stem-step-node');
-    const radius = 200; // 圓形半徑
-    nodes.forEach((node, i) => {
-        const angle = (i * (360 / 7) - 90) * (Math.PI / 180);
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        node.style.left = `calc(50% + ${x}px - 55px)`;
-        node.style.top = `calc(50% + ${y}px - 55px)`;
-    });
-
-    // --- 生成漂浮珠寶 ---
-    const treasures = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
-    const container = document.getElementById('treasure-container');
-    for (let i = 0; i < 30; i++) {
-        const div = document.createElement('div');
-        div.className = 'treasure-item';
-        div.innerText = treasures[Math.floor(Math.random() * treasures.length)];
-        div.style.left = Math.random() * 100 + 'vw';
-        div.style.top = Math.random() * 100 + 'vh';
-        container.appendChild(div);
-        
-        // 隨機漂浮動畫
-        gsap.to(div, {
-            y: "-=50", x: "+=30",
-            duration: 2 + Math.random() * 3,
-            repeat: -1, yoyo: true, ease: "sine.inOut"
-        });
-    }
-    // --- 修改後的開箱動畫 ---
-    const chestBtn = document.getElementById('chest-btn');
-    const goldFlash = document.getElementById('gold-flash');
-
-    chestBtn.addEventListener('click', () => {
-        chestBtn.classList.add('chest-open');
-        
-        const tl = gsap.timeline();
-        tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
-          // 噴發金光
-          .to(goldFlash, { duration: 0.6, scale: 200, opacity: 1, ease: "power4.in" })
-          // 珠寶隨著地圖出現而消失
-          .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<")
-          .set(introScene, { display: "none" })
-          .set(mapContainer, { display: "block" })
-          // 閃光退去，地圖攤開
-          .to(goldFlash, { duration: 1, opacity: 0 })
-          .to(mapContainer, { 
-              duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
-              ease: "back.out(1.2)", transformOrigin: "center top"
-          }, "-=0.8")
-          .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2 }, "-=0.5");
     });
 </script>
 </body>
