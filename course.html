@@ -434,7 +434,7 @@ for (let i = 0; i < jewelCount; i++) {
         
         const tl = gsap.timeline();
         tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 }) // 寶箱震動
-          .to(goldFlash, { duration: 0.6, scale: 200, opacity: 1, ease: "power4.in" }) // 噴發金光
+          .to(goldFlash, { duration: 1.2, scale: 200, opacity: 1, sine.inOut: "power4.in" }) // 噴發金光
           .to('.treasure-item', { duration: 0.5, opacity: 0, scale: 0 }, "<") // 珠寶同時消失
           .set(introScene, { display: "none" })
           .set(mapContainer, { display: "block" })
@@ -442,7 +442,7 @@ for (let i = 0; i < jewelCount; i++) {
           .to(mapContainer, { 
               duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
               ease: "back.out(1.2)", transformOrigin: "center top"
-          }, "-=0.2") // 地圖攤開
+          }, "-=0.5") // 地圖攤開
           .to(courseCards, { duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out" }, "-=0.5")
           .to(closeMapBtn, { duration: 0.5, opacity: 1, ease: "power2.out" }); // 顯示關閉按鈕
     });
