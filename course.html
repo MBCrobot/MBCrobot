@@ -142,7 +142,9 @@
     </style>
 </head>
 <body>
-
+<button id="back-to-home" class="fixed top-6 left-6 z-[100] flex items-center gap-2 bg-[#8b4513] text-[#f3e5ab] px-4 py-2 rounded-full border-2 border-[#f3e5ab] shadow-xl hover:scale-110 hover:bg-[#5d4037] transition-all opacity-0 pointer-events-none">
+    <span>🏠</span><span class="font-bold">返回冒險起點</span>
+</button>
     <header class="py-6 text-center relative z-50">
         <h1 class="adventure-title">積動城市．冒險地圖</h1>
     </header>
@@ -260,57 +262,59 @@
             ★ 積動城市 Jidong Chengshi ★ 臺灣智能程式科技教育推廣協會 (SPARK) ★ 冒險地圖版 ★ 讓孩子在積木與程式中找到自信，開啟智慧旅程！ ★
         </div>
     </footer>
+<script>
+    const chestBtn = document.getElementById('chest-btn');
+    const introScene = document.getElementById('intro-scene');
+    const mapContainer = document.getElementById('map-container');
+    const courseCards = document.querySelectorAll('.course-card');
+    const backBtn = document.getElementById('back-to-home'); // 新增這行
 
-    <script>
-        // --- GSAP 開場動畫序列 ---
-        const chestBtn = document.getElementById('chest-btn');
-        const introScene = document.getElementById('intro-scene');
-        const mapContainer = document.getElementById('map-container');
-        const courseCards = document.querySelectorAll('.course-card');
+    // --- 您的原始開場動畫 (加入了顯示返回按鈕的邏輯) ---
+    chestBtn.addEventListener('click', () => {
+        chestBtn.classList.add('chest-open');
+        const tl = gsap.timeline();
+        tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 })
+          .to(introScene, { duration: 0.5, opacity: 0, scale: 0.8, ease: "power2.in" }, "+=0.3")
+          .set(introScene, { display: "none" })
+          .set(mapContainer, { display: "block" })
+          .to(mapContainer, { 
+              duration: 1.5, opacity: 1, rotateX: 0, scale: 1, 
+              ease: "back.out(1.2)", transformOrigin: "center top"
+          })
+          .to(courseCards, {
+              duration: 0.8, opacity: 1, y: 0, stagger: 0.2, ease: "power3.out"
+          }, "-=0.5")
+          .to(backBtn, { duration: 0.5, opacity: 1, pointerEvents: "auto" }); // 新增：顯示按鈕
+    });
 
-        chestBtn.addEventListener('click', () => {
-            // 1. 寶箱打開動畫
-            chestBtn.classList.add('chest-open');
-            
-            // 建立 GSAP 時間軸
-            const tl = gsap.timeline();
+    // --- 新增：回首頁邏輯 ---
+    backBtn.addEventListener('click', () => {
+        const tl = gsap.timeline();
+        tl.to([mapContainer, backBtn], { duration: 0.5, opacity: 0, scale: 0.9 })
+          .set(mapContainer, { display: "none" })
+          .set(backBtn, { pointerEvents: "none" })
+          .set(introScene, { display: "flex", opacity: 0, scale: 0.8 })
+          .to(introScene, { duration: 0.8, opacity: 1, scale: 1, ease: "back.out(1.7)" })
+          .add(() => {
+              chestBtn.classList.remove('chest-open');
+              gsap.set(courseCards, { opacity: 0, y: 50 });
+              gsap.set(mapContainer, { rotateX: 90, scale: 0.5 });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+    });
 
-            tl.to(chestBtn, { duration: 0.1, x: "+=5", yoyo: true, repeat: 5 }) // 寶箱震動
-              .to(introScene, { duration: 0.5, opacity: 0, scale: 0.8, ease: "power2.in" }, "+=0.3") // 隱藏開場介面
-              .set(introScene, { display: "none" }) // 移除開場介面
-              .set(mapContainer, { display: "block" }) // 顯示地圖容器
-              // 2. 地圖攤開動畫 (核心關鍵)
-              .to(mapContainer, { 
-                  duration: 1.5, 
-                  opacity: 1, 
-                  rotateX: 0, // 從 90度攤平到 0度
-                  scale: 1,   // 從 0.5 放大到 1
-                  ease: "back.out(1.2)", // 加入一點回彈效果
-                  transformOrigin: "center top"
-              })
-              // 3. 課程卡片依序浮現
-              .to(courseCards, {
-                  duration: 0.8,
-                  opacity: 1,
-                  y: 0,
-                  stagger: 0.2, // 每張卡片間隔 0.2秒出現
-                  ease: "power3.out"
-              }, "-=0.5"); // 提前一點開始播放，銜接更順暢
-        });
-
-
-        // --- 自動翻頁圖片邏輯 (保留原功能) ---
-        document.querySelectorAll('.carousel-container').forEach(container => {
-            const track = container.querySelector('.carousel-track');
-            const imgs = track.querySelectorAll('img');
-            let idx = 0;
-            if (imgs.length > 1) {
-                setInterval(() => {
-                    idx = (idx + 1) % imgs.length;
-                    track.style.transform = `translateX(-${idx * 100}%)`;
-                }, parseInt(container.dataset.interval));
-            }
-        });
-    </script>
+    // --- 您的原始圖片翻頁邏輯 (完全保留) ---
+    document.querySelectorAll('.carousel-container').forEach(container => {
+        const track = container.querySelector('.carousel-track');
+        const imgs = track.querySelectorAll('img');
+        let idx = 0;
+        if (imgs.length > 1) {
+            setInterval(() => {
+                idx = (idx + 1) % imgs.length;
+                track.style.transform = `translateX(-${idx * 100}%)`;
+            }, parseInt(container.dataset.interval));
+        }
+    });
+</script>
 </body>
 </html>
