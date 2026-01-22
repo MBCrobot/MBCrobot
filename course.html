@@ -152,6 +152,33 @@
             background-size: 300% 300%; animation: flowBorder 3s linear infinite;
         }
         .stem-step-node:hover { transform: scale(1.2); z-index: 30; }
+        /* --- STEM 循環箭頭樣式 --- */
+.stem-arrow-container {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 15; /* 介於核心文字與節點之間 */
+}
+
+.stem-arrow {
+    fill: none;
+    stroke: #8b4513; /* 咖啡色線條銜接風格 */
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 10, 15; /* 虛線感 */
+    opacity: 0.6;
+}
+
+/* 軌道流光特效 */
+.flow-line {
+    fill: none;
+    stroke: url(#flowGradient);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 20, 100; /* 流光長度 */
+    filter: drop-shadow(0 0 5px rgba(255, 165, 2, 0.8));
+}
     </style>
 </head>
 <body class="flex flex-col">
@@ -249,16 +276,31 @@
             <p class="text-lg text-brown-800 font-bold max-w-2xl mx-auto px-4 mb-10">
                 「樂高機器人不是只學積木或程式，而是透過不斷循環的解決問題過程，培養孩子獨立思考的能力。」
             </p>
-            <div class="stem-circle-container">
-                <div class="stem-core-text"><img src="STEM.jpg" class="w-16 mx-auto mb-2 rounded-lg">核心思考訓練</div>
-                <div class="stem-step-node" data-index="0"><span>❓</span><b class="text-xs">提出問題</b></div>
-                <div class="stem-step-node" data-index="1"><span>💡</span><b class="text-xs">發想解法</b></div>
-                <div class="stem-step-node" data-index="2"><span>🛠️</span><b class="text-xs">動手做</b></div>
-                <div class="stem-step-node" data-index="3"><span>🧪</span><b class="text-xs">測試</b></div>
-                <div class="stem-step-node" data-index="4"><span>🔍</span><b class="text-xs">發現問題</b></div>
-                <div class="stem-step-node" data-index="5"><span>🔧</span><b class="text-xs">修正</b></div>
-                <div class="stem-step-node" data-index="6"><span>🔄</span><b class="text-xs">再測試</b></div>
-            </div>
+           <div class="stem-circle-container">
+    <svg class="stem-arrow-container" viewBox="0 0 500 500">
+        <defs>
+            <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffa502" stop-opacity="0" />
+                <stop offset="50%" stop-color="#ff4757" stop-opacity="1" />
+                <stop offset="100%" stop-color="#ffa502" stop-opacity="0" />
+            </linearGradient>
+        </defs>
+        <g id="arrow-paths"></g>
+    </svg>
+
+    <div class="stem-core-text">
+        <img src="STEM.jpg" class="w-16 mx-auto mb-2 rounded-lg">
+        核心思考訓練
+    </div>
+
+    <div class="stem-step-node" data-index="0"><span>❓</span><b class="text-xs">提出問題</b></div>
+    <div class="stem-step-node" data-index="1"><span>💡</span><b class="text-xs">發想解法</b></div>
+    <div class="stem-step-node" data-index="2"><span>🛠️</span><b class="text-xs">動手做</b></div>
+    <div class="stem-step-node" data-index="3"><span>🧪</span><b class="text-xs">測試</b></div>
+    <div class="stem-step-node" data-index="4"><span>🔍</span><b class="text-xs">發現問題</b></div>
+    <div class="stem-step-node" data-index="5"><span>🔧</span><b class="text-xs">修正</b></div>
+    <div class="stem-step-node" data-index="6"><span>🔄</span><b class="text-xs">再測試</b></div>
+</div>
         </div>
     </div>
 </main>
@@ -288,6 +330,45 @@
         node.style.left = `calc(50% + ${x}px - 55px)`;
         node.style.top = `calc(50% + ${y}px - 55px)`;
     });
+    // --- 新增：STEM 箭頭生成與動畫邏輯 ---
+const arrowGroup = document.getElementById('arrow-paths');
+const totalNodes = nodes.length;
+
+for (let i = 0; i < totalNodes; i++) {
+    const startAngle = (i * (360 / totalNodes) - 90) * (Math.PI / 180);
+    const endAngle = (((i + 1) % totalNodes) * (360 / totalNodes) - 90) * (Math.PI / 180);
+    
+    // 計算弧線路徑 (稍微縮短半徑避免蓋住文字)
+    const r = 160; 
+    const x1 = 250 + Math.cos(startAngle + 0.2) * r;
+    const y1 = 250 + Math.sin(startAngle + 0.2) * r;
+    const x2 = 250 + Math.cos(endAngle - 0.2) * r;
+    const y2 = 250 + Math.sin(endAngle - 0.2) * r;
+
+    // 建立 SVG 路徑 (弧線)
+    const pathData = `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`;
+    
+    // 建立底色虛線軌道
+    const bgPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    bgPath.setAttribute("d", pathData);
+    bgPath.setAttribute("class", "stem-arrow");
+    arrowGroup.appendChild(bgPath);
+
+    // 建立流光動畫路徑
+    const flowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    flowPath.setAttribute("d", pathData);
+    flowPath.setAttribute("class", "flow-line");
+    arrowGroup.appendChild(flowPath);
+
+    // GSAP 流光循環動畫
+    gsap.to(flowPath, {
+        strokeDashoffset: -120, // 讓線條往前跑
+        duration: 1.5,
+        repeat: -1,
+        ease: "none",
+        delay: i * 0.2 // 讓箭頭一個接一個跑
+    });
+}
 
     // --- 漂浮珠寶 ---
     const treasuresItems = ['💎', '💰', '👑', '💍', '🪙', '✨', '🔴', '🔵'];
