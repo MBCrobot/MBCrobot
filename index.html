@@ -566,19 +566,26 @@
     background-color: #ee5253 !important;
 }
 
-/* Google 表單容器：下方留出一點空間，避免底部被切掉 */
+/* 修改後的 Google 表單容器 */
 .iframe-container {
-    width: 100%;
-    height: 100%;
-    padding-top: 10px; /* 給頂部留一點點緩衝 */
+    position: relative; /* 必須加這個，叉叉按鈕才能以此為基準定位 */
+    width: 80%;         /* 建議不要太小，50% 在手機上會變得很擠 */
+    max-width: 600px;   /* 設定最大寬度，保持美觀 */
+    height: 70vh;       /* 使用 vh (視窗高度) 比較穩定 */
+    margin: auto;       /* 居中 */
+    padding-top: 40px;  /* 增加頂部空間，留給叉叉按鈕 */
     border-radius: 20px;
-    overflow: hidden;
+    overflow: visible;  /* 修改為 visible，確保叉叉如果超出邊框也能被看到/按到 */
+    background: white;  /* 增加背景色防止透視 */
+    z-index: 1000;      /* 確保在最上層 */
 }
 
+/* 內部的 iframe */
 .iframe-container iframe {
-    width: 100%;
-    height: 100%;
+    width: 100%;        /* 滿佈容器內部 */
+    height: 100%;       /* 滿佈容器內部 */
     border: none;
+    border-radius: 0 0 20px 20px; /* 底部圓角 */
 }
     </style>
 </head>
@@ -998,7 +1005,7 @@ window.onclick = function(event) {
     <div class="modal-content" id="modal-box">
         <span id="close-btn" class="close-modal" onclick="closeCampModal()">&times;</span>
         
-        <div class="iframe-container">
+        <div class="iframe-container" id="form-container">
             <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform">載入中…</iframe>
         </div>
     </div>
