@@ -534,21 +534,36 @@
 /* 叉叉按鈕：強制置頂並增加點擊權限 */
 .close-modal {
     position: absolute !important;
-    top: -15px;    /* 稍微往上移出邊界，更好看也更好點 */
-    right: -15px;  /* 稍微往右移出邊界 */
-    width: 40px;
-    height: 40px;
-    background: #ff4757; /* 改為紅色背景，更醒目 */
+    /* 調整位置，讓它稍微突出來一點，避免跟 Google 表單內容打架 */
+    top: -15px !important; 
+    right: -15px !important;
+    
+    /* 視覺美化：紅色圓圈配白色叉叉 */
+    width: 45px !important;
+    height: 45px !important;
+    background-color: #ff4757 !important; 
     color: white !important;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
+    border-radius: 50% !important;
+    
+    /* 置中叉叉符號 */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 28px !important;
+    font-weight: bold !important;
+    
+    /* 點擊關鍵：層級必須最高，且強制啟用滑鼠事件 */
+    z-index: 999999 !important; 
     cursor: pointer !important;
-    z-index: 10005 !important; /* 確保絕對高於 iframe */
-    pointer-events: auto !important; /* 強制啟動點擊偵測 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    pointer-events: auto !important;
+    
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    transform: scale(1.1) rotate(90deg) !important;
+    background-color: #ee5253 !important;
 }
 
 /* Google 表單容器：下方留出一點空間，避免底部被切掉 */
