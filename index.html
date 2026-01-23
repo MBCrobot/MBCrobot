@@ -423,6 +423,65 @@
 .animate-confetti {
     animation: confetti-fall var(--duration) linear infinite;
 }
+        /* 懸浮掛件容器 */
+#camp-widget {
+    position: fixed;
+    right: 30px;
+    bottom: 100px; /* 避開可能的回到頂部按鈕 */
+    width: 90px;
+    height: 90px;
+    z-index: 9999;
+    cursor: pointer;
+    display: none; /* 初始隱藏，由 JS 判斷是否顯示 */
+    transition: transform 0.3s ease;
+}
+
+/* 呼吸燈效果與流水邊框 */
+.widget-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    padding: 5px;
+    background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa);
+    background-size: 300% 300%;
+    animation: flowBorder 3s linear infinite, pulse 2s ease-in-out infinite;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.widget-inner {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #fff;
+}
+
+#camp-icon {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+/* 動畫定義 */
+@keyframes flowBorder {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    50% { transform: scale(1.1); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+}
+
+/* 滑鼠懸停效果 */
+#camp-widget:hover {
+    transform: scale(1.2) rotate(10deg);
+}
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -586,6 +645,58 @@
         container.appendChild(confetti);
     }
 });
+    document.addEventListener("DOMContentLoaded", function() {
+    const campWidget = document.getElementById('camp-widget');
+    const campIcon = document.getElementById('camp-icon');
+    const campLabel = document.getElementById('camp-label');
+    
+    // 獲取當前月份 (0-11, 所以 0 是 1 月)
+    const currentMonth = new Date().getMonth(); 
+    
+    // 設定季節邏輯 (測試時可以手動改這裡的月份)
+    // 冬令營: 12, 1, 2 月 (月份代碼: 11, 0, 1)
+    // 夏令營: 6, 7, 8 月 (月份代碼: 5, 6, 7)
+    
+    let isActive = false;
+    
+    if (currentMonth === 11 || currentMonth <= 1) {
+        // 冬令營模式
+        campIcon.src = '冬令營icon.png'; // 這裡請放您找好的冬令營圖檔名
+        campLabel.innerText = '2026 冬令營';
+        campLabel.style.background = '#00a8ff'; // 藍色調
+        isActive = true;
+    } else if (currentMonth >= 5 && currentMonth <= 7) {
+        // 夏令營模式
+        campIcon.src = '夏令營icon.png'; // 這裡請放您找好的夏令營圖檔名
+        campLabel.innerText = '2026 夏令營';
+        campLabel.style.background = '#ff4757'; // 紅橘色調
+        isActive = true;
+    }
+
+    if (isActive) {
+        campWidget.style.display = 'block';
+        
+        // --- 吸引注意動畫：每隔 5 秒瘋狂搖擺一次 ---
+        setInterval(() => {
+            gsap.to("#camp-widget", {
+                duration: 0.1,
+                x: "+=10",
+                repeat: 5,
+                yoyo: true,
+                ease: "sine.inOut",
+                onComplete: () => {
+                    gsap.to("#camp-widget", { x: 0, duration: 0.1 });
+                }
+            });
+        }, 5000);
+    }
+});
+
+// 點擊後的行為 (明天再實作表單彈出)
+function openCampModal() {
+    console.log("開啟報名表單...");
+    // 這裡明天會接 Modal 代碼
+}
 </script>
          
 <section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
@@ -733,6 +844,17 @@
             </div>
         </div>
     </section>
+        
+        <div id="camp-widget" onclick="openCampModal()">
+    <div class="widget-container">
+        <div class="widget-inner">
+            <img id="camp-icon" src="" alt="營隊報名">
+        </div>
+    </div>
+    <div id="camp-label" class="absolute -top-4 -left-10 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap shadow-lg">
+        熱烈報名中!
+    </div>
+</div>
      
     <footer class="bg-gray-800 text-white py-4 overflow-hidden border-t-4 border-mbc-red">
         <div class="flex items-center justify-between container mx-auto px-4 relative">
