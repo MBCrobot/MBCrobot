@@ -730,38 +730,34 @@
         container.appendChild(confetti);
     }
 });
-  document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     const campWidget = document.getElementById('camp-widget');
     const campIcon = document.getElementById('camp-icon');
     const campLabel = document.getElementById('camp-label');
     
-    // 1. 智慧季節偵測 (自動切換冬/夏令營圖片與文字)
-    const currentMonth = new Date().getMonth(); // 0 是 1 月
+    // 1. 智慧季節偵測
+    const currentMonth = new Date().getMonth(); 
     let isActive = false;
 
     if (currentMonth === 11 || currentMonth <= 1) {
-        // 冬令營模式 (12, 1, 2 月)
         if (campIcon) campIcon.src = '冬令營icon.png'; 
         if (campLabel) {
             campLabel.innerText = '2026 冬令營';
-            campLabel.style.background = '#00a8ff'; // 藍色調
+            campLabel.style.background = '#00a8ff';
         }
         isActive = true;
     } else if (currentMonth >= 5 && currentMonth <= 7) {
-        // 夏令營模式 (6, 7, 8 月)
         if (campIcon) campIcon.src = '夏令營icon.png'; 
         if (campLabel) {
             campLabel.innerText = '2026 夏令營';
-            campLabel.style.background = '#ff4757'; // 紅橘色調
+            campLabel.style.background = '#ff4757';
         }
         isActive = true;
     }
 
-    // 2. 如果在營隊期間，則顯示並啟動動畫
     if (isActive) {
         campWidget.style.display = 'block';
 
-        // 定義「瘋狂吸引注意」的動畫函數
         function crazyShake() {
             console.log("🔥 啟動瘋狂震動！");
             const tl = gsap.timeline();
@@ -771,31 +767,28 @@
               .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
               .to("#camp-widget", { duration: 0.1, rotation: 0, scale: 1, ease: "back.out(2)" });
         }
-
-        // 每 5 秒震動一次
         setInterval(crazyShake, 5000);
-        // 網頁開啟 1 秒後先震一次
         setTimeout(crazyShake, 1000);
     }
 });
 
-// --- 2. 這裡放「全域函數」：確保 HTML 的 onclick 找得到它們 ---
-// 注意：這三個部分必須在 DOMContentLoaded 的大括號 } 之外！！
+/* --- 以下這部分要放在大括號外面，保證全域可用 --- */
 
+// 開啟彈窗
 function openCampModal() {
     console.log("嘗試開啟表單...");
     const modal = document.getElementById('camp-modal');
     const modalBox = document.getElementById('modal-box');
     
     modal.style.display = 'flex';
-    gsap.set(modal, { opacity: 1 }); // 確保遮罩是可見的
-    
+    gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
     gsap.fromTo(modalBox, 
         { scale: 0.5, opacity: 0, y: 50 }, 
         { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
     );
 }
 
+// 關閉彈窗 (這段就是你剛才問要放哪裡的內容)
 function closeCampModal() {
     console.log("觸發關閉按鈕！");
     const modal = document.getElementById('camp-modal');
@@ -812,7 +805,7 @@ function closeCampModal() {
     gsap.to(modal, { opacity: 0, duration: 0.3 });
 }
 
-// 點擊遮罩關閉
+// 點擊遮罩空白處也可以關閉
 window.onclick = function(event) {
     const modal = document.getElementById('camp-modal');
     if (event.target == modal) {
@@ -980,9 +973,10 @@ window.onclick = function(event) {
 
 <div id="camp-modal" class="modal-overlay">
     <div class="modal-content" id="modal-box">
-        <span class="close-modal" onclick="closeCampModal()">&times;</span>
+        <span id="close-btn" class="close-modal" onclick="closeCampModal()">&times;</span>
+        
         <div class="iframe-container">
-            <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform?embedded=true">載入中…</iframe>
+            <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform">載入中…</iframe>
         </div>
     </div>
 </div>
