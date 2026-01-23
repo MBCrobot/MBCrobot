@@ -428,12 +428,25 @@
     position: fixed;
     right: 40px;
     bottom: 100px; /* 避開可能的回到頂部按鈕 */
-    width: 150px;
-    height: 150px;
+    width: 180px;
+    height: 180px;
     z-index: 9999;
     cursor: pointer;
     display: none; /* 初始隱藏，由 JS 判斷是否顯示 */
     transition: transform 0.3s ease;
+}
+        /* 2. 調整提示標籤文字大小與位置 */
+#camp-label {
+    position: absolute;
+    top: -10px;       /* 往上飄一點 */
+    left: 50%;
+    transform: translateX(-50%); /* 居中對齊 */
+    font-size: 1rem;  /* 文字加大 */
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10;
 }
 
 /* 呼吸燈效果與流水邊框 */
