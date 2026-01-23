@@ -697,22 +697,30 @@
     if (isActive) {
         campWidget.style.display = 'block';
         
-       // --- 吸引注意動畫：每隔 5 秒進行強烈左右震動 ---
-setInterval(() => {
-    // 建立一個微小的震動時間軸
-    const shakeTl = gsap.timeline();
+document.addEventListener("DOMContentLoaded", function() {
+    const campWidget = document.getElementById('camp-widget');
     
-    // 快速左右來回晃動 (幅度加大到 30px)
-    shakeTl.to("#camp-widget", { duration: 0.05, x: -30, ease: "none" })
-           .to("#camp-widget", { duration: 0.05, x: 30, ease: "none" })
-           .to("#camp-widget", { duration: 0.05, x: -20, ease: "none" })
-           .to("#camp-widget", { duration: 0.05, x: 20, ease: "none" })
-           .to("#camp-widget", { duration: 0.05, x: -10, ease: "none" })
-           .to("#camp-widget", { duration: 0.05, x: 10, ease: "none" })
-           .to("#camp-widget", { duration: 0.05, x: 0, ease: "none" });
-           
-}, 5000); // 每 5 秒震動一次
+    // 1. 強制讓它顯示（測試用，確認 ID 沒問題）
+    campWidget.style.display = 'block';
+
+    // 2. 定義一個「瘋狂吸引注意」的動畫函數
+    function crazyShake() {
+        console.log("🔥 啟動瘋狂震動！");
+        const tl = gsap.timeline();
+        
+        // 左右快速旋轉 + 縮放（像警鈴一樣）
+        tl.to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
+          .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
+          .to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
+          .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
+          .to("#camp-widget", { duration: 0.1, rotation: 0, scale: 1, ease: "back.out(2)" });
     }
+
+    // 3. 每 5 秒震動一次
+    setInterval(crazyShake, 5000);
+    
+    // 4. 網頁開啟 1 秒後先震一次給你看
+    setTimeout(crazyShake, 1000); 
 });
 
 // 點擊後的行為 (明天再實作表單彈出)
