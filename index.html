@@ -666,67 +666,59 @@
         container.appendChild(confetti);
     }
 });
-    document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function() {
     const campWidget = document.getElementById('camp-widget');
     const campIcon = document.getElementById('camp-icon');
     const campLabel = document.getElementById('camp-label');
     
-    // 獲取當前月份 (0-11, 所以 0 是 1 月)
-    const currentMonth = new Date().getMonth(); 
-    
-    // 設定季節邏輯 (測試時可以手動改這裡的月份)
-    // 冬令營: 12, 1, 2 月 (月份代碼: 11, 0, 1)
-    // 夏令營: 6, 7, 8 月 (月份代碼: 5, 6, 7)
-    
+    // 1. 智慧季節偵測 (自動切換冬/夏令營圖片與文字)
+    const currentMonth = new Date().getMonth(); // 0 是 1 月
     let isActive = false;
-    
+
     if (currentMonth === 11 || currentMonth <= 1) {
-        // 冬令營模式
-        campIcon.src = '冬令營icon.png'; // 這裡請放您找好的冬令營圖檔名
-        campLabel.innerText = '2026 冬令營';
-        campLabel.style.background = '#00a8ff'; // 藍色調
+        // 冬令營模式 (12, 1, 2 月)
+        if (campIcon) campIcon.src = '冬令營icon.png'; 
+        if (campLabel) {
+            campLabel.innerText = '2026 冬令營';
+            campLabel.style.background = '#00a8ff'; // 藍色調
+        }
         isActive = true;
     } else if (currentMonth >= 5 && currentMonth <= 7) {
-        // 夏令營模式
-        campIcon.src = '夏令營icon.png'; // 這裡請放您找好的夏令營圖檔名
-        campLabel.innerText = '2026 夏令營';
-        campLabel.style.background = '#ff4757'; // 紅橘色調
+        // 夏令營模式 (6, 7, 8 月)
+        if (campIcon) campIcon.src = '夏令營icon.png'; 
+        if (campLabel) {
+            campLabel.innerText = '2026 夏令營';
+            campLabel.style.background = '#ff4757'; // 紅橘色調
+        }
         isActive = true;
     }
 
+    // 2. 如果在營隊期間，則顯示並啟動動畫
     if (isActive) {
         campWidget.style.display = 'block';
-        
-document.addEventListener("DOMContentLoaded", function() {
-    const campWidget = document.getElementById('camp-widget');
-    
-    // 1. 強制讓它顯示（測試用，確認 ID 沒問題）
-    campWidget.style.display = 'block';
 
-    // 2. 定義一個「瘋狂吸引注意」的動畫函數
-    function crazyShake() {
-        console.log("🔥 啟動瘋狂震動！");
-        const tl = gsap.timeline();
-        
-        // 左右快速旋轉 + 縮放（像警鈴一樣）
-        tl.to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
-          .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
-          .to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
-          .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
-          .to("#camp-widget", { duration: 0.1, rotation: 0, scale: 1, ease: "back.out(2)" });
+        // 定義「瘋狂吸引注意」的動畫函數
+        function crazyShake() {
+            console.log("🔥 啟動瘋狂震動！");
+            const tl = gsap.timeline();
+            tl.to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
+              .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
+              .to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
+              .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
+              .to("#camp-widget", { duration: 0.1, rotation: 0, scale: 1, ease: "back.out(2)" });
+        }
+
+        // 每 5 秒震動一次
+        setInterval(crazyShake, 5000);
+        // 網頁開啟 1 秒後先震一次
+        setTimeout(crazyShake, 1000);
     }
-
-    // 3. 每 5 秒震動一次
-    setInterval(crazyShake, 5000);
-    
-    // 4. 網頁開啟 1 秒後先震一次給你看
-    setTimeout(crazyShake, 1000); 
 });
 
-// 點擊後的行為 (明天再實作表單彈出)
+// 3. 點擊後的彈出行為 (預留位置)
 function openCampModal() {
     console.log("開啟報名表單...");
-    // 這裡明天會接 Modal 代碼
+    // 這裡接下來要放 Modal 的彈出代碼
 }
 </script>
          
