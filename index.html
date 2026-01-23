@@ -779,30 +779,28 @@
     }
 });
 
-// 開啟彈窗
+// --- 2. 這裡放「全域函數」：確保 HTML 的 onclick 找得到它們 ---
+// 注意：這三個部分必須在 DOMContentLoaded 的大括號 } 之外！！
+
 function openCampModal() {
+    console.log("嘗試開啟表單...");
     const modal = document.getElementById('camp-modal');
     const modalBox = document.getElementById('modal-box');
     
-    // 顯示遮罩
     modal.style.display = 'flex';
+    gsap.set(modal, { opacity: 1 }); // 確保遮罩是可見的
     
-    // 使用 GSAP 製作彈出動畫
     gsap.fromTo(modalBox, 
         { scale: 0.5, opacity: 0, y: 50 }, 
         { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
     );
-    
-    // 同時讓背景遮罩淡入
-    gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
 }
 
-// 關閉彈窗
 function closeCampModal() {
+    console.log("觸發關閉按鈕！");
     const modal = document.getElementById('camp-modal');
     const modalBox = document.getElementById('modal-box');
 
-    // 縮小淡出動畫
     gsap.to(modalBox, { 
         scale: 0.8, 
         opacity: 0, 
@@ -811,9 +809,10 @@ function closeCampModal() {
             modal.style.display = 'none';
         }
     });
+    gsap.to(modal, { opacity: 0, duration: 0.3 });
 }
 
-// 點擊遮罩空白處也可以關閉
+// 點擊遮罩關閉
 window.onclick = function(event) {
     const modal = document.getElementById('camp-modal');
     if (event.target == modal) {
