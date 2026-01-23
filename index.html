@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>積動城市 MBC Robot | 啟動孩子的創造力</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
     
     <script>
@@ -18,7 +19,7 @@
                             orange: '#FF9F43',
                             blue: '#54A0FF',
                             green: '#6BCB77',
-                            cream: '#FFFDF5', // 護眼暖底色
+                            cream: '#FFFDF5',
                         }
                     },
                     fontFamily: {
@@ -30,556 +31,82 @@
     </script>
 
     <style>
-        body {
-            background-color: #FFFDF5; /* 暖米色背景 */
-            color: #2d3436;
-        }
+        /* --- 保留原有所有樣式並修正彈窗 --- */
+        body { background-color: #FFFDF5; color: #2d3436; }
 
         /* 導覽列果凍效果 */
-        .nav-item {
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        .nav-item:hover {
-            transform: scale(1.1) translateY(-2px);
-            font-weight: 900;
-        }
+        .nav-item { transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .nav-item:hover { transform: scale(1.1) translateY(-2px); font-weight: 900; }
 
-        /* 主視覺 GIF 光暈與浮動 */
-        .hero-gif {
-            filter: drop-shadow(0 0 20px rgba(255, 217, 61, 0.6));
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
+        /* 火車動畫樣式  */
+        .train-total-wrap { display: inline-flex; align-items: flex-end; animation: trainMovement 18s ease-in-out infinite; white-space: nowrap; }
+        .train-part { position: relative; display: flex; justify-content: center; align-items: center; height: 80px; padding: 0 15px; border-radius: 12px 12px 4px 4px; margin-right: 12px; font-weight: 900; color: white; box-shadow: inset -4px -4px 0 rgba(0,0,0,0.1); }
+        .engine-blue { background: #54A0FF; border-bottom: 8px solid #341f97; }
+        .car-red { background: #FF6B6B; border-bottom: 8px solid #ee5253; }
+        .car-yellow { background: #FFD93D; border-bottom: 8px solid #feca57; color: #333; }
+        .car-green { background: #6BCB77; border-bottom: 8px solid #48dbfb; }
+        @keyframes trainMovement { 0% { transform: translateX(100vw); opacity: 1; } 20% { transform: translateX(0); opacity: 1; } 80% { transform: translateX(0); opacity: 1; } 95% { transform: translateX(-120vw); opacity: 1; } 100% { transform: translateX(-120vw); opacity: 1; } }
 
-      /* 定義呼吸燈動畫 */
-    @keyframes frameBreathe {
-        0% { 
-            box-shadow: 0 0 10px rgba(255, 159, 67, 0.3), 10px 10px 0px #FF9F43;
-            border-color: #FFD93D;
-        }
-        50% { 
-            box-shadow: 0 0 25px rgba(255, 217, 61, 0.8), 10px 10px 0px #FF9F43;
-            border-color: #FFFFFF; /* 閃爍感 */
-        }
-        100% { 
-            box-shadow: 0 0 10px rgba(255, 159, 67, 0.3), 10px 10px 0px #FF9F43;
-            border-color: #FFD93D;
-        }
-    }
-
-    .glory-frame-new {
-        border: 8px solid #FFD93D;
-        border-radius: 24px;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        background: white;
-        /* 啟用呼吸燈動畫 */
-        animation: frameBreathe 3s infinite ease-in-out;
-    }
-
-    /* 滑鼠移入：停止呼吸，改為強光聚焦並膨脹 */
-    .glory-frame-new:hover {
-        animation: none;
-        transform: scale(1.03) translateY(-10px);
-        box-shadow: 0 0 40px rgba(84, 160, 255, 0.8), 15px 15px 0px #54A0FF;
-        border-color: #54A0FF;
-        z-index: 10;
-    }
-
-    .glory-frame-new img {
-        transition: transform 0.6s ease;
-    }
-
-    .glory-frame-new:hover img {
-        transform: scale(1.1);
-    }
-        /* 呼吸燈特效 (用於社群與特定按鈕) */
-        @keyframes breathe {
-            0% { transform: scale(1); filter: brightness(100%); }
-            50% { transform: scale(1.08); filter: brightness(120%); }
-            100% { transform: scale(1); filter: brightness(100%); }
-        }
-        
-        /* 應用於社群相框的隨機呼吸 */
-        .social-frame {
-            animation: breathe 4s infinite ease-in-out;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 0 15px rgba(255, 159, 67, 0.5);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 彈跳貝茲曲線 */
-            background: white;
-            display: flex;
-            align-items: center;
+        /* 彈窗遮罩 [cite: 461-463] */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
             justify-content: center;
-        }
-        
-        /* 給不同圖示設定些微不同的動畫時間，製造隨機感 */
-        .social-frame:nth-child(1) { animation-duration: 3.5s; animation-delay: 0s; border-color: #54A0FF; }
-        .social-frame:nth-child(2) { animation-duration: 4.2s; animation-delay: 1s; border-color: #FF6B6B; }
-        .social-frame:nth-child(3) { animation-duration: 3.8s; animation-delay: 0.5s; border-color: #6BCB77; }
-
-        /* 滑鼠移入瞬間膨脹 */
-        .social-frame:hover {
-            animation: none; /* 停止呼吸 */
-            transform: scale(1.3) !important;
-            box-shadow: 0 0 30px rgba(255, 217, 61, 1);
-            z-index: 10;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
         }
 
-        /* 頁尾跑馬燈 */
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
+        /* 彈窗主體 [cite: 464-466] */
+        .modal-content {
+            background: white;
+            width: 95%;
+            max-width: 700px;
+            height: 85vh;
+            border-radius: 20px;
             position: relative;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            overflow: visible;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border: 3px solid #54A0FF;
         }
 
-        /* 頁尾發光 Logo */
-        .footer-logo-glow {
-            filter: drop-shadow(0 0 5px #fff);
-            animation: glow 2s ease-in-out infinite alternate;
+        /* 修正：叉叉按鈕點擊權限 [cite: 467-473] */
+        .close-modal {
+            position: absolute !important;
+            top: -15px !important;
+            right: -15px !important;
+            width: 45px !important;
+            height: 45px !important;
+            background-color: #FF6B6B !important;
+            color: white !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            font-size: 28px !important;
+            font-weight: bold !important;
+            z-index: 999999 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
         }
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
-            to { filter: drop-shadow(0 0 15px rgba(84, 160, 255, 0.9)); }
-        }
-        /* 標題發光與火車動畫 */
-        @keyframes glowing {
-            0% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
-            50% { text-shadow: 0 0 15px rgba(255, 217, 61, 0.8), 0 0 25px rgba(255, 107, 107, 0.8); }
-            100% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
-        }
+        .close-modal:hover { transform: scale(1.1) rotate(90deg); }
 
-        @keyframes trainIntro {
-            0% { transform: translateX(100%); opacity: 0; }
-            10% { transform: translateX(0); opacity: 1; } /* 快速駛入 */
-            80% { transform: translateX(0); opacity: 1; } /* 停留 */
-            90% { transform: translateX(-100%); opacity: 0; } /* 緩慢駛出 */
-            100% { transform: translateX(-100%); opacity: 0; }
-        }
-/* 火車總容器：控制整體行駛動畫 */
-.train-total-wrap {
-  display: inline-flex;
-    align-items: flex-end;
-    animation: trainMovement 18s ease-in-out infinite;
-    white-space: nowrap;
-}
+        .iframe-container { width: 100%; height: 100%; border-radius: 18px; overflow: hidden; }
+        .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
-/* 車頭與車廂的共通樣式 */
-.train-part {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80px; /* 統一高度 */
-    padding: 0 15px;
-    border-radius: 12px 12px 4px 4px;
-    margin-right: 12px; /* 車廂間距 */
-    font-weight: 900;
-    color: white;
-    box-shadow: inset -4px -4px 0 rgba(0,0,0,0.1);
-}
-
-/* 連結桿 (用偽元素做在車廂前面) */
-.train-part:not(:first-child)::before {
-    content: '';
-    position: absolute;
-    right: 100%;
-    bottom: 20px;
-    width: 12px;
-    height: 8px;
-    background: #555;
-}
-
-/* 各車廂配色 */
-.engine-blue { background: #54A0FF; border-bottom: 8px solid #341f97; } /* 火車頭 */
-.car-red { background: #FF6B6B; border-bottom: 8px solid #ee5253; }    /* 來到 */
-.car-yellow { background: #FFD93D; border-bottom: 8px solid #feca57; color: #333; } /* 積動 */
-.car-green { background: #6BCB77; border-bottom: 8px solid #48dbfb; }  /* 城市 */
-
-/* 煙囪與雲朵動畫 (延用剛才的設定) */
-.chimney-wrap {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.chimney { width: 20px; height: 25px; background: #333; border-radius: 4px 4px 0 0; }
-.smoke-cloud {
-    position: absolute;
-    bottom: 30px;
-    width: 20px;
-    height: 20px;
-    background: #ddd;
-    border-radius: 50%;
-    box-shadow: 15px 5px 0 2px #ddd, -10px 5px 0 1px #ddd, 5px -5px 0 3px #eee;
-    opacity: 0;
-    filter: blur(2px);
-}
-
-@keyframes cloudPuff {
-    0% { transform: translateY(0) scale(0.5); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: translateY(-100px) translateX(-20px) scale(3); opacity: 0; }
-}
-
-.s-1 { animation: cloudPuff 3s infinite 3s; }
-.s-2 { animation: cloudPuff 3s infinite 4.5s; }
-
-/* 行駛動畫 */
-@keyframes trainMovement {
-    /* 0% 到 20%：從右側緩緩駛入 (原本是 10%，現在改為 20% 讓時間翻倍) */
-    0% { transform: translateX(100vw); opacity: 1; }
-    20% { transform: translateX(0); opacity: 1; }
-    
-    /* 20% 到 80%：停留在畫面中心冒煙 (約 10.8 秒) */
-    80% { transform: translateX(0); opacity: 1; }
-    
-    /* 80% 到 95%：緩緩向左駛出 */
-    95% { transform: translateX(-120vw); opacity: 1; }
-    
-    /* 95% 到 100%：極短暫的空白，隨即重頭開始循環 */
-    100% { transform: translateX(-120vw); opacity: 1; }
-    }
-        /* 定義呼吸燈動畫 */
-@keyframes core-breathing {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-    50% {
-        transform: scale(1.02); /* 輕微放大 */
-        /* 這裡的 shadow 顏色會在下方個別定義 */
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-}
-
-/* 應用動畫到 4C 框框 */
-.core-card {
-    transition: all 0.3s ease;
-    animation: core-breathing 4s ease-in-out infinite;
-}
-
-/* 為四種顏色設定專屬的呼吸燈光效果 */
-/* Connect - 藍色燈光 */
-.core-card-blue:nth-child(1) { animation-delay: 0s; }
-.core-card-blue {
-    animation-name: breathing-blue;
-}
-@keyframes breathing-blue {
-    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 113, 188, 0.1); }
-    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(0, 113, 188, 0.4); }
-}
-
-/* Construct - 紅色燈光 */
-.core-card-red:nth-child(2) { animation-delay: 1s; } /* 交錯發光感 */
-.core-card-red {
-    animation-name: breathing-red;
-}
-@keyframes breathing-red {
-    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(227, 6, 19, 0.1); }
-    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(227, 6, 19, 0.4); }
-}
-
-/* Contemplate - 橘色燈光 */
-.core-card-orange:nth-child(3) { animation-delay: 2s; }
-.core-card-orange {
-    animation-name: breathing-orange;
-}
-@keyframes breathing-orange {
-    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(243, 146, 0, 0.1); }
-    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(243, 146, 0, 0.4); }
-}
-
-/* Continue - 綠色燈光 */
-.core-card-green:nth-child(4) { animation-delay: 3s; }
-.core-card-green {
-    animation-name: breathing-green;
-}
-@keyframes breathing-green {
-    0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 150, 64, 0.1); }
-    50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(0, 150, 64, 0.4); }
-}
-
-/* 當滑鼠懸停時暫停動畫，讓使用者好閱讀 */
-.core-card:hover {
-    animation-play-state: paused;
-    transform: scale(1.05) !important;
-    z-index: 10;
-}
-/* 修正背景容器 */
-.warm-hero-bg {
-    position: relative;
-    width: 100%;
-    min-height: 80vh; /* 調整高度，避免撐得太開 */
-    background: linear-gradient(135deg, #fffdf5 0%, #f7fbff 100%) !important;
-    overflow: hidden;
-    display: block; /* 改回 block，不強制內容縱向排列 */
-}
-
-/* 確保光暈在最底層，不干涉排版 */
-.soft-glow {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(255, 245, 200, 0.4) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(60px);
-    animation: glow-move 20s infinite alternate ease-in-out;
-    pointer-events: none;
-    z-index: 0; /* 設為 0 */
-}
-
-/* 確保火車內容在光暈之上 */
-.container.z-10 {
-    position: relative;
-    z-index: 10;
-}
-
-/* 漂浮零件同樣設為不干涉佈局 */
-.lego-particle {
-    position: absolute;
-    opacity: 0.2;
-    pointer-events: none;
-    z-index: 1;
-}
-        /* 積木零件基礎樣式 */
-.dynamic-lego {
-    position: absolute;
-    opacity: 0.15;
-    z-index: 2;
-    transition: all 0.5s ease-out;
-}
-
-/* 定義複雜的隨機漂浮動畫 */
-@keyframes super-float {
-    0% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-    }
-    33% {
-        transform: translate(var(--move-x), var(--move-y)) rotate(120deg) scale(1.2);
-    }
-    66% {
-        transform: translate(calc(var(--move-x) * -0.5), calc(var(--move-y) * 1.5)) rotate(240deg) scale(0.8);
-    }
-    100% {
-        transform: translate(0, 0) rotate(360deg) scale(1);
-    }
-}
-
-.animate-lego {
-    animation: super-float var(--duration) infinite ease-in-out;
-}
-/* 確保標題大小不被縮放影響 */
-#honors h2 {
-    font-size: 2.25rem !important; /* 強制恢復 4xl 大小 */
-    line-height: 2.5rem;
-}
-
-/* 修正彩帶：讓它們可以從不同高度開始 */
-.confetti {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    z-index: 1; /* 提升層級，讓它在背景之上 */
-    opacity: 0;
-}
-
-@keyframes confetti-fall {
-    0% {
-        transform: translateY(0) translateX(0) rotate(0deg);
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    /* 噴發到高處 */
-    30% {
-        transform: translateY(-400px) translateX(var(--move-x)) rotate(90deg);
-        opacity: 1;
-    }
-    /* 緩慢飄落 */
-    100% {
-        transform: translateY(600px) translateX(calc(var(--move-x) * 2)) rotate(720deg);
-        opacity: 0;
-    }
-}
-
-.animate-confetti {
-    animation: confetti-fall var(--duration) linear infinite;
-}
-        /* 懸浮掛件容器 */
-#camp-widget {
-    position: fixed;
-    right: 40px;
-    bottom: 100px; /* 避開可能的回到頂部按鈕 */
-    width: 180px;
-    height: 180px;
-    z-index: 9999;
-    cursor: pointer;
-    display: none; /* 初始隱藏，由 JS 判斷是否顯示 */
-    transition: transform 0.3s ease;
-}
-        /* 2. 調整提示標籤文字大小與位置 */
-#camp-label {
-    position: absolute;
-    top: -10px;       /* 往上飄一點 */
-    left: 50%;
-    transform: translateX(-50%); /* 居中對齊 */
-    font-size: 1rem;  /* 文字加大 */
-    padding: 6px 12px;
-    border-radius: 999px;
-    white-space: nowrap;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    z-index: 10;
-}
-
-/* 呼吸燈效果與流水邊框 */
-.widget-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    padding: 5px;
-    background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa);
-    background-size: 300% 300%;
-    animation: flowBorder 3s linear infinite, pulse 2s ease-in-out infinite;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-.widget-inner {
-    width: 100%;
-    height: 100%;
-    background: white;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #fff;
-}
-
-#camp-icon {
-    width: 80%;
-    height: 80%;
-    object-fit: contain;
-}
-
-/* 動畫定義 */
-@keyframes flowBorder {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    50% { transform: scale(1.1); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-}
-
-/* 滑鼠懸停效果 */
-#camp-widget:hover {
-    transform: scale(1.2) rotate(10deg);
-}
-        @media (max-width: 768px) {
-    #camp-widget {
-        width: 80px;
-        height: 80px;
-        right: 20px;
-    }
-    #camp-label { font-size: 0.7rem; }
-}
-        /* 彈窗背景遮罩 */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* 背景變暗 */
-    display: none; /* 初始隱藏 */
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    backdrop-filter: blur(5px); /* 背景模糊感，顯得高級 */
-}
-
-/* 彈窗主體：增加相對定位，作為叉叉的參考座標 */
-.modal-content {
-    background: white;
-    width: 95%; /* 手機版更寬一點 */
-    max-width: 700px;
-    height: 85vh;
-    border-radius: 20px;
-    position: relative; /* 重要：讓叉叉可以根據它定位 */
-    overflow: visible; /* 改為 visible，讓叉叉可以稍微突出邊緣更明顯 */
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    border: 3px solid #00a8ff;
-}
-
-/* 叉叉按鈕：強制置頂並增加點擊權限 */
-.close-modal {
-    position: absolute !important;
-    /* 調整位置，讓它稍微突出來一點，避免跟 Google 表單內容打架 */
-    top: -15px !important; 
-    right: -15px !important;
-    
-    /* 視覺美化：紅色圓圈配白色叉叉 */
-    width: 45px !important;
-    height: 45px !important;
-    background-color: #ff4757 !important; 
-    color: white !important;
-    border-radius: 50% !important;
-    
-    /* 置中叉叉符號 */
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    font-size: 28px !important;
-    font-weight: bold !important;
-    
-    /* 點擊關鍵：層級必須最高，且強制啟用滑鼠事件 */
-    z-index: 999999 !important; 
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    transition: all 0.3s ease;
-}
-
-.close-modal:hover {
-    transform: scale(1.1) rotate(90deg) !important;
-    background-color: #ee5253 !important;
-}
-
-/* Google 表單容器：下方留出一點空間，避免底部被切掉 */
-.iframe-container {
-    width: 100%;
-    height: 100%;
-    padding-top: 10px; /* 給頂部留一點點緩衝 */
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.iframe-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
+        /* 營隊掛件樣式 [cite: 445-458] */
+        #camp-widget { position: fixed; right: 40px; bottom: 100px; width: 120px; height: 120px; z-index: 9999; cursor: pointer; display: none; }
+        .widget-container { position: relative; width: 100%; height: 100%; border-radius: 50%; padding: 5px; background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #3742fa); background-size: 300% 300%; animation: flowBorder 3s linear infinite, pulse 2s ease-in-out infinite; }
+        .widget-inner { width: 100%; height: 100%; background: white; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 2px solid #fff; }
+        @keyframes flowBorder { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -587,440 +114,111 @@
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-lg border-b-4 border-mbc-yellow">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-3 group">
-                <img src="積動城市圖1.png" alt="積動城市 Logo" class="h-12 md:h-16 group-hover:rotate-12 transition-transform duration-300">
-                <span class="text-2xl font-black text-mbc-blue tracking-widest hidden md:block group-hover:text-mbc-orange transition-colors">積動城市</span>
+                <img src="積動城市圖1.png" alt="Logo" class="h-12 md:h-16">
+                <span class="text-2xl font-black text-mbc-blue">積動城市</span>
             </a>
-
-            <div class="hidden md:flex space-x-8 items-center text-lg font-bold text-gray-600">
+            <div class="hidden md:flex space-x-8 items-center text-lg font-bold">
                 <a href="index.html" class="nav-item text-mbc-blue">首頁</a>
-                <a href="course.html" class="nav-item hover:text-mbc-green">課程介紹</a>
-                <a href="award.html" class="nav-item hover:text-mbc-yellow">得獎紀錄</a>
-                <a href="classroom.html" class="nav-item hover:text-mbc-orange">教室環境</a>
-                <a href="#downloads" class="nav-item hover:text-mbc-red">常用連結</a>
-                <a href="#contact" class="px-6 py-2 bg-mbc-red text-white rounded-full shadow-md hover:bg-mbc-orange transition-all transform hover:scale-105 active:scale-95">聯絡我們</a>
+                <a href="#contact" class="px-6 py-2 bg-mbc-red text-white rounded-full">聯絡我們</a>
             </div>
-
-            <button class="md:hidden text-mbc-blue text-3xl">☰</button>
         </div>
     </nav>
-<header class="warm-hero-bg relative w-full py-24 overflow-hidden">
-    <div class="soft-glow pointer-events-none"></div>
-    <div class="soft-glow pointer-events-none" style="right: -10%; top: 20%; animation-delay: -5s; background: radial-gradient(circle, rgba(220, 240, 255, 0.4) 0%, transparent 70%);"></div>
 
-    <div id="lego-particle-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
-
-    <div class="container mx-auto px-4 relative z-10 text-center">
-        
-        <div class="train-total-wrap">
-            <div class="train-part engine-blue">
-                <div class="chimney-wrap">
-                    <div class="smoke-cloud s-1"></div>
-                    <div class="smoke-cloud s-2"></div>
-                    <div class="chimney"></div>
-                </div>
-                <span class="text-3xl md:text-5xl">歡迎</span>
+    <header class="relative w-full py-24 overflow-hidden">
+        <div class="container mx-auto px-4 text-center">
+            <div class="train-total-wrap">
+                <div class="train-part engine-blue"><span>歡迎</span></div>
+                <div class="train-part car-red"><span>來到</span></div>
+                <div class="train-part car-yellow"><span>積動</span></div>
+                <div class="train-part car-green"><span>城市</span></div>
             </div>
-
-            <div class="train-part car-red">
-                <span class="text-3xl md:text-5xl">來到</span>
-            </div>
-
-            <div class="train-part car-yellow">
-                <span class="text-3xl md:text-5xl">積動</span>
-            </div>
-
-            <div class="train-part car-green">
-                <span class="text-3xl md:text-5xl">城市</span>
+            <p class="text-xl text-gray-600 mt-16 font-bold">讓創意與程式，成為孩子未來的超能力！</p>
+            <div class="mt-8 relative w-full max-w-lg mx-auto">
+                <img src="積動城市GIF.gif" alt="Logo" class="w-full h-auto">
             </div>
         </div>
+    </header>
 
-        <p class="text-xl text-gray-600 mt-16 font-bold">讓創意與程式，成為孩子未來的超能力！</p>
-        
-        <div class="mt-8 relative w-full max-w-lg mx-auto">
-            <img src="積動城市GIF.gif" alt="Logo" class="w-full h-auto">
+    <div id="camp-widget" onclick="openCampModal()">
+        <div id="camp-label" class="absolute -top-4 -left-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap shadow-lg">熱烈報名中!</div>
+        <div class="widget-container">
+            <div class="widget-inner">
+                <img id="camp-icon" src="" alt="營隊icon">
+            </div>
         </div>
     </div>
-</header>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const titleSpan = document.querySelector('.animated-title');
-        const smokePuff1 = document.getElementById('smokePuff1');
-        const smokePuff2 = document.getElementById('smokePuff2');
+    <div id="camp-modal" class="modal-overlay">
+        <div class="modal-content" id="modal-box">
+            <span id="close-btn" class="close-modal" onclick="closeCampModal()">&times;</span>
+            <div class="iframe-container">
+                <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform">載入中…</iframe>
+            </div>
+        </div>
+    </div>
 
-        titleSpan.addEventListener('animationiteration', (e) => {
-            if (e.animationName === 'trainIntro') {
-                // 在火車停下後的適當時機觸發冒煙
-                if (e.elapsedTime % 20 > 10 && e.elapsedTime % 20 < 15) { // 假設停留時間在 10s-18s 之間
-                    smokePuff1.style.animation = 'smokePuff 2s ease-out forwards';
-                    smokePuff2.style.animation = 'smokePuff 2s ease-out forwards 0.3s'; // 錯開一點時間
-                    
-                    // 重置動畫以便下次循環
-                    setTimeout(() => {
-                        smokePuff1.style.animation = 'none';
-                        smokePuff2.style.animation = 'none';
-                    }, 2000); // 煙霧動畫持續2秒
+    <script>
+        // --- 全域函式：確保 HTML 的 onclick 可以呼叫  ---
+        function openCampModal() {
+            const modal = document.getElementById('camp-modal');
+            const modalBox = document.getElementById('modal-box');
+            modal.style.display = 'flex';
+            gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+            gsap.fromTo(modalBox, 
+                { scale: 0.5, opacity: 0, y: 50 }, 
+                { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
+            );
+        }
+
+        function closeCampModal() {
+            const modal = document.getElementById('camp-modal');
+            const modalBox = document.getElementById('modal-box');
+            gsap.to(modalBox, { 
+                scale: 0.8, 
+                opacity: 0, 
+                duration: 0.3, 
+                onComplete: () => {
+                    modal.style.display = 'none';
                 }
+            });
+            gsap.to(modal, { opacity: 0, duration: 0.3 });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const campWidget = document.getElementById('camp-widget');
+            const campIcon = document.getElementById('camp-icon');
+            const campLabel = document.getElementById('camp-label');
+            const currentMonth = new Date().getMonth();
+            let isActive = false;
+
+            // 季節偵測 [cite: 318]
+            if (currentMonth === 11 || currentMonth <= 1) {
+                if (campIcon) campIcon.src = '冬令營icon.png';
+                if (campLabel) campLabel.innerText = '2026 冬令營';
+                isActive = true;
+            } else if (currentMonth >= 5 && currentMonth <= 7) {
+                if (campIcon) campIcon.src = '夏令營icon.png';
+                if (campLabel) campLabel.innerText = '2026 夏令營';
+                isActive = true;
+            }
+
+            if (isActive) {
+                campWidget.style.display = 'block';
+                function crazyShake() {
+                    const tl = gsap.timeline();
+                    tl.to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
+                      .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
+                      .to("#camp-widget", { duration: 0.1, rotation: 0, scale: 1, ease: "back.out(2)" });
+                }
+                setInterval(crazyShake, 5000);
+            }
+
+            // 背景點擊關閉 [cite: 326]
+            window.onclick = function(event) {
+                const modal = document.getElementById('camp-modal');
+                if (event.target == modal) { closeCampModal(); }
             }
         });
-    });
-       document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('lego-particle-container');
-    const particleCount = 18; // 設定為 18 個
-    const colors = ['#0071BC', '#E30613', '#F39200', '#009640']; // 品牌藍、紅、橘、綠
-
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'dynamic-lego animate-lego';
-        
-        // 1. 隨機形狀 (0: 圓形, 1: 正方形, 2: 長方形)
-        const shapeType = Math.floor(Math.random() * 3);
-        const size = Math.random() * 40 + 20; // 20px ~ 60px
-        
-        if (shapeType === 0) {
-            particle.style.borderRadius = '50%';
-            particle.style.border = `4px solid ${colors[Math.floor(Math.random() * colors.length)]}`;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-        } else if (shapeType === 1) {
-            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.borderRadius = '4px';
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-        } else {
-            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.borderRadius = '4px';
-            particle.style.width = `${size * 1.5}px`;
-            particle.style.height = `${size * 0.6}px`;
-        }
-
-        // 2. 隨機初始位置 (分散在四周)
-        particle.style.top = `${Math.random() * 100}%`;
-        particle.style.left = `${Math.random() * 100}%`;
-
-        // 3. 隨機運動參數 (CSS 變數)
-        // 讓每個零件移動的方向與距離都不同
-        const moveX = (Math.random() - 0.5) * 200; // -100px 到 100px
-        const moveY = (Math.random() - 0.5) * 200;
-        const duration = Math.random() * 10 + 10; // 10s 到 20s 的循環
-        
-        particle.style.setProperty('--move-x', `${moveX}px`);
-        particle.style.setProperty('--move-y', `${moveY}px`);
-        particle.style.setProperty('--duration', `${duration}s`);
-        
-        // 隨機延遲，讓動作錯開
-        particle.style.animationDelay = `${Math.random() * -20}s`;
-
-        container.appendChild(particle);
-    }
-});
-  document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('confetti-container');
-    // 增加數量到 50 個，視覺效果更好
-    const confettiCount = 50; 
-    const colors = ['#FFD700', '#FF6347', '#1E90FF', '#32CD32', '#FF69B4', '#8A2BE2'];
-
-    for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti animate-confetti';
-        
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
-
-        // 修正噴發起始位置：分散在容器底部中央區塊
-        confetti.style.left = `${10 + Math.random() * 80}%`; 
-        confetti.style.bottom = "-20px"; // 從稍微下方一點的地方噴出來
-
-        // 設置隨機參數
-        const moveX = (Math.random() - 0.5) * 400; // 左右飄移
-        const duration = Math.random() * 3 + 5; // 掉落時間 5-8 秒
-        const delay = Math.random() * 8; // 讓彩帶陸續出現，不擠在一起
-
-        confetti.style.setProperty('--move-x', `${moveX}px`);
-        confetti.style.setProperty('--duration', `${duration}s`);
-        confetti.style.animationDelay = `${delay}s`;
-
-        container.appendChild(confetti);
-    }
-});
-document.addEventListener("DOMContentLoaded", function() {
-    const campWidget = document.getElementById('camp-widget');
-    const campIcon = document.getElementById('camp-icon');
-    const campLabel = document.getElementById('camp-label');
-    
-    // 1. 智慧季節偵測
-    const currentMonth = new Date().getMonth(); 
-    let isActive = false;
-
-    if (currentMonth === 11 || currentMonth <= 1) {
-        if (campIcon) campIcon.src = '冬令營icon.png'; 
-        if (campLabel) {
-            campLabel.innerText = '2026 冬令營';
-            campLabel.style.background = '#00a8ff';
-        }
-        isActive = true;
-    } else if (currentMonth >= 5 && currentMonth <= 7) {
-        if (campIcon) campIcon.src = '夏令營icon.png'; 
-        if (campLabel) {
-            campLabel.innerText = '2026 夏令營';
-            campLabel.style.background = '#ff4757';
-        }
-        isActive = true;
-    }
-
-    if (isActive) {
-        campWidget.style.display = 'block';
-
-        function crazyShake() {
-            console.log("🔥 啟動瘋狂震動！");
-            const tl = gsap.timeline();
-            tl.to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
-              .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
-              .to("#camp-widget", { duration: 0.05, rotation: 10, scale: 1.2, ease: "none" })
-              .to("#camp-widget", { duration: 0.05, rotation: -10, scale: 1.2, ease: "none" })
-              .to("#camp-widget", { duration: 0.1, rotation: 0, scale: 1, ease: "back.out(2)" });
-        }
-        setInterval(crazyShake, 5000);
-        setTimeout(crazyShake, 1000);
-    }
-});
-
-/* --- 以下這部分要放在大括號外面，保證全域可用 --- */
-
-// 開啟彈窗
-function openCampModal() {
-    console.log("嘗試開啟表單...");
-    const modal = document.getElementById('camp-modal');
-    const modalBox = document.getElementById('modal-box');
-    
-    modal.style.display = 'flex';
-    gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
-    gsap.fromTo(modalBox, 
-        { scale: 0.5, opacity: 0, y: 50 }, 
-        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
-    );
-}
-
-// 關閉彈窗 (這段就是你剛才問要放哪裡的內容)
-function closeCampModal() {
-    console.log("觸發關閉按鈕！");
-    const modal = document.getElementById('camp-modal');
-    const modalBox = document.getElementById('modal-box');
-
-    gsap.to(modalBox, { 
-        scale: 0.8, 
-        opacity: 0, 
-        duration: 0.3, 
-        onComplete: () => {
-            modal.style.display = 'none';
-        }
-    });
-    gsap.to(modal, { opacity: 0, duration: 0.3 });
-}
-
-// 點擊遮罩空白處也可以關閉
-window.onclick = function(event) {
-    const modal = document.getElementById('camp-modal');
-    if (event.target == modal) {
-        closeCampModal();
-    }
-}
-    // 雙重保障：用代碼強行綁定點擊事件
-(function ensureCloseWorks() {
-    const btn = document.getElementById('close-btn');
-    if (btn) {
-        btn.addEventListener('click', function(e) {
-            console.log("偵測到強力點擊！");
-            closeCampModal();
-        });
-    }
-})();
-</script>
-         
-<section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-black text-mbc-blue mb-4 inline-block border-b-4 border-mbc-yellow pb-2">
-                ✨ 4C 教學核心理念
-            </h2>
-            <p class="text-gray-500 mt-4 text-lg">透過 LEGO 循環學習模式，引導孩子從想像到實現。</p>
-        </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    
-    <div class="core-card core-card-blue p-8 bg-[#0071BC]/10 border-t-8 border-[#0071BC] rounded-2xl transition-all">
-        <div class="flex items-center mb-4">
-            <span class="text-4xl font-black text-[#0071BC] mr-4">1</span>
-            <h3 class="text-2xl font-bold text-[#0071BC]">Connect 聯想</h3>
-        </div>
-        <p class="text-gray-700 leading-relaxed text-lg">連結新舊知識，透過圖像與故事導入，激發孩子不經意間萌發新主意。</p>
-    </div>
-
-    <div class="core-card core-card-red p-8 bg-[#E30613]/10 border-t-8 border-[#E30613] rounded-2xl transition-all">
-        <div class="flex items-center mb-4">
-            <span class="text-4xl font-black text-[#E30613] mr-4">2</span>
-            <h3 class="text-2xl font-bold text-[#E30613]">Construct 建構</h3>
-        </div>
-        <p class="text-gray-700 leading-relaxed text-lg">將想像力轉化為實體形象。孩子學習設置規劃並動手實作。</p>
-    </div>
-
-    <div class="core-card core-card-orange p-8 bg-[#F39200]/10 border-t-8 border-[#F39200] rounded-2xl transition-all">
-        <div class="flex items-center mb-4">
-            <span class="text-4xl font-black text-[#F39200] mr-4">3</span>
-            <h3 class="text-2xl font-bold text-[#F39200]">Contemplate 反思</h3>
-        </div>
-        <p class="text-gray-700 leading-relaxed text-lg">孩子透過深度思考與回顧過程，擷取經驗並內化為解決問題的智慧。</p>
-    </div>
-
-    <div class="core-card core-card-green p-8 bg-[#009640]/10 border-t-8 border-[#009640] rounded-2xl transition-all">
-        <div class="flex items-center mb-4">
-            <span class="text-4xl font-black text-[#009640] mr-4">4</span>
-            <h3 class="text-2xl font-bold text-[#009640]">Continue 延續</h3>
-        </div>
-        <p class="text-gray-700 leading-relaxed text-lg">提高學習積極性，勇敢克服困難去解決更高層級的挑戰。</p>
-    </div>
-
-</div>
-        </div>
-    </div>
-</section>
-
-    <section id="glory" class="py-20 bg-mbc-cream relative overflow-hidden">
-        <svg class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0 100 C 20 0 50 0 100 100 Z" fill="#FF9F43" />
-        </svg>
-<section id="honors" class="relative py-20 overflow-hidden bg-white">
-    <div id="confetti-container" class="absolute inset-0 pointer-events-none"></div>
-
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center mb-12">
-            <h2 class="text-4xl md:text-5xl font-black text-mbc-orange">🏆 光榮瞬間</h2>
-            <p class="text-gray-500 mt-4 font-bold">每一滴汗水，都化作台上最耀眼的笑容。</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-            <div class="glory-frame-new relative bg-white aspect-video cursor-pointer group overflow-hidden rounded-xl shadow-xl hover:-translate-y-2 transition-all duration-500">
-                <img src="glory-1.jpg" alt="比賽獲獎照片1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                <div class="absolute bottom-0 left-0 w-full bg-black/60 text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    <p class="font-bold text-lg text-center">各類獎項獎盃</p>
-                </div>
-            </div>
-
-            <div class="glory-frame-new relative bg-white aspect-video cursor-pointer group overflow-hidden rounded-xl shadow-xl hover:-translate-y-2 transition-all duration-500">
-                <img src="glory-2.jpg" alt="比賽獲獎照片2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                <div class="absolute bottom-0 left-0 w-full bg-black/60 text-white p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                    <p class="font-bold text-lg text-center">臺中市政府頒發傑出青年獎</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-12">
-            <a href="award.html" class="inline-block px-10 py-4 bg-mbc-blue text-white font-black rounded-full shadow-lg hover:bg-mbc-red transform hover:scale-110 transition-all duration-300">
-                查看完整得獎紀錄 ➔
-            </a>
-        </div>
-    </div>
-</section>
-<section id="downloads" class="py-16 bg-white border-t-8 border-dashed border-mbc-yellow">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-black text-gray-800 mb-10">📂 常用連結與資源</h2>
-            
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="https://education.lego.com/en-us/downloads/mindstorms-ev3/software/" target="_blank" class="p-6 border-2 border-gray-200 rounded-2xl hover:border-mbc-red hover:bg-red-50 transition-all group shadow-sm hover:shadow-md">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">📝</div>
-                    <h3 class="font-bold text-gray-700">EV3程式下載</h3>
-                </a>
-
-                <a href="https://www.tinkercad.com/" target="_blank" class="p-6 border-2 border-gray-200 rounded-2xl hover:border-mbc-blue hover:bg-blue-50 transition-all group shadow-sm hover:shadow-md">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🖨️</div>
-                    <h3 class="font-bold text-gray-700">營隊3D列印下載</h3>
-                </a>
-
-                <a href="https://apps.microsoft.com/detail/9pfgj25jl6x3?hl=zh-tw&gl=US" target="_blank" class="p-6 border-2 border-gray-200 rounded-2xl hover:border-mbc-green hover:bg-green-50 transition-all group shadow-sm hover:shadow-md">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🐱</div>
-                    <h3 class="font-bold text-gray-700">Scratch 下載</h3>
-                </a>
-
-                <a href="https://drive.google.com/file/d/1NxE9nkX5NADsm71Lc-2LIxp4lCF2yEa8/view" target="_blank" class="p-6 border-2 border-gray-200 rounded-2xl hover:border-mbc-orange hover:bg-orange-50 transition-all group shadow-sm hover:shadow-md">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">☁️</div>
-                    <h3 class="font-bold text-gray-700">LDD 軟體下載</h3>
-                </a>
-
-                <a href="https://education.lego.com/en-us/downloads/retiredproducts/wedo-2/software/" target="_blank" class="p-6 border-2 border-gray-200 rounded-2xl hover:border-mbc-red hover:bg-red-50 transition-all group shadow-sm hover:shadow-md">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🧩</div>
-                    <h3 class="font-bold text-gray-700">WeDo 2.0 軟體下載</h3>
-                </a>
-
-                </div>
-        </div>
-    </section>
-
-    <section id="contact" class="py-20 bg-mbc-blue relative">
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        
-        <div class="container mx-auto px-4 relative z-10 text-center text-white">
-            <h2 class="text-4xl font-black mb-6">💬 聯絡積動城市</h2>
-            <p class="text-xl mb-12 opacity-90">想了解更多課程資訊？歡迎透過以下方式找到我們！</p>
-
-            <div class="flex justify-center items-center gap-8 md:gap-16">
-                <a href="https://www.facebook.com/MBC.robot" class="social-frame w-24 h-24 md:w-32 md:h-32 bg-white">
-                    <img src="path-to-your-fb-icon.png" alt="Facebook" class="w-12 h-12 md:w-16 md:h-16 object-contain">
-                </a>
-                
-                <a href="https://www.instagram.com/mbc.robot?igsh=MXN4Z2djc21kMDlraA==" class="social-frame w-24 h-24 md:w-32 md:h-32 bg-white">
-                    <img src="path-to-your-ig-icon.png" alt="Instagram" class="w-12 h-12 md:w-16 md:h-16 object-contain">
-                </a>
-                
-                <a href="https://lin.ee/netGShg" class="social-frame w-24 h-24 md:w-32 md:h-32 bg-white">
-                    <img src="path-to-your-LINE-icon.png" alt="Threads" class="w-12 h-12 md:w-16 md:h-16 object-contain">
-                </a>
-            </div>
-
-            <div class="mt-12 text-lg font-bold bg-white/10 inline-block px-8 py-4 rounded-xl backdrop-blur-sm border border-white/30">
-                <p>📍 地址：臺中市西屯區國安一路89號</p>
-                <p class="mt-2">📞 電話：0983-335-673</p>
-            </div>
-        </div>
-    </section>
-        
-        <div id="camp-widget" onclick="openCampModal()">
-    <div class="widget-container">
-        <div class="widget-inner">
-            <img id="camp-icon" src="" alt="營隊報名">
-        </div>
-    </div>
-    <div id="camp-label" class="absolute -top-4 -left-10 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap shadow-lg">
-        熱烈報名中!
-    </div>
-</div>
-
-<div id="camp-modal" class="modal-overlay">
-    <div class="modal-content" id="modal-box">
-        <span id="close-btn" class="close-modal" onclick="closeCampModal()">&times;</span>
-        
-        <div class="iframe-container">
-            <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform">載入中…</iframe>
-        </div>
-    </div>
-</div>
-     
-    <footer class="bg-gray-800 text-white py-4 overflow-hidden border-t-4 border-mbc-red">
-        <div class="flex items-center justify-between container mx-auto px-4 relative">
-            
-            <div class="w-2/3 md:w-3/4 marquee-container text-mbc-yellow font-bold tracking-widest text-sm md:text-base">
-                <div class="marquee-content">
-                    MBC Robot 積動城市  •  啟動創造力  •  Future is Now  •  MBC Robot 積動城市  •  啟動創造力  •  Future is Now
-                </div>
-            </div>
-
-            <div class="w-1/3 md:w-1/4 flex justify-end">
-                <img src="積動城市圖2.png" alt="MBC Footer Logo" class="h-10 md:h-12 footer-logo-glow">
-            </div>
-        </div>
-        <div class="text-center text-xs text-gray-500 mt-2">
-            © 2026 積動城市 MBC Robot. All Rights Reserved.
-        </div>
-    </footer>
-
+    </script>
 </body>
 </html>
