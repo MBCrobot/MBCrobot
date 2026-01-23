@@ -697,19 +697,21 @@
     if (isActive) {
         campWidget.style.display = 'block';
         
-        // --- 吸引注意動畫：每隔 5 秒瘋狂搖擺一次 ---
-        setInterval(() => {
-            gsap.to("#camp-widget", {
-                duration: 0.1,
-                x: "+=50",
-                repeat: 5,
-                yoyo: true,
-                ease: "sine.inOut",
-                onComplete: () => {
-                    gsap.to("#camp-widget", { x: 0, duration: 0.1 });
-                }
-            });
-        }, 5000);
+       // --- 吸引注意動畫：每隔 5 秒進行強烈左右震動 ---
+setInterval(() => {
+    // 建立一個微小的震動時間軸
+    const shakeTl = gsap.timeline();
+    
+    // 快速左右來回晃動 (幅度加大到 30px)
+    shakeTl.to("#camp-widget", { duration: 0.05, x: -30, ease: "none" })
+           .to("#camp-widget", { duration: 0.05, x: 30, ease: "none" })
+           .to("#camp-widget", { duration: 0.05, x: -20, ease: "none" })
+           .to("#camp-widget", { duration: 0.05, x: 20, ease: "none" })
+           .to("#camp-widget", { duration: 0.05, x: -10, ease: "none" })
+           .to("#camp-widget", { duration: 0.05, x: 10, ease: "none" })
+           .to("#camp-widget", { duration: 0.05, x: 0, ease: "none" });
+           
+}, 5000); // 每 5 秒震動一次
     }
 });
 
