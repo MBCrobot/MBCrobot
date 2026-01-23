@@ -724,15 +724,6 @@
 });
   document.addEventListener("DOMContentLoaded", function() {
     const campWidget = document.getElementById('camp-widget');
-      
- <div id="camp-modal" class="modal-overlay">
-    <div class="modal-content" id="modal-box">
-        <span class="close-modal" onclick="closeCampModal()">&times;</span>
-        <div class="iframe-container">
-            <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform">載入中…</iframe>
-        </div>
-    </div>
-</div>
     const campIcon = document.getElementById('camp-icon');
     const campLabel = document.getElementById('camp-label');
     
@@ -977,6 +968,15 @@ window.onclick = function(event) {
     </div>
     <div id="camp-label" class="absolute -top-4 -left-10 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold whitespace-nowrap shadow-lg">
         熱烈報名中!
+    </div>
+</div>
+
+<div id="camp-modal" class="modal-overlay">
+    <div class="modal-content" id="modal-box">
+        <span class="close-modal" onclick="closeCampModal()">&times;</span>
+        <div class="iframe-container">
+            <iframe id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSclQekA8N_Tjhqi_nnu-8noX2AgVrK6W0znj5LfcIwKi-0PFQ/viewform?embedded=true">載入中…</iframe>
+        </div>
     </div>
 </div>
      
