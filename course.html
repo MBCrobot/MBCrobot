@@ -193,6 +193,35 @@
         .stem-arrow-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; }
         .stem-arrow { fill: none; stroke: #8b4513; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 10, 15; opacity: 0.6; }
         .flow-line { fill: none; stroke: url(#flowGradient); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 20, 100; filter: drop-shadow(0 0 5px rgba(255, 165, 2, 0.8)); }
+        /* 針對手機螢幕（寬度小於 768px）進行自動縮放 */
+@media (max-width: 768px) {
+    .stem-circle-container {
+        /* 使用 transform 縮小整個容器，不影響原本的佈局邏輯 */
+        transform: scale(0.65); 
+        
+        /* 以頂部中央為縮放基準點，避免下方留白過大 */
+        transform-origin: center top; 
+        
+        /* 強制讓容器在手機上不要撐開頁面寬度 */
+        margin: 20px auto -150px auto; 
+        
+        /* 由於 500px 縮小後左右會變窄，我們讓它左右置中 */
+        left: 50%;
+        margin-left: -250px; /* 500px 的一半，配合 left: 50% 達到絕對置中 */
+    }
+
+    /* 讓核心文字在縮小時保持清晰 */
+    .stem-core-text {
+        font-size: 1.1rem;
+        width: 150px;
+    }
+
+    /* 讓節點內的小圖示稍微縮小 */
+    .stem-step-node {
+        width: 90px;
+        height: 90px;
+    }
+}
     </style>
 </head>
 <body class="flex flex-col">
