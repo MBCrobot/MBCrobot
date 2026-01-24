@@ -558,7 +558,7 @@
 </head>
 <body class="flex flex-col min-h-screen font-sans">
 
-   <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-lg border-b-4 border-mbc-yellow">
+  <nav class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md shadow-lg border-b-4 border-mbc-yellow">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
         <a href="index.html" class="flex items-center space-x-3 group">
             <img src="積動城市圖1.png" alt="積動城市 Logo" class="h-12 md:h-16 group-hover:rotate-12 transition-transform duration-300">
@@ -574,16 +574,18 @@
             <a href="#contact" class="px-6 py-2 bg-mbc-red text-white rounded-full shadow-md hover:bg-mbc-orange transition-all transform hover:scale-105 active:scale-95">聯絡我們</a>
         </div>
 
-        <button id="mobile-menu-btn" class="md:hidden text-mbc-blue text-3xl focus:outline-none">☰</button>
+        <button id="mobile-menu-btn" class="md:hidden text-mbc-blue text-4xl p-2 focus:outline-none" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
+            ☰
+        </button>
     </div>
 
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t-2 border-mbc-yellow flex flex-col font-bold text-lg text-gray-600">
-        <a href="index.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50 text-mbc-blue">首頁</a>
-        <a href="course.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">課程介紹</a>
-        <a href="award.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">得獎紀錄</a>
-        <a href="classroom.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">教室環境</a>
-        <a href="#downloads" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">常用連結</a>
-        <a href="#contact" class="px-6 py-4 bg-mbc-red text-white text-center">聯絡我們</a>
+    <div id="mobile-menu" class="hidden fixed inset-0 top-[72px] bg-white z-[99] flex flex-col font-bold text-xl text-gray-600 overflow-y-auto">
+        <a href="index.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50 text-mbc-blue">首頁</a>
+        <a href="course.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">課程介紹</a>
+        <a href="award.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">得獎紀錄</a>
+        <a href="classroom.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">教室環境</a>
+        <a href="#downloads" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">常用連結</a>
+        <a href="#contact" class="px-8 py-8 bg-mbc-red text-white text-center">聯絡我們</a>
     </div>
 </nav>
 <header class="warm-hero-bg relative w-full py-24 overflow-hidden">
@@ -626,6 +628,37 @@
 </header>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        if (btn && menu) {
+            btn.onclick = function(e) {
+                e.preventDefault();
+                const isHidden = menu.classList.contains('hidden');
+                
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    btn.innerHTML = '✕'; // 變成關閉符號
+                    document.body.style.overflow = 'hidden'; // 防止選單開啟時底層滑動
+                } else {
+                    menu.classList.add('hidden');
+                    btn.innerHTML = '☰'; // 變回漢堡符號
+                    document.body.style.overflow = '';
+                }
+            };
+
+            // 點擊選單連結後自動關閉
+            const links = menu.querySelectorAll('a');
+            links.forEach(link => {
+                link.onclick = function() {
+                    menu.classList.add('hidden');
+                    btn.innerHTML = '☰';
+                    document.body.style.overflow = '';
+                };
+            });
+        }
+    });
     document.addEventListener('DOMContentLoaded', () => {
         const titleSpan = document.querySelector('.animated-title');
         const smokePuff1 = document.getElementById('smokePuff1');
@@ -818,29 +851,7 @@ window.onclick = function(event) {
         });
     }
 })();
-    // 手機版選單開關功能
-    const btn = document.getElementById('mobile-menu-btn');
-    const menu = document.getElementById('mobile-menu');
-
-    if (btn && menu) {
-        btn.addEventListener('click', () => {
-            // 切換 hidden 類別來顯示或隱藏
-            menu.classList.toggle('hidden');
-            
-            // 點擊按鈕時的小動畫
-            btn.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
-            btn.style.transition = 'transform 0.3s ease';
-        });
-
-        // 點擊選單連結後自動收起選單 (適用於錨點連結)
-        const menuLinks = menu.querySelectorAll('a');
-        menuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.add('hidden');
-                btn.style.transform = 'rotate(0deg)';
-            });
-        });
-    }
+   
 </script>
          
 <section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
