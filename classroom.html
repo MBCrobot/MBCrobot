@@ -629,6 +629,96 @@
     0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
     100% { transform: translateX(-50%) scale(1.1) skewX(2deg); opacity: 1; }
 }
+        /* === 手機版自定義修正 (RWD) === */
+@media screen and (max-width: 768px) {
+    /* 1. 調整背景與整體容器 */
+    .castle-container {
+        flex-direction: column; /* 讓兩側塔樓與主塔垂直排列 */
+        padding: 60px 10px;
+        gap: 30px;
+        align-items: center;
+    }
+
+    /* 2. 標題縮小，避免換行 */
+    .castle-title {
+        font-size: 1.8rem !important;
+        letter-spacing: 2px !important;
+        white-space: normal !important; /* 手機版允許適度換行 */
+    }
+
+    /* 3. 隱藏側邊塔樓，保留主體以節省空間 */
+    .side-tower {
+        display: none; 
+    }
+
+    /* 4. 主建築樓層 RWD：將固定寬度改為百分比 */
+    .main-keep {
+        width: 100%;
+    }
+
+    .castle-floor {
+        width: 95% !important; /* 所有樓層在手機上統一寬度 */
+        margin: 0 auto 15px auto !important;
+        transform: none !important; /* 取消 3D 偏移防止切到螢幕 */
+    }
+
+    /* 縮小每層樓的高度 */
+    .floor-3f .floor-content { height: 120px !important; }
+    .floor-2f .floor-content { height: 120px !important; }
+    .floor-1f .floor-content { height: 150px !important; }
+    .floor-gf .floor-content { height: 110px !important; }
+
+    /* 5. 強化手機點擊體驗：資訊框改為彈出或常駐 */
+    .floor-info {
+        position: relative !important;
+        right: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        opacity: 1 !important; /* 手機版直接顯示，不要等 hover */
+        transform: none !important;
+        border-left: none !important;
+        border-top: 4px solid var(--brick-yellow);
+        margin-top: -5px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 0 0 8px 8px;
+        pointer-events: auto !important;
+    }
+
+    /* 6. 皇宮影片區與掛毯調整 */
+    .palace-section {
+        padding: 40px 10px;
+    }
+
+    .tapestry {
+        display: none; /* 手機版空間不足，隱藏地毯避免遮擋影片 */
+    }
+
+    .wall-torch {
+        transform: scale(0.6) translateY(-50%); /* 縮小火把 */
+    }
+    .torch-left { left: 5px; }
+    .torch-right { right: 5px; }
+
+    .royal-frame {
+        width: 100% !important;
+        border-width: 10px !important; /* 邊框變細 */
+    }
+
+    /* 7. 羊皮紙文字框調整 */
+    .royal-text-box {
+        padding: 25px 20px !important;
+        margin-top: 30px !important;
+        width: 90% !important;
+    }
+    .royal-text-box::before, .royal-text-box::after {
+        width: 20px !important; /* 縮小捲軸柱子 */
+    }
+
+    /* 8. 守衛縮小 */
+    .guardian-container {
+        width: 100px !important;
+    }
+}
     </style>
 </head>
 <body>
