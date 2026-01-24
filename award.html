@@ -256,15 +256,38 @@
         line-height: 1.8;
     }
 
-    /* 6. 跑馬燈頁尾縮小 */
-    .marquee-text {
-        font-size: 12px;
+ /* 6. 跑馬燈頁尾優化：防止換行與縮放問題 */
+    .footer-marquee-container {
+        padding: 10px 0 !important;
+        height: 60px !important;
+        display: flex !important;
+        align-items: center;
     }
-    
+
+    .marquee-wrapper {
+        animation: scrollText 12s linear infinite !important; /* 手機版內容少，加快捲動才不會有空隙 */
+        white-space: nowrap !important; /* 強制不換行 */
+        display: flex !important;
+    }
+
+    .marquee-item {
+        margin-right: 30px !important;
+        flex-shrink: 0 !important; /* 防止內容被擠壓變窄 */
+        display: flex !important;
+        align-items: center !important;
+    }
+
     .marquee-logo {
-        height: 30px !important;
+        height: 25px !important; /* 稍微縮小 Logo */
+        width: auto !important;
+        margin-right: 10px !important;
     }
-}
+
+    .marquee-text {
+        font-size: 13px !important;
+        letter-spacing: 1px !important;
+        white-space: nowrap !important;
+    }
     </style>
 </head>
 <body>
