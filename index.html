@@ -558,25 +558,34 @@
 </head>
 <body class="flex flex-col min-h-screen font-sans">
 
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-lg border-b-4 border-mbc-yellow">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-3 group">
-                <img src="積動城市圖1.png" alt="積動城市 Logo" class="h-12 md:h-16 group-hover:rotate-12 transition-transform duration-300">
-                <span class="text-2xl font-black text-mbc-blue tracking-widest hidden md:block group-hover:text-mbc-orange transition-colors">積動城市</span>
-            </a>
+   <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-lg border-b-4 border-mbc-yellow">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="index.html" class="flex items-center space-x-3 group">
+            <img src="積動城市圖1.png" alt="積動城市 Logo" class="h-12 md:h-16 group-hover:rotate-12 transition-transform duration-300">
+            <span class="text-2xl font-black text-mbc-blue tracking-widest hidden md:block group-hover:text-mbc-orange transition-colors">積動城市</span>
+        </a>
 
-            <div class="hidden md:flex space-x-8 items-center text-lg font-bold text-gray-600">
-                <a href="index.html" class="nav-item text-mbc-blue">首頁</a>
-                <a href="course.html" class="nav-item hover:text-mbc-green">課程介紹</a>
-                <a href="award.html" class="nav-item hover:text-mbc-yellow">得獎紀錄</a>
-                <a href="classroom.html" class="nav-item hover:text-mbc-orange">教室環境</a>
-                <a href="#downloads" class="nav-item hover:text-mbc-red">常用連結</a>
-                <a href="#contact" class="px-6 py-2 bg-mbc-red text-white rounded-full shadow-md hover:bg-mbc-orange transition-all transform hover:scale-105 active:scale-95">聯絡我們</a>
-            </div>
-
-            <button class="md:hidden text-mbc-blue text-3xl">☰</button>
+        <div class="hidden md:flex space-x-8 items-center text-lg font-bold text-gray-600">
+            <a href="index.html" class="nav-item text-mbc-blue">首頁</a>
+            <a href="course.html" class="nav-item hover:text-mbc-green">課程介紹</a>
+            <a href="award.html" class="nav-item hover:text-mbc-yellow">得獎紀錄</a>
+            <a href="classroom.html" class="nav-item hover:text-mbc-orange">教室環境</a>
+            <a href="#downloads" class="nav-item hover:text-mbc-red">常用連結</a>
+            <a href="#contact" class="px-6 py-2 bg-mbc-red text-white rounded-full shadow-md hover:bg-mbc-orange transition-all transform hover:scale-105 active:scale-95">聯絡我們</a>
         </div>
-    </nav>
+
+        <button id="mobile-menu-btn" class="md:hidden text-mbc-blue text-3xl focus:outline-none">☰</button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t-2 border-mbc-yellow flex flex-col font-bold text-lg text-gray-600">
+        <a href="index.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50 text-mbc-blue">首頁</a>
+        <a href="course.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">課程介紹</a>
+        <a href="award.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">得獎紀錄</a>
+        <a href="classroom.html" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">教室環境</a>
+        <a href="#downloads" class="px-6 py-4 border-b border-gray-100 hover:bg-gray-50">常用連結</a>
+        <a href="#contact" class="px-6 py-4 bg-mbc-red text-white text-center">聯絡我們</a>
+    </div>
+</nav>
 <header class="warm-hero-bg relative w-full py-24 overflow-hidden">
     <div class="soft-glow pointer-events-none"></div>
     <div class="soft-glow pointer-events-none" style="right: -10%; top: 20%; animation-delay: -5s; background: radial-gradient(circle, rgba(220, 240, 255, 0.4) 0%, transparent 70%);"></div>
@@ -809,6 +818,29 @@ window.onclick = function(event) {
         });
     }
 })();
+    // 手機版選單開關功能
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+
+    if (btn && menu) {
+        btn.addEventListener('click', () => {
+            // 切換 hidden 類別來顯示或隱藏
+            menu.classList.toggle('hidden');
+            
+            // 點擊按鈕時的小動畫
+            btn.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+            btn.style.transition = 'transform 0.3s ease';
+        });
+
+        // 點擊選單連結後自動收起選單 (適用於錨點連結)
+        const menuLinks = menu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                btn.style.transform = 'rotate(0deg)';
+            });
+        });
+    }
 </script>
          
 <section id="core" class="py-20 bg-white rounded-t-[50px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
