@@ -579,14 +579,16 @@
         </button>
     </div>
 
-    <div id="mobile-menu" class="hidden fixed inset-0 top-[72px] bg-white z-[99] flex flex-col font-bold text-xl text-gray-600 overflow-y-auto">
-        <a href="index.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50 text-mbc-blue">首頁</a>
-        <a href="course.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">課程介紹</a>
-        <a href="award.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">得獎紀錄</a>
-        <a href="classroom.html" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">教室環境</a>
-        <a href="#downloads" class="px-8 py-6 border-b border-gray-100 hover:bg-gray-50">常用連結</a>
-        <a href="#contact" class="px-8 py-8 bg-mbc-red text-white text-center">聯絡我們</a>
+   <div id="mobile-menu" class="hidden fixed inset-x-0 top-[70px] bottom-0 bg-white z-[999] flex flex-col font-bold text-xl text-gray-700 shadow-2xl overflow-y-auto">
+    <a href="index.html" class="px-8 py-6 border-b border-gray-100 active:bg-gray-50 text-mbc-blue">首頁</a>
+    <a href="course.html" class="px-8 py-6 border-b border-gray-100 active:bg-gray-50">課程介紹</a>
+    <a href="award.html" class="px-8 py-6 border-b border-gray-100 active:bg-gray-50">得獎紀錄</a>
+    <a href="classroom.html" class="px-8 py-6 border-b border-gray-100 active:bg-gray-50">教室環境</a>
+    <a href="#downloads" class="px-8 py-6 border-b border-gray-100 active:bg-gray-50">常用連結</a>
+    <div class="p-8">
+        <a href="#contact" class="block w-full py-4 bg-mbc-red text-white text-center rounded-xl shadow-lg">聯絡我們</a>
     </div>
+</div>
 </nav>
 <header class="warm-hero-bg relative w-full py-24 overflow-hidden">
     <div class="soft-glow pointer-events-none"></div>
@@ -629,36 +631,36 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
 
-        if (btn && menu) {
-            btn.onclick = function(e) {
-                e.preventDefault();
-                const isHidden = menu.classList.contains('hidden');
-                
-                if (isHidden) {
-                    menu.classList.remove('hidden');
-                    btn.innerHTML = '✕'; // 變成關閉符號
-                    document.body.style.overflow = 'hidden'; // 防止選單開啟時底層滑動
-                } else {
-                    menu.classList.add('hidden');
-                    btn.innerHTML = '☰'; // 變回漢堡符號
-                    document.body.style.overflow = '';
-                }
+    if (btn && menu) {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            const isHidden = menu.classList.toggle('hidden');
+            
+            if (!isHidden) {
+                // 選單開啟時
+                btn.innerHTML = '✕'; 
+                document.body.style.overflow = 'hidden'; // 禁止底層捲動
+            } else {
+                // 選單關閉時
+                btn.innerHTML = '☰';
+                document.body.style.overflow = ''; // 恢復捲動
+            }
+        };
+
+        // 點選連結後自動關閉選單
+        const links = menu.querySelectorAll('a');
+        links.forEach(link => {
+            link.onclick = () => {
+                menu.classList.add('hidden');
+                btn.innerHTML = '☰';
+                document.body.style.overflow = '';
             };
-
-            // 點擊選單連結後自動關閉
-            const links = menu.querySelectorAll('a');
-            links.forEach(link => {
-                link.onclick = function() {
-                    menu.classList.add('hidden');
-                    btn.innerHTML = '☰';
-                    document.body.style.overflow = '';
-                };
-            });
-        }
-    });
+        });
+    }
+});
     document.addEventListener('DOMContentLoaded', () => {
         const titleSpan = document.querySelector('.animated-title');
         const smokePuff1 = document.getElementById('smokePuff1');
