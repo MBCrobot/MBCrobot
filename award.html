@@ -196,6 +196,72 @@
         .marquee-item { display: flex; align-items: center; margin-right: 60px; }
         .marquee-logo { height: 50px; margin-right: 15px; }
         @keyframes scrollText { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        /* --- 手機版 (768px 以下) 綜合樣式優化 --- */
+@media (max-width: 768px) {
+    
+    /* 1. 榮耀時光放映館：放映機與底片調整 */
+    .glory-cinema-container {
+        padding-top: 20px;
+        overflow: hidden;
+    }
+
+    .projector-icon {
+        opacity: 0.15; /* 稍微再調淡一點，背景感更強 */
+        transform: scale(0.5) translateX(80px); /* 縮得更小一點並往右移，騰出空間給文字 */
+        z-index: 0;
+    }
+
+    .film-display-area {
+        width: 100% !important;
+        margin: 0 auto;
+        z-index: 10;
+        position: relative;
+    }
+
+    .film-title {
+        font-size: 1rem !important; /* 針對極窄螢幕再微調 */
+        line-height: 1.4;
+        padding: 0 10px;
+    }
+
+    .control-knobs {
+        transform: scale(0.75); /* 縮放旋鈕，避免重疊 */
+        margin-top: 15px;
+    }
+
+    /* 2. 電影介紹金色區塊調整 */
+    .movie-intro-box {
+        margin: 20px 15px;
+        padding: 25px 20px;
+        border-width: 2px; /* 稍微減細邊框，增加內部空間 */
+    }
+
+    .movie-intro-box h2 {
+        font-size: 1.4rem !important;
+        text-align: center;
+    }
+
+    /* 3. 頁尾 (Footer) 佈局重整 */
+    .footer-content {
+        flex-direction: column; /* 垂直排列 */
+        gap: 30px; /* 增加兩側文字之間的距離 */
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .footer-vertical-text {
+        writing-mode: horizontal-tb; /* 轉為水平閱讀方向 */
+        letter-spacing: 4px; /* 增加字距增加質感 */
+        font-size: 13px;
+        opacity: 0.8;
+        display: block; /* 確保佔據獨立行 */
+    }
+
+    /* 額外優化：讓中間的版權宣告與 Logo 保持適度距離 */
+    .footer-brand {
+        margin: 15px 0;
+    }
+}
     </style>
 </head>
 <body>
