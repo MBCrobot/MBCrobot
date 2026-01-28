@@ -256,38 +256,52 @@
         line-height: 1.8;
     }
 
- /* 6. 跑馬燈頁尾優化：防止換行與縮放問題 */
-    .footer-marquee-container {
-        padding: 10px 0 !important;
-        height: 60px !important;
-        display: flex !important;
-        align-items: center;
-    }
+/* 6. 跑馬燈頁尾優化：防止換行與縮放問題 */
+.footer-marquee-container {
+    padding: 10px 0 !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center;
+    overflow: hidden; /* 確保超出部分隱藏 */
+}
 
-    .marquee-wrapper {
-        animation: scrollText 12s linear infinite !important; /* 手機版內容少，加快捲動才不會有空隙 */
-        white-space: nowrap !important; /* 強制不換行 */
-        display: flex !important;
-    }
+.marquee-wrapper {
+    /* --- 修改：將 12s 稍微縮短，並確保動畫邏輯正確 --- */
+    animation: scrollText 10s linear infinite !important; 
+    white-space: nowrap !important;
+    display: flex !important;
+    width: max-content !important; /* 新增：強制容器寬度由內容撐開，防止擠壓重疊 */
+}
 
-    .marquee-item {
-        margin-right: 30px !important;
-        flex-shrink: 0 !important; /* 防止內容被擠壓變窄 */
-        display: flex !important;
-        align-items: center !important;
-    }
+/* --- 新增：核心關鍵！隱藏第二組 flex，只留第一組 (共2個 Item) --- */
+.marquee-wrapper .flex:nth-child(2) {
+    display: none !important;
+}
 
-    .marquee-logo {
-        height: 25px !important; /* 稍微縮小 Logo */
-        width: auto !important;
-        margin-right: 10px !important;
-    }
+.marquee-item {
+    margin-right: 50px !important; /* 增加間距，讓手機版 2 組看起來不擁擠 */
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
 
-    .marquee-text {
-        font-size: 13px !important;
-        letter-spacing: 1px !important;
-        white-space: nowrap !important;
-    }
+.marquee-logo {
+    height: 22px !important; /* 稍微縮小 Logo 提升精緻度 */
+    width: auto !important;
+    margin-right: 10px !important;
+}
+
+.marquee-text {
+    font-size: 13px !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap !important;
+}
+
+/* --- 新增：修正動畫路徑，因為只剩一組內容，移動 100% 即可無縫 --- */
+@keyframes scrollText {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+}
     </style>
 </head>
 <body>
@@ -380,30 +394,31 @@
         </div>
     </section>
 
-    <footer class="footer-marquee-container">
-        <div class="marquee-wrapper">
-            <div class="flex">
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">積動城市 MBC ROBOT</span>
-                </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">啟發創意•程式教育</span>
-                </div>
+  <footer class="footer-marquee-container">
+    <div class="marquee-wrapper">
+        <div class="flex">
+            <div class="marquee-item">
+                <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
+                <span class="marquee-text">積動城市 MBC ROBOT</span>
             </div>
-            <div class="flex">
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">積動城市 MBC ROBOT</span>
-                </div>
-                <div class="marquee-item">
-                    <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
-                    <span class="marquee-text">啟發創意•程式教育</span>
-                </div>
+            <div class="marquee-item">
+                <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
+                <span class="marquee-text">啟發創意•程式教育</span>
             </div>
         </div>
-    </footer>
+        
+        <div class="flex pc-only-flex">
+            <div class="marquee-item">
+                <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
+                <span class="marquee-text">積動城市 MBC ROBOT</span>
+            </div>
+            <div class="marquee-item">
+                <img src="積動城市圖1.png" alt="Logo" class="marquee-logo">
+                <span class="marquee-text">啟發創意•程式教育</span>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
