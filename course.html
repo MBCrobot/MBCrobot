@@ -220,6 +220,20 @@
     .stem-step-node {
         width: 90px;
         height: 90px;
+.nav-btn-flow {
+        position: fixed !important;   /* 變成固定定位 */
+        top: auto !important;         /* 移除原本可能有的頂部距離 */
+        bottom: 30px !important;      /* 距離底部 30px */
+        right: 20px !important;       /* 距離右側 20px */
+        left: auto !important;        /* 確保不會被置中設定干擾 */
+        z-index: 10000 !important;    /* 確保在寶箱和裝甲框的最上層 */
+        
+        /* 增加一點發光感，讓它在深色背景中更明顯 */
+        box-shadow: 0 0 15px rgba(30, 58, 138, 0.8), 0 0 5px white;
+        
+        /* 稍微縮小一點，避免佔用太多手機畫面空間 */
+        transform: scale(0.9);
+        transition: all 0.3s ease;
     }
 }
     </style>
