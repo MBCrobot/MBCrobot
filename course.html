@@ -194,46 +194,48 @@
         .stem-arrow { fill: none; stroke: #8b4513; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 10, 15; opacity: 0.6; }
         .flow-line { fill: none; stroke: url(#flowGradient); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 20, 100; filter: drop-shadow(0 0 5px rgba(255, 165, 2, 0.8)); }
         /* 針對手機螢幕（寬度小於 768px）進行自動縮放 */
+/* --- 修正後的手機版專用 CSS --- */
 @media (max-width: 768px) {
+    /* 1. STEM 圓圈容器縮放 */
     .stem-circle-container {
-        /* 使用 transform 縮小整個容器，不影響原本的佈局邏輯 */
         transform: scale(0.65); 
-        
-        /* 以頂部中央為縮放基準點，避免下方留白過大 */
         transform-origin: center top; 
-        
-        /* 強制讓容器在手機上不要撐開頁面寬度 */
         margin: 20px auto -150px auto; 
-        
-        /* 由於 500px 縮小後左右會變窄，我們讓它左右置中 */
         left: 50%;
-        margin-left: -250px; /* 500px 的一半，配合 left: 50% 達到絕對置中 */
+        margin-left: -250px; 
     }
 
-    /* 讓核心文字在縮小時保持清晰 */
+    /* 2. 核心文字調整 */
     .stem-core-text {
         font-size: 1.1rem;
         width: 150px;
     }
 
-    /* 讓節點內的小圖示稍微縮小 */
+    /* 3. 節點大小調整 (這裡之前少了結束括號) */
     .stem-step-node {
         width: 90px;
         height: 90px;
-.nav-btn-flow {
-        position: fixed !important;   /* 變成固定定位 */
-        top: auto !important;         /* 移除原本可能有的頂部距離 */
-        bottom: 30px !important;      /* 距離底部 30px */
-        right: 20px !important;       /* 距離右側 20px */
-        left: auto !important;        /* 確保不會被置中設定干擾 */
-        z-index: 10000 !important;    /* 確保在寶箱和裝甲框的最上層 */
+    }
+
+    /* 4. 強制將「回官網首頁」按鈕移至右下角，避免遮擋標題 */
+    .nav-btn-flow {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 30px !important;
+        right: 20px !important;
+        left: auto !important;
+        z-index: 10000 !important;
         
-        /* 增加一點發光感，讓它在深色背景中更明顯 */
-        box-shadow: 0 0 15px rgba(30, 58, 138, 0.8), 0 0 5px white;
-        
-        /* 稍微縮小一點，避免佔用太多手機畫面空間 */
+        /* 手機版微縮放，增加點擊便利性 */
         transform: scale(0.9);
-        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        pointer-events: auto !important; /* 確保可以點擊 */
+    }
+
+    /* 5. 調整標題間距，避免太靠近頂端 */
+    .adventure-title {
+        font-size: 2.2rem !important; /* 手機版標題縮小一點點更精緻 */
+        padding-top: 20px;
     }
 }
     </style>
