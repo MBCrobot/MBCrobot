@@ -174,7 +174,7 @@
 .train-total-wrap {
   display: inline-flex;
     align-items: flex-end;
-    animation: trainMovement 18s ease-in-out infinite;
+    animation: trainMovement 8s ease-in-out infinite;
     white-space: nowrap;
 }
 
@@ -235,24 +235,20 @@
     20% { opacity: 1; }
     100% { transform: translateY(-100px) translateX(-20px) scale(3); opacity: 0; }
 }
-
-.s-1 { animation: cloudPuff 3s infinite 3s; }
-.s-2 { animation: cloudPuff 3s infinite 4.5s; }
+/* 縮短煙霧生命週期，讓它跟著火車的節奏 */
+.s-1 { animation: cloudPuff 1.5s infinite; } /* 縮短為 1.5s */
+.s-2 { animation: cloudPuff 1.5s infinite 0.75s; }
 
 /* --- 修改後的行駛動畫：縮短停頓，無縫循環 --- */
+/* --- 調整為：快速進場、短暫停頓、立即出發 --- */
 @keyframes trainMovement {
-    /* 0% 到 25%：從右側駛入（縮短進場佔比） */
     0% { transform: translateX(100vw); opacity: 1; }
-    15% { transform: translateX(0); opacity: 1; }
+    15% { transform: translateX(0); opacity: 1; }  /* 快速到達中心 */
     
-    /* 25% 到 45%：停留在畫面中心（大幅縮短停頓時間，約佔總時長 30%） */
-    45% { transform: translateX(0); opacity: 1; }
+    30% { transform: translateX(0); opacity: 1; }  /* 僅停頓一下下 (15%~30%) */
     
-    /* 45% 到 95%：緩緩向左駛出（讓離場過程更優雅） */
-    95% { transform: translateX(-120vw); opacity: 1; }
-    
-    /* 95% 到 100%：火車剛好完全消失後，下一秒立即從右邊出現，達成「無白場」循環 */
-    100% { transform: translateX(-120vw); opacity: 0; }
+    98% { transform: translateX(-120vw); opacity: 1; } /* 持續移動到消失 */
+    100% { transform: translateX(-120vw); opacity: 0; } /* 瞬間重置 */
 }
         /* 定義呼吸燈動畫 */
 @keyframes core-breathing {
