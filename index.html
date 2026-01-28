@@ -175,21 +175,17 @@
             100% { text-shadow: 0 0 5px rgba(255, 217, 61, 0.5), 0 0 10px rgba(255, 107, 107, 0.5); }
         }
 
-        @keyframes trainIntro {
-            0% { transform: translateX(100%); opacity: 0; }
-            10% { transform: translateX(0); opacity: 1; } /* 快速駛入 */
-            80% { transform: translateX(0); opacity: 1; } /* 停留 */
-            90% { transform: translateX(-100%); opacity: 0; } /* 緩慢駛出 */
-            100% { transform: translateX(-100%); opacity: 0; }
-        }
 /* 火車總容器：控制整體行駛動畫 */
+/* --- 修改後：確保火車勻速行駛且不間斷 --- */
 .train-total-wrap {
-  display: inline-flex;
+    display: inline-flex;
     align-items: flex-end;
-    animation: trainMovement 8s ease-in-out infinite;
+    /* 改為 linear 並將時間稍微拉長至 10s (可依喜好調整) */
+    animation: trainMovement 10s linear infinite !important;
     white-space: nowrap;
+    /* 確保火車在移動中始終可見 */
+    opacity: 1 !important;
 }
-
 /* 車頭與車廂的共通樣式 */
 .train-part {
     position: relative;
@@ -247,20 +243,18 @@
     20% { opacity: 1; }
     100% { transform: translateY(-100px) translateX(-20px) scale(3); opacity: 0; }
 }
-/* 縮短煙霧生命週期，讓它跟著火車的節奏 */
-.s-1 { animation: cloudPuff 1.5s infinite; } /* 縮短為 1.5s */
-.s-2 { animation: cloudPuff 1.5s infinite 0.75s; }
+/* 讓煙霧跟隨火車頭的藍色車廂 (engine-blue) */
+.s-1 { animation: cloudPuff 1.2s infinite; } 
+.s-2 { animation: cloudPuff 1.2s infinite 0.6s; } /* 0.6s 是 1.2s 的一半，節奏最穩 */
 
-/* --- 修改後的行駛動畫：縮短停頓，無縫循環 --- */
-/* --- 調整為：快速進場、短暫停頓、立即出發 --- */
+/* --- 修改後：純粹的勻速移動，無淡入淡出，循環最流暢 --- */
 @keyframes trainMovement {
-    0% { transform: translateX(100vw); opacity: 1; }
-    15% { transform: translateX(0); opacity: 1; }  /* 快速到達中心 */
-    
-    30% { transform: translateX(0); opacity: 1; }  /* 僅停頓一下下 (15%~30%) */
-    
-    98% { transform: translateX(-120vw); opacity: 1; } /* 持續移動到消失 */
-    100% { transform: translateX(-120vw); opacity: 0; } /* 瞬間重置 */
+    0% { 
+        transform: translateX(100vw); 
+    }
+    100% { 
+        transform: translateX(-150vw); /* 增加距離確保長長的車身完全離場 */
+    }
 }
         /* 定義呼吸燈動畫 */
 @keyframes core-breathing {
