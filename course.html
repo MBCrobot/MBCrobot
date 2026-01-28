@@ -194,9 +194,8 @@
         .stem-arrow { fill: none; stroke: #8b4513; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 10, 15; opacity: 0.6; }
         .flow-line { fill: none; stroke: url(#flowGradient); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 20, 100; filter: drop-shadow(0 0 5px rgba(255, 165, 2, 0.8)); }
         /* 針對手機螢幕（寬度小於 768px）進行自動縮放 */
-/* --- 修正後的手機版專用 CSS --- */
 @media (max-width: 768px) {
-    /* 1. STEM 圓圈容器縮放 */
+    /* 1. STEM 圓圈容器縮放 (維持原樣) */
     .stem-circle-container {
         transform: scale(0.65); 
         transform-origin: center top; 
@@ -204,38 +203,35 @@
         left: 50%;
         margin-left: -250px; 
     }
+    .stem-core-text { font-size: 1.1rem; width: 150px; }
+    .stem-step-node { width: 90px; height: 90px; }
 
-    /* 2. 核心文字調整 */
-    .stem-core-text {
-        font-size: 1.1rem;
-        width: 150px;
-    }
-
-    /* 3. 節點大小調整 (這裡之前少了結束括號) */
-    .stem-step-node {
-        width: 90px;
-        height: 90px;
-    }
-
-    /* 4. 強制將「回官網首頁」按鈕移至右下角，避免遮擋標題 */
+    /* 2. 通用的按鈕基礎設定 */
     .nav-btn-flow {
         position: fixed !important;
         top: auto !important;
-        bottom: 30px !important;
         right: 20px !important;
         left: auto !important;
         z-index: 10000 !important;
-        
-        /* 手機版微縮放，增加點擊便利性 */
-        transform: scale(0.9);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        pointer-events: auto !important; /* 確保可以點擊 */
+        transform: scale(0.85);
+        pointer-events: auto !important;
     }
 
-    /* 5. 調整標題間距，避免太靠近頂端 */
+    /* 3. 「回官網首頁」按鈕放最下面 */
+    a.nav-btn-flow {
+        bottom: 20px !important;
+    }
+
+    /* 4. 「收回地圖」按鈕疊在上方 */
+    button#close-map-btn.nav-btn-flow {
+        bottom: 80px !important; /* 距離底部更高一點，錯開下方按鈕 */
+        background-color: #8b4513 !important; /* 保持深褐色風格 */
+    }
+
+    /* 5. 標題縮小避免擠壓 */
     .adventure-title {
-        font-size: 2.2rem !important; /* 手機版標題縮小一點點更精緻 */
-        padding-top: 20px;
+        font-size: 2rem !important;
+        padding-top: 15px;
     }
 }
     </style>
